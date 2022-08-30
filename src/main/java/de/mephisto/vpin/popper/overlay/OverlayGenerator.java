@@ -34,10 +34,10 @@ public class OverlayGenerator {
       GraphicsConfiguration gc = gd.getDefaultConfiguration();
 
       BufferedImage rotated = create(backgroundImage, Math.PI / 2, gc);
-      OverlayGraphics.drawGames(rotated, gameRepository, new HighsoreResolver());
+      OverlayGraphics.drawGames(rotated, gameRepository, new HighsoreResolver(new File("./")));
 
-//      BufferedImage rotatedTwice = create(backgroundImage, -Math.PI / 2, gc);
-      writeImage(rotated);
+      BufferedImage rotatedTwice = create(rotated, -Math.PI / 2, gc);
+      writeImage(rotatedTwice);
       long duration = System.currentTimeMillis() - start;
       LOG.info("Generation took " + duration + "ms");
     } catch (Exception e) {

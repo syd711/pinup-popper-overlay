@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,10 +29,12 @@ public class OverlayGraphics {
 
   private final static String HIGHSCORE_FONT_FILE = Config.getConfiguration().getString("ui.highscore.font.file");
   private final static String HIGHSCORE_FONT_NAME = Config.getConfiguration().getString("ui.highscore.font.name");
-  private final static int HIGHSCORE_FONT_SIZE = Config.getConfiguration().getInt("ui.highscore.font.size");
+  private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getConfiguration().getInt("ui.highscore.table.font.size");
+  private final static int HIGHSCORE_OWNER_FONT_SIZE = Config.getConfiguration().getInt("ui.highscore.owner.font.size");
 
   private final static String TITLE_FONT_FILE = Config.getConfiguration().getString("ui.title.font.file");
   private final static String TITLE_FONT_NAME = Config.getConfiguration().getString("ui.title.font.name");
+  private final static int TITLE_Y_OFFSET = Config.getConfiguration().getInt("ui.title.y.offset");
   private final static int TITLE_FONT_SIZE = Config.getConfiguration().getInt("ui.title.font.size");
 
 
@@ -59,37 +62,62 @@ public class OverlayGraphics {
     renderHighscoreList(imageWidth, imageHeight, gameOfTheMonth, gameRepository, highsoreResolver, g);
   }
 
+  /**
+   * The upper section, usually with the three topscores.
+   *
+   * @param highsoreResolver
+   * @param imageWidth
+   * @param g
+   * @param gameOfTheMonth
+   * @throws Exception
+   */
   private static void renderTableOfTheMonth(HighsoreResolver highsoreResolver, int imageWidth, Graphics g, GameInfo gameOfTheMonth) throws Exception {
     String title = TITLE_TEXT;
     int titleWidth = g.getFontMetrics().stringWidth(title);
-    int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE;
+    int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE + TITLE_Y_OFFSET;
     g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
 
-    g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_FONT_SIZE));
+    g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.BOLD, HIGHSCORE_TABLE_FONT_SIZE));
     String tableOfTheMonth = gameOfTheMonth.getGameDisplayName();
     int width = g.getFontMetrics().stringWidth(tableOfTheMonth);
     int tableNameY = titleY + ROW_SEPARATOR + TITLE_FONT_SIZE;
     g.drawString(tableOfTheMonth, imageWidth / 2 - width / 2, tableNameY);
 
+    g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
     Highscore highscore = highsoreResolver.getHighscore(gameOfTheMonth);
     if (highscore != null) {
-
-      File wheelIconFile = gameOfTheMonth.getWheelIconFile();
-      int wheelSize = HIGHSCORE_FONT_SIZE * 3 + ROW_SEPARATOR * 3;
-      if (wheelIconFile.exists()) {
-        BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        g.drawImage(wheelImage, imageWidth / 2 - wheelSize * 2 - ROW_PADDING_LEFT, tableNameY + ROW_SEPARATOR, wheelSize, wheelSize, null);
-      }
-
       int count = 0;
+      int scoreWidth = 0;
+
+      List<String> scores = new ArrayList<>();
       for (Score score : highscore.getScores()) {
-        int scoreY = tableNameY + score.getPosition() * TITLE_FONT_SIZE;
         String scoreString = score.getPosition() + ". " + score.getUserInitials() + " " + score.getScore();
-        g.drawString( scoreString, imageWidth / 2 - wheelSize, scoreY);
+        scores.add(scoreString);
+
+        int singleScoreWidth = g.getFontMetrics().stringWidth(title);
+        if(scoreWidth < singleScoreWidth ) {
+          scoreWidth = singleScoreWidth;
+        }
         count++;
         if (count == 3) {
           break;
         }
+      }
+
+      int position = 0;
+      int wheelWidth = 3 * TITLE_FONT_SIZE + 3* ROW_SEPARATOR;
+      int totalScoreAndWheelWidth = scoreWidth + wheelWidth;
+
+      for (String score : scores) {
+        position++;
+        int scoreY = tableNameY + position * TITLE_FONT_SIZE + ROW_SEPARATOR;
+        g.drawString(score, imageWidth / 2 - totalScoreAndWheelWidth / 2 + wheelWidth + ROW_SEPARATOR, scoreY);
+      }
+
+      File wheelIconFile = gameOfTheMonth.getWheelIconFile();
+      if (wheelIconFile.exists()) {
+        BufferedImage wheelImage = ImageIO.read(wheelIconFile);
+        g.drawImage(wheelImage, imageWidth / 2 - totalScoreAndWheelWidth / 2, tableNameY + ROW_SEPARATOR, wheelWidth, wheelWidth, null);
       }
     }
   }
@@ -98,17 +126,15 @@ public class OverlayGraphics {
     g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
     String text = HIGHSCORE_TEXT;
     int highscoreTextWidth = g.getFontMetrics().stringWidth(text);
-    g.drawString(text, imageWidth / 2 - highscoreTextWidth / 2, imageHeight - ROW_COUNT * ROW_HEIGHT - ROW_COUNT * ROW_SEPARATOR - ROW_SEPARATOR * 2);
 
-    g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_FONT_SIZE));
+    int highscoreTitleY = imageHeight - ((ROW_COUNT * ROW_HEIGHT) + (ROW_COUNT * ROW_SEPARATOR) + TITLE_FONT_SIZE + (TITLE_FONT_SIZE / 2));
+    g.drawString(text, imageWidth / 2 - highscoreTextWidth / 2, highscoreTitleY);
 
     int tableIndex = 1;
-    int yStart = imageHeight - ROW_COUNT * ROW_HEIGHT - ROW_COUNT * ROW_SEPARATOR - ROW_SEPARATOR;
-    int scoreOffset = ROW_HEIGHT / 2 + HIGHSCORE_FONT_SIZE / 2;
-    int opticalCenterOffset = ROW_HEIGHT * 10 / 100;
+    int yStart = highscoreTitleY + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
     List<GameInfo> gameInfos = gameRepository.getGameInfos();
-    Collections.sort(gameInfos, (o1, o2) -> (int) (o2.getLastModified() - o1.getLastModified()));
+    gameInfos.sort((o1, o2) -> (int) (o2.getLastModified() - o1.getLastModified()));
 
     for (GameInfo game : gameInfos) {
       Highscore highscore = highsoreResolver.getHighscore(game);
@@ -126,7 +152,12 @@ public class OverlayGraphics {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
         g.drawImage(wheelImage, ROW_PADDING_LEFT, yStart, ROW_HEIGHT, ROW_HEIGHT, null);
       }
-      g.drawString(game.getGameDisplayName() + "   " + highscore.getScore(), ROW_HEIGHT + (ROW_PADDING_LEFT * 2), yStart + scoreOffset - opticalCenterOffset);
+
+      g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
+      g.drawString(game.getGameDisplayName(), ROW_HEIGHT + (ROW_PADDING_LEFT * 2), yStart + HIGHSCORE_TABLE_FONT_SIZE);
+
+      g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_OWNER_FONT_SIZE));
+      g.drawString(highscore.getUserInitials() + " " + highscore.getScore(), ROW_HEIGHT + (ROW_PADDING_LEFT * 2), yStart + HIGHSCORE_OWNER_FONT_SIZE + ((ROW_HEIGHT - HIGHSCORE_OWNER_FONT_SIZE) / 2) + HIGHSCORE_OWNER_FONT_SIZE/2);
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;
       tableIndex++;
