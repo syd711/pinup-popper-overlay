@@ -12,71 +12,86 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OverlayGraphics {
-  private final static int ROW_COUNT = Config.getGeneratorConfig().getInt("ui.highscores.count");
-  private final static int ROW_HEIGHT = Config.getGeneratorConfig().getInt("ui.highscores.row.height");
-  private final static int ROW_SEPARATOR = Config.getGeneratorConfig().getInt("ui.highscores.row.separator");
-  private final static int ROW_PADDING_LEFT = Config.getGeneratorConfig().getInt("ui.highscores.row.padding.left");
+  private final static int ROW_COUNT = Config.getGeneratorConfig().getInt("overlay.highscores.count");
+  private final static int ROW_HEIGHT = Config.getGeneratorConfig().getInt("overlay.highscores.row.height");
+  private final static int ROW_SEPARATOR = Config.getGeneratorConfig().getInt("overlay.highscores.row.separator");
+  private final static int ROW_PADDING_LEFT = Config.getGeneratorConfig().getInt("overlay.highscores.row.padding.left");
 
-  private final static String HIGHSCORE_TEXT = Config.getGeneratorConfig().getString("ui.highscores.text");
-  private final static String TITLE_TEXT = Config.getGeneratorConfig().getString("ui.title.text");
+  private final static String HIGHSCORE_TEXT = Config.getGeneratorConfig().getString("overlay.highscores.text");
+  private final static String TITLE_TEXT = Config.getGeneratorConfig().getString("overlay.title.text");
 
-  private final static String HIGHSCORE_FONT_FILE = Config.getGeneratorConfig().getString("ui.highscore.font.file");
-  private final static String HIGHSCORE_FONT_NAME = Config.getGeneratorConfig().getString("ui.highscore.font.name");
-  private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getGeneratorConfig().getInt("ui.highscore.table.font.size");
-  private final static int HIGHSCORE_OWNER_FONT_SIZE = Config.getGeneratorConfig().getInt("ui.highscore.owner.font.size");
+  private final static String HIGHSCORE_FONT_FILE = Config.getGeneratorConfig().getString("overlay.highscore.font.file");
+  private final static String HIGHSCORE_FONT_NAME = Config.getGeneratorConfig().getString("overlay.highscore.font.name");
+  private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getGeneratorConfig().getInt("overlay.highscore.table.font.size");
+  private final static int HIGHSCORE_OWNER_FONT_SIZE = Config.getGeneratorConfig().getInt("overlay.highscore.owner.font.size");
 
-  private final static String TITLE_FONT_FILE = Config.getGeneratorConfig().getString("ui.title.font.file");
-  private final static String TITLE_FONT_NAME = Config.getGeneratorConfig().getString("ui.title.font.name");
-  private final static int TITLE_Y_OFFSET = Config.getGeneratorConfig().getInt("ui.title.y.offset");
-  private final static int TITLE_FONT_SIZE = Config.getGeneratorConfig().getInt("ui.title.font.size");
+  private final static String TITLE_FONT_FILE = Config.getGeneratorConfig().getString("overlay.title.font.file");
+  private final static String TITLE_FONT_NAME = Config.getGeneratorConfig().getString("overlay.title.font.name");
+  private final static int TITLE_Y_OFFSET = Config.getGeneratorConfig().getInt("overlay.title.y.offset");
+  private final static int TITLE_FONT_SIZE = Config.getGeneratorConfig().getInt("overlay.title.font.size");
 
 
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGenerator.class);
+  public static final String RESOURCES = "./resources/";
 
   public static void drawGames(BufferedImage image, GameRepository gameRepository, HighsoreResolver highsoreResolver) throws Exception {
     List<GameInfo> gameInfos = gameRepository.getGameInfos();
-    int imageWidth = image.getWidth();
-    int imageHeight = image.getHeight();
+    GameInfo gameOfTheMonth = gameInfos.get(1);
 
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./resources/" + HIGHSCORE_FONT_FILE));
-    ge.registerFont(scoreFont);
-    Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./resources/" + TITLE_FONT_FILE));
-    ge.registerFont(textFont);
+    registerFonts();
+    setRendingHints(image);
+    setDefaultColor(image);
+    applyAlphaComposites(image);
 
+    renderTableOfTheMonth(highsoreResolver, image, gameOfTheMonth);
+    renderHighscoreList(image, gameOfTheMonth, gameRepository, highsoreResolver);
+  }
+
+  /**
+   * Enables the anti aliasing for fonts
+   */
+  private static void setRendingHints(BufferedImage image) {
     Graphics g = image.getGraphics();
-    Graphics2D g2d = (Graphics2D)g;
+    Graphics2D g2d = (Graphics2D) g;
     g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
-    setDefaultColor(g);
-
-
-    GameInfo gameOfTheMonth = gameInfos.get(1);
-
-    applyAlphaComposites(imageWidth, imageHeight, g);
-    renderTableOfTheMonth(highsoreResolver, imageWidth, g, gameOfTheMonth);
-    renderHighscoreList(imageWidth, imageHeight, gameOfTheMonth, gameRepository, highsoreResolver, g);
   }
 
-  private static void setDefaultColor(Graphics g) {
-    g.setColor(Color.decode(Config.getGeneratorConfig().getString("ui.font.color")));
+  private static void registerFonts() throws Exception {
+    try {
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(RESOURCES + HIGHSCORE_FONT_FILE));
+      ge.registerFont(scoreFont);
+      Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(RESOURCES + TITLE_FONT_FILE));
+      ge.registerFont(textFont);
+    } catch (Exception e) {
+      LOG.error("Failed to register fonts: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
-  private static void applyAlphaComposites(int imageWidth, int imageHeight, Graphics g) {
-    float alphaWhite = Config.getGeneratorConfig().getFloat("ui.alphacomposite.white");
-    float alphaBlack = Config.getGeneratorConfig().getFloat("ui.alphacomposite.black");
+  private static void setDefaultColor(BufferedImage image) {
+    Graphics g = image.getGraphics();
+    g.setColor(Color.decode(Config.getGeneratorConfig().getString("overlay.font.color")));
+  }
 
-    if(alphaWhite > 0) {
-      Graphics2D g2d = (Graphics2D)g.create();
+  private static void applyAlphaComposites(BufferedImage image) {
+    Graphics g = image.getGraphics();
+    int imageWidth = image.getWidth();
+    int imageHeight = image.getHeight();
+
+    float alphaWhite = Config.getGeneratorConfig().getFloat("overlay.alphacomposite.white");
+    float alphaBlack = Config.getGeneratorConfig().getFloat("overlay.alphacomposite.black");
+
+    if (alphaWhite > 0) {
+      Graphics2D g2d = (Graphics2D) g.create();
       g2d.setColor(Color.WHITE);
       Rectangle rect = new Rectangle(0, 0, imageWidth, imageHeight);
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaWhite));
@@ -84,8 +99,8 @@ public class OverlayGraphics {
       g2d.dispose();
     }
 
-    if(alphaBlack > 0) {
-      Graphics2D g2d = (Graphics2D)g.create();
+    if (alphaBlack > 0) {
+      Graphics2D g2d = (Graphics2D) g.create();
       g2d.setColor(Color.BLACK);
       Rectangle rect = new Rectangle(0, 0, imageWidth, imageHeight);
       g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaBlack));
@@ -94,19 +109,18 @@ public class OverlayGraphics {
     }
 
 
-    setDefaultColor(g);
+    setDefaultColor(image);
   }
 
   /**
    * The upper section, usually with the three topscores.
-   *
-   * @param highsoreResolver
-   * @param imageWidth
-   * @param g
-   * @param gameOfTheMonth
-   * @throws Exception
    */
-  private static void renderTableOfTheMonth(HighsoreResolver highsoreResolver, int imageWidth, Graphics g, GameInfo gameOfTheMonth) throws Exception {
+  private static void renderTableOfTheMonth(HighsoreResolver highsoreResolver, BufferedImage image, GameInfo gameOfTheMonth) throws Exception {
+    Graphics g = image.getGraphics();
+    int imageWidth = image.getWidth();
+
+    g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
+
     String title = TITLE_TEXT;
     int titleWidth = g.getFontMetrics().stringWidth(title);
     int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE + TITLE_Y_OFFSET;
@@ -130,7 +144,7 @@ public class OverlayGraphics {
         scores.add(scoreString);
 
         int singleScoreWidth = g.getFontMetrics().stringWidth(title);
-        if(scoreWidth < singleScoreWidth ) {
+        if (scoreWidth < singleScoreWidth) {
           scoreWidth = singleScoreWidth;
         }
         count++;
@@ -140,7 +154,7 @@ public class OverlayGraphics {
       }
 
       int position = 0;
-      int wheelWidth = 3 * TITLE_FONT_SIZE + 3* ROW_SEPARATOR;
+      int wheelWidth = 3 * TITLE_FONT_SIZE + 3 * ROW_SEPARATOR;
       int totalScoreAndWheelWidth = scoreWidth + wheelWidth;
 
       for (String score : scores) {
@@ -157,7 +171,11 @@ public class OverlayGraphics {
     }
   }
 
-  private static void renderHighscoreList(int imageWidth, int imageHeight, GameInfo gameOfTheMonth, GameRepository gameRepository, HighsoreResolver highsoreResolver, Graphics g) throws Exception {
+  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository, HighsoreResolver highsoreResolver) throws Exception {
+    Graphics g = image.getGraphics();
+    int imageWidth = image.getWidth();
+    int imageHeight = image.getHeight();
+
     g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
     String text = HIGHSCORE_TEXT;
     int highscoreTextWidth = g.getFontMetrics().stringWidth(text);
@@ -192,7 +210,7 @@ public class OverlayGraphics {
       g.drawString(game.getGameDisplayName(), ROW_HEIGHT + (ROW_PADDING_LEFT * 2), yStart + HIGHSCORE_TABLE_FONT_SIZE);
 
       g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_OWNER_FONT_SIZE));
-      g.drawString(highscore.getUserInitials() + " " + highscore.getScore(), ROW_HEIGHT + (ROW_PADDING_LEFT * 2), yStart + HIGHSCORE_OWNER_FONT_SIZE + ((ROW_HEIGHT - HIGHSCORE_OWNER_FONT_SIZE) / 2) + HIGHSCORE_OWNER_FONT_SIZE/2);
+      g.drawString(highscore.getUserInitials() + " " + highscore.getScore(), ROW_HEIGHT + (ROW_PADDING_LEFT * 2), yStart + HIGHSCORE_OWNER_FONT_SIZE + ((ROW_HEIGHT - HIGHSCORE_OWNER_FONT_SIZE) / 2) + HIGHSCORE_OWNER_FONT_SIZE / 2);
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;
       tableIndex++;

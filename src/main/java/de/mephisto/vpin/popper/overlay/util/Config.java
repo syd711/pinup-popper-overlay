@@ -19,7 +19,7 @@ import java.io.InputStream;
  */
 public class Config {
   private final static Logger LOG = LoggerFactory.getLogger(Config.class);
-  private final static String GENERATOR_CONFIG_FILENAME = "./resources/generator.properties";
+  private final static String GENERATOR_CONFIG_FILENAME = "./resources/4k-generator.properties";
   private final static String OVERLAY_CONFIG_FILENAME = "./resources/overlay.properties";
 
   private static Configuration generatorConfig;

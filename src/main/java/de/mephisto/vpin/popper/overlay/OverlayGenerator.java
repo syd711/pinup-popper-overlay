@@ -16,7 +16,7 @@ public class OverlayGenerator {
 
   private final GameRepository gameRepository;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     new OverlayGenerator().generate();
   }
 
@@ -24,7 +24,7 @@ public class OverlayGenerator {
     gameRepository = GameRepository.create();
   }
 
-  public void generate() {
+  public BufferedImage generate() throws Exception {
     try {
       long start = System.currentTimeMillis();
       BufferedImage backgroundImage = ImageIO.read(new File("./resources", "background.jpg"));
@@ -40,8 +40,11 @@ public class OverlayGenerator {
       writeImage(rotatedTwice);
       long duration = System.currentTimeMillis() - start;
       LOG.info("Generation took " + duration + "ms");
+
+      return rotatedTwice;
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(),e );
+      throw e;
     }
   }
 

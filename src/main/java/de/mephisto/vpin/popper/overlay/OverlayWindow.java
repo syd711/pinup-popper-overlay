@@ -14,16 +14,16 @@ import java.util.logging.Logger;
 
 public class OverlayWindow extends JFrame implements NativeKeyListener {
 
-
-  private File file = new File("./resources", "overlay.png");
+  private final KeyChecker keyChecker;
+  private final File file = new File("./resources", "overlay.png");
 
   private boolean visible = false;
 
-  private String hotkey;
 
   public OverlayWindow() throws Exception {
     Configuration overlayConfig = Config.getOverlayConfig();
-    hotkey = overlayConfig.getString("overlay.hotkey");
+    String hotkey = overlayConfig.getString("overlay.hotkey");
+    keyChecker = new KeyChecker(hotkey);
 
     UIManager.setLookAndFeel(
         UIManager.getCrossPlatformLookAndFeelClassName());
@@ -33,7 +33,7 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(0, 0);
     setUndecorated(true);
-    setSize((int)dimension.getWidth(),(int)dimension.getHeight());
+    setSize((int) dimension.getWidth(), (int) dimension.getHeight());
 
     // no layout manager
     setLayout(new BorderLayout());
@@ -59,9 +59,10 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
 
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-
-    this.visible = !visible;
-    this.setVisible(this.visible);
+    if (keyChecker.matches(nativeKeyEvent)) {
+      this.visible = !visible;
+      this.setVisible(this.visible);
+    }
   }
 
   @Override
