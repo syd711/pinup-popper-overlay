@@ -1,17 +1,18 @@
 package de.mephisto.vpin.popper.overlay;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class ConfigWindow extends JFrame implements KeyListener {
+public class ConfigWindow extends JFrame {
 
   public ConfigWindow() throws Exception {
     UIManager.setLookAndFeel(
         UIManager.getCrossPlatformLookAndFeelClassName());
 
-    this.addKeyListener(this);
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 
@@ -39,26 +40,23 @@ public class ConfigWindow extends JFrame implements KeyListener {
 
     // now frame will be visible, by default it is not visible
     setVisible(true);
+
+
+    Action escapeAction = new AbstractAction() {
+      private static final long serialVersionUID = 5572504000935312338L;
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        System.exit(0);
+      }
+    };
+
+    this.getRootPane().getInputMap().put(KeyStroke.getKeyStroke("F2"),
+        "pressed");
+    this.getRootPane().getActionMap().put("pressed", escapeAction);
+
   }
 
   public static void main(String[] args) throws Exception {
     new ConfigWindow();
-  }
-
-  @Override
-  public void keyTyped(KeyEvent e) {
-    if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-      System.exit(0);
-    }
-  }
-
-  @Override
-  public void keyPressed(KeyEvent e) {
-
-  }
-
-  @Override
-  public void keyReleased(KeyEvent e) {
-
   }
 }

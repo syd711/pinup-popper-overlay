@@ -1,6 +1,6 @@
 package de.mephisto.vpin.popper.overlay;
 
-import de.mephisto.vpin.commons.GameRepository;
+import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.highscores.HighsoreResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class OverlayGenerator {
   }
 
   private void writeImage(BufferedImage rotated1) throws IOException {
-    File outputfile = new File("./resources", "generated.png");
+    File outputfile = new File("./resources", "overlay.png");
     ImageIO.write(rotated1, "png", outputfile);
   }
 

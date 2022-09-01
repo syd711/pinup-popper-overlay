@@ -1,7 +1,7 @@
 package de.mephisto.vpin.popper.overlay;
 
-import de.mephisto.vpin.commons.GameInfo;
-import de.mephisto.vpin.commons.GameRepository;
+import de.mephisto.vpin.games.GameInfo;
+import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.highscores.Highscore;
 import de.mephisto.vpin.highscores.HighsoreResolver;
 import de.mephisto.vpin.highscores.Score;
@@ -12,30 +12,30 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class OverlayGraphics {
-  private final static int ROW_COUNT = Config.getConfiguration().getInt("ui.highscores.count");
-  private final static int ROW_HEIGHT = Config.getConfiguration().getInt("ui.highscores.row.height");
-  private final static int ROW_SEPARATOR = Config.getConfiguration().getInt("ui.highscores.row.separator");
-  private final static int ROW_PADDING_LEFT = Config.getConfiguration().getInt("ui.highscores.row.padding.left");
+  private final static int ROW_COUNT = Config.getGeneratorConfig().getInt("ui.highscores.count");
+  private final static int ROW_HEIGHT = Config.getGeneratorConfig().getInt("ui.highscores.row.height");
+  private final static int ROW_SEPARATOR = Config.getGeneratorConfig().getInt("ui.highscores.row.separator");
+  private final static int ROW_PADDING_LEFT = Config.getGeneratorConfig().getInt("ui.highscores.row.padding.left");
 
-  private final static String HIGHSCORE_TEXT = Config.getConfiguration().getString("ui.highscores.text");
-  private final static String TITLE_TEXT = Config.getConfiguration().getString("ui.title.text");
+  private final static String HIGHSCORE_TEXT = Config.getGeneratorConfig().getString("ui.highscores.text");
+  private final static String TITLE_TEXT = Config.getGeneratorConfig().getString("ui.title.text");
 
-  private final static String HIGHSCORE_FONT_FILE = Config.getConfiguration().getString("ui.highscore.font.file");
-  private final static String HIGHSCORE_FONT_NAME = Config.getConfiguration().getString("ui.highscore.font.name");
-  private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getConfiguration().getInt("ui.highscore.table.font.size");
-  private final static int HIGHSCORE_OWNER_FONT_SIZE = Config.getConfiguration().getInt("ui.highscore.owner.font.size");
+  private final static String HIGHSCORE_FONT_FILE = Config.getGeneratorConfig().getString("ui.highscore.font.file");
+  private final static String HIGHSCORE_FONT_NAME = Config.getGeneratorConfig().getString("ui.highscore.font.name");
+  private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getGeneratorConfig().getInt("ui.highscore.table.font.size");
+  private final static int HIGHSCORE_OWNER_FONT_SIZE = Config.getGeneratorConfig().getInt("ui.highscore.owner.font.size");
 
-  private final static String TITLE_FONT_FILE = Config.getConfiguration().getString("ui.title.font.file");
-  private final static String TITLE_FONT_NAME = Config.getConfiguration().getString("ui.title.font.name");
-  private final static int TITLE_Y_OFFSET = Config.getConfiguration().getInt("ui.title.y.offset");
-  private final static int TITLE_FONT_SIZE = Config.getConfiguration().getInt("ui.title.font.size");
+  private final static String TITLE_FONT_FILE = Config.getGeneratorConfig().getString("ui.title.font.file");
+  private final static String TITLE_FONT_NAME = Config.getGeneratorConfig().getString("ui.title.font.name");
+  private final static int TITLE_Y_OFFSET = Config.getGeneratorConfig().getInt("ui.title.y.offset");
+  private final static int TITLE_FONT_SIZE = Config.getGeneratorConfig().getInt("ui.title.font.size");
 
 
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGenerator.class);
@@ -52,14 +52,49 @@ public class OverlayGraphics {
     ge.registerFont(textFont);
 
     Graphics g = image.getGraphics();
-    g.setColor(Color.WHITE);
+    Graphics2D g2d = (Graphics2D)g;
+    g2d.setRenderingHint(
+        RenderingHints.KEY_TEXT_ANTIALIASING,
+        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
+    setDefaultColor(g);
 
 
     GameInfo gameOfTheMonth = gameInfos.get(1);
 
+    applyAlphaComposites(imageWidth, imageHeight, g);
     renderTableOfTheMonth(highsoreResolver, imageWidth, g, gameOfTheMonth);
     renderHighscoreList(imageWidth, imageHeight, gameOfTheMonth, gameRepository, highsoreResolver, g);
+  }
+
+  private static void setDefaultColor(Graphics g) {
+    g.setColor(Color.decode(Config.getGeneratorConfig().getString("ui.font.color")));
+  }
+
+  private static void applyAlphaComposites(int imageWidth, int imageHeight, Graphics g) {
+    float alphaWhite = Config.getGeneratorConfig().getFloat("ui.alphacomposite.white");
+    float alphaBlack = Config.getGeneratorConfig().getFloat("ui.alphacomposite.black");
+
+    if(alphaWhite > 0) {
+      Graphics2D g2d = (Graphics2D)g.create();
+      g2d.setColor(Color.WHITE);
+      Rectangle rect = new Rectangle(0, 0, imageWidth, imageHeight);
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaWhite));
+      g2d.fill(rect);
+      g2d.dispose();
+    }
+
+    if(alphaBlack > 0) {
+      Graphics2D g2d = (Graphics2D)g.create();
+      g2d.setColor(Color.BLACK);
+      Rectangle rect = new Rectangle(0, 0, imageWidth, imageHeight);
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaBlack));
+      g2d.fill(rect);
+      g2d.dispose();
+    }
+
+
+    setDefaultColor(g);
   }
 
   /**

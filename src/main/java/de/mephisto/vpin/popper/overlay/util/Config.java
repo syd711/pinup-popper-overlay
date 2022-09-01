@@ -19,18 +19,30 @@ import java.io.InputStream;
  */
 public class Config {
   private final static Logger LOG = LoggerFactory.getLogger(Config.class);
-  private final static String CONFIG_FILENAME = "./resources/config.properties";
+  private final static String GENERATOR_CONFIG_FILENAME = "./resources/generator.properties";
+  private final static String OVERLAY_CONFIG_FILENAME = "./resources/overlay.properties";
 
-  private static Configuration configuration;
+  private static Configuration generatorConfig;
+  private static Configuration overlayConfig;
 
-  public static Configuration getConfiguration() {
-    if(configuration != null) {
-      return configuration;
+  public static Configuration getGeneratorConfig() {
+    if(generatorConfig == null) {
+      generatorConfig = Config.create(new File(GENERATOR_CONFIG_FILENAME));
     }
+    return generatorConfig;
+  }
 
+  public static Configuration getOverlayConfig() {
+    if(overlayConfig == null) {
+      overlayConfig = Config.create(new File(OVERLAY_CONFIG_FILENAME));
+    }
+    return overlayConfig;
+  }
+
+  public static Configuration create(File file) {
     try {
       FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
-          new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class)
+          new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
               .configure(new Parameters().properties()
                   .setThrowExceptionOnMissing(true)
                   .setListDelimiterHandler(new DefaultListDelimiterHandler(';'))
@@ -38,18 +50,14 @@ public class Config {
 
       FileBasedConfiguration config = builder.getConfiguration();
       FileHandler fileHandler = new FileHandler(config);
-      InputStream resourceAsStream = new FileInputStream(CONFIG_FILENAME);
+      InputStream resourceAsStream = new FileInputStream(file);
       fileHandler.load(resourceAsStream);
       resourceAsStream.close();
 
-      configuration = config;
+      return config;
     } catch (Throwable e) {
-      LOG.error("Error loading " + CONFIG_FILENAME + ": " + e.getMessage(), e);
+      LOG.error("Error loading " + file.getAbsolutePath() + ": " + e.getMessage(), e);
     }
-    return configuration;
-  }
-
-  private static File getConfigFile(String dir, String config) {
-    return new File(dir + config);
+    return null;
   }
 }
