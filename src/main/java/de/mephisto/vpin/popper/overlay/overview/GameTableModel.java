@@ -1,4 +1,4 @@
-package de.mephisto.vpin.popper.overlay.components;
+package de.mephisto.vpin.popper.overlay.overview;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.popper.overlay.components;
+package de.mephisto.vpin.popper.overlay.overview;
 
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;

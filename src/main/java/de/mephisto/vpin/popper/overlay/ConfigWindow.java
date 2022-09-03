@@ -1,11 +1,8 @@
 package de.mephisto.vpin.popper.overlay;
 
 import de.mephisto.vpin.games.GameRepository;
-import de.mephisto.vpin.popper.overlay.components.GameTableColumnModel;
-import de.mephisto.vpin.popper.overlay.components.GameTableModel;
-import de.mephisto.vpin.popper.overlay.components.GamesTable;
-import de.mephisto.vpin.popper.overlay.components.OverviewTab;
-import de.mephisto.vpin.popper.overlay.util.ResourceLoader;
+import de.mephisto.vpin.popper.overlay.overview.OverviewTab;
+import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +11,15 @@ import java.awt.event.KeyEvent;
 
 public class ConfigWindow extends JFrame {
 
+  private static ConfigWindow instance;
+
+  public static ConfigWindow getInstance() {
+    return instance;
+  }
+
   public ConfigWindow() throws Exception {
+    ConfigWindow.instance = this;
+
     setUIFont (new javax.swing.plaf.FontUIResource("Tahoma",Font.PLAIN,14));
     UIManager.setLookAndFeel(
         UIManager.getCrossPlatformLookAndFeelClassName());
@@ -25,7 +30,7 @@ public class ConfigWindow extends JFrame {
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    ImageIcon icon = createImageIcon("logo.png");
+    ImageIcon icon = createImageIcon("logo-small.png");
     tabbedPane.addTab("Overview", icon, new OverviewTab(gameRepository),"");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
@@ -52,7 +57,7 @@ public class ConfigWindow extends JFrame {
 
     // setting the title of Frame
     setTitle("VPin Overlay");
-    setIconImage(Toolkit.getDefaultToolkit().getImage(ResourceLoader.getResource("logo.png")));
+    setIconImage(ResourceLoader.getResource("logo.png"));
 
 
 
