@@ -26,7 +26,7 @@
         <dependency>
             <groupId>com.1stleg</groupId>
             <artifactId>jnativehook</artifactId>
-            <version>LATEST</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -102,14 +102,166 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>de.mephisto.vpin.popper.overlay.OverlayWindowFXMain</mainClass>
+                                    <mainClass>de.mephisto.vpin.popper.overlay.SuperMain</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>auto-clean</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>deployment/</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+
+
+                    <execution>
+                        <id>resources-copy</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/deployment/VPinOverlay/resources/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>resources/</directory>
+                                    <includes>
+                                        <include>4k-generator.properties</include>
+                                        <include>*.exe</include>
+                                        <include>*.png</include>
+                                        <include>*.jpg</include>
+                                        <include>*.ttf</include>
+                                        <include>overlay.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>pinemhi-copy</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/deployment/VPinOverlay/pinemhi</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>pinemhi/</directory>
+                                    <includes>
+                                        <include>*.exe</include>
+                                        <include>*.ini</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>app-copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/deployment/VPinOverlay/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/</directory>
+                                    <includes>
+                                        <include>overlay-${project.version}.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+
+                    <execution>
+                        <id>copy-bats</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/deployment/VPinOverlay</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>./</directory>
+                                    <includes>
+                                        <include>*.bat</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.coderplus.maven.plugins</groupId>
+                <artifactId>copy-rename-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <id>rename-file</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>rename</goal>
+                        </goals>
+                        <configuration>
+                            <sourceFile>${basedir}/deployment/VPinOverlay/overlay-${project.version}.jar</sourceFile>
+                            <destinationFile>${basedir}/deployment/VPinOverlay/overlay.jar</destinationFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>deployment</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
+
         </plugins>
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>

@@ -28,3 +28,4 @@ hs_err_pid*
 /dependency-reduced-pom.xml
 /resources/repository.properties
 /overlay.iml
+/deployment/
