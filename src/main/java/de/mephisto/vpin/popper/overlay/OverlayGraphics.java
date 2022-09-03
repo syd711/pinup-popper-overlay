@@ -3,7 +3,6 @@ package de.mephisto.vpin.popper.overlay;
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.highscores.Highscore;
-import de.mephisto.vpin.highscores.HighsoreResolver;
 import de.mephisto.vpin.highscores.Score;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public class OverlayGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGenerator.class);
   public static final String RESOURCES = "./resources/";
 
-  public static void drawGames(BufferedImage image, GameRepository gameRepository, HighsoreResolver highsoreResolver) throws Exception {
+  public static void drawGames(BufferedImage image, GameRepository gameRepository) throws Exception {
     List<GameInfo> gameInfos = gameRepository.getGameInfos();
     GameInfo gameOfTheMonth = gameInfos.get(1);
 
@@ -49,8 +48,8 @@ public class OverlayGraphics {
     setDefaultColor(image);
     applyAlphaComposites(image);
 
-    renderTableOfTheMonth(highsoreResolver, image, gameOfTheMonth);
-    renderHighscoreList(image, gameOfTheMonth, gameRepository, highsoreResolver);
+    renderTableOfTheMonth(image, gameOfTheMonth);
+    renderHighscoreList(image, gameOfTheMonth, gameRepository);
   }
 
   /**
@@ -115,7 +114,7 @@ public class OverlayGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private static void renderTableOfTheMonth(HighsoreResolver highsoreResolver, BufferedImage image, GameInfo gameOfTheMonth) throws Exception {
+  private static void renderTableOfTheMonth(BufferedImage image, GameInfo gameOfTheMonth) throws Exception {
     Graphics g = image.getGraphics();
     int imageWidth = image.getWidth();
 
@@ -133,7 +132,7 @@ public class OverlayGraphics {
     g.drawString(tableOfTheMonth, imageWidth / 2 - width / 2, tableNameY);
 
     g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
-    Highscore highscore = highsoreResolver.getHighscore(gameOfTheMonth);
+    Highscore highscore = gameOfTheMonth.getHighscore();
     if (highscore != null) {
       int count = 0;
       int scoreWidth = 0;
@@ -171,7 +170,7 @@ public class OverlayGraphics {
     }
   }
 
-  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository, HighsoreResolver highsoreResolver) throws Exception {
+  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository) throws Exception {
     Graphics g = image.getGraphics();
     int imageWidth = image.getWidth();
     int imageHeight = image.getHeight();
@@ -187,10 +186,10 @@ public class OverlayGraphics {
     int yStart = highscoreTitleY + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
     List<GameInfo> gameInfos = gameRepository.getGameInfos();
-    gameInfos.sort((o1, o2) -> (int) (o2.getLastModified() - o1.getLastModified()));
+    gameInfos.sort((o1, o2) -> (int) (o2.getLastPlayed().getTime() - o1.getLastPlayed().getTime()));
 
     for (GameInfo game : gameInfos) {
-      Highscore highscore = highsoreResolver.getHighscore(game);
+      Highscore highscore = game.getHighscore();
       if (highscore == null) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;

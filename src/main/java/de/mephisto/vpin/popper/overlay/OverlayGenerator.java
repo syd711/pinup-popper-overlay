@@ -1,7 +1,6 @@
 package de.mephisto.vpin.popper.overlay;
 
 import de.mephisto.vpin.games.GameRepository;
-import de.mephisto.vpin.highscores.HighsoreResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ public class OverlayGenerator {
       GraphicsConfiguration gc = gd.getDefaultConfiguration();
 
       BufferedImage rotated = create(backgroundImage, Math.PI / 2, gc);
-      OverlayGraphics.drawGames(rotated, gameRepository, new HighsoreResolver(new File("./")));
+      OverlayGraphics.drawGames(rotated, gameRepository);
 
       BufferedImage rotatedTwice = create(rotated, -Math.PI / 2, gc);
       writeImage(rotatedTwice);
