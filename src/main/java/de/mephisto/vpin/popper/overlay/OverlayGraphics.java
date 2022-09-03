@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OverlayGraphics {
+  private final static Logger LOG = LoggerFactory.getLogger(OverlayGraphics.class);
+
   private final static int ROW_COUNT = Config.getGeneratorConfig().getInt("overlay.highscores.count");
   private final static int ROW_HEIGHT = Config.getGeneratorConfig().getInt("overlay.highscores.row.height");
   private final static int ROW_SEPARATOR = Config.getGeneratorConfig().getInt("overlay.highscores.row.separator");
@@ -36,7 +38,6 @@ public class OverlayGraphics {
   private final static int TITLE_FONT_SIZE = Config.getGeneratorConfig().getInt("overlay.title.font.size");
 
 
-  private final static Logger LOG = LoggerFactory.getLogger(OverlayGenerator.class);
   public static final String RESOURCES = "./resources/";
 
   public static void drawGames(BufferedImage image, GameRepository gameRepository) throws Exception {

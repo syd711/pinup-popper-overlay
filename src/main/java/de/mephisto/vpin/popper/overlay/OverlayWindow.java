@@ -33,7 +33,7 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(0, 0);
     setUndecorated(true);
-    setSize((int) dimension.getWidth(), (int) dimension.getHeight());
+    setAlwaysOnTop(true);
 
     // no layout manager
     setLayout(new BorderLayout());
@@ -62,6 +62,12 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
     if (keyChecker.matches(nativeKeyEvent)) {
       this.visible = !visible;
       this.setVisible(this.visible);
+      EventQueue.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          toFront();
+        }
+      });
     }
   }
 

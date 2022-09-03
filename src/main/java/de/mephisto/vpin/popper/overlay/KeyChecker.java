@@ -24,13 +24,6 @@ public class KeyChecker {
 
   public boolean matches(NativeKeyEvent event) {
     String keyText = NativeKeyEvent.getKeyText(event.getKeyCode());
-    String modifiers = NativeKeyEvent.getKeyText(event.getModifiers());
-    System.out.println("Modifier: " + event.getModifiers());
-    System.out.println(String.valueOf(keyText).equalsIgnoreCase(this.letter));
-    if(keyText.equalsIgnoreCase(this.letter) && this.modifier == event.getModifiers()) {
-      return true;
-    }
-
-    return false;
+    return keyText.equalsIgnoreCase(this.letter) && this.modifier == event.getModifiers();
   }
 }
