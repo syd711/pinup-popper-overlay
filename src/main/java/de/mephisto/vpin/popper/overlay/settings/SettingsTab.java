@@ -1,16 +1,19 @@
 package de.mephisto.vpin.popper.overlay.settings;
 
-import com.sun.javafx.scene.input.KeyCodeMap;
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
+import de.mephisto.vpin.popper.overlay.util.Keys;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
 
 public class SettingsTab extends JPanel {
+
 
   private ConfigWindow configWindow;
   private final SettingsTabActionListener actionListener;
@@ -21,7 +24,9 @@ public class SettingsTab extends JPanel {
     setBackground(Color.WHITE);
 
 
-    GroupLayout groupLayout = new GroupLayout(this);
+
+    setLayout(new MigLayout("gap rel 8 insets 10", "left"));
+
     List<GameInfo> gameInfos = repository.getGameInfos();
     Vector<GameInfo> data = new Vector<>(gameInfos);
     data.insertElementAt(null, 0);
@@ -29,44 +34,21 @@ public class SettingsTab extends JPanel {
     tableSelection.setActionCommand("tableOfTheMonthSelector");
     tableSelection.addActionListener(this.actionListener);
 
-    groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
-            .addComponent(new JLabel("Table of the Month:"))
-            .addComponent(tableSelection));
+    add(new JLabel("Table of the Month:"));
+    add(tableSelection, "span 2");
+    add(new JLabel(""), "wrap");
 
-    groupLayout = new GroupLayout(this);
     data.insertElementAt(null, 0);
-    JComboBox modifierCombo = new JComboBox(new DefaultComboBoxModel(new String[] { "CTRL", "ALT", "SHIFT" }));
+    JComboBox modifierCombo = new JComboBox(new DefaultComboBoxModel(new String[]{"Left-CTRL", "Right-CTRL", "ALT", "Left-SHIFT", "Right-SHIFT"}));
     modifierCombo.setActionCommand("modifierCombo");
     modifierCombo.addActionListener(this.actionListener);
 
-    JComboBox keyCombo = new JComboBox(new DefaultComboBoxModel(getKeys()));
+    JComboBox keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
     keyCombo.setActionCommand("keyCombo");
     keyCombo.addActionListener(this.actionListener);
 
-    groupLayout.setHorizontalGroup(
-        groupLayout.createSequentialGroup()
-            .addComponent(new JLabel("Overlay Shortcut:"))
-            .addComponent(modifierCombo)
-            .addComponent(keyCombo));
-
-
-  }
-
-  private KeyStroke[] getKeys() {
-    JTextField textField = new JTextField();
-    InputMap inputMap = textField.getInputMap( JComponent.WHEN_FOCUSED );
-    return inputMap.allKeys();
-  }
-
-
-  class KeyBinding {
-
-
-
-    @Override
-    public String toString() {
-      return super.toString();
-    }
+    add(new JLabel("Overlay Shortcut:"));
+    add(modifierCombo);
+    add(keyCombo, "wrap");
   }
 }

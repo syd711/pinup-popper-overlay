@@ -27,17 +27,14 @@ public class HighscoreDialog extends JDialog implements ActionListener {
     JPanel top = new JPanel();
     top.setLayout(new MigLayout("gap rel 0", "grow"));
     Highscore highscore = gameInfo.getHighscore();
-    JLabel label = new JLabel("Parsed Highscores:");
+    JLabel label = new JLabel("Parsed Highscores");
     label.setFont(font);
     top.add(label, "wrap");
 
     List<Score> scores = highscore.getScores();
     for (Score score : scores) {
-      label = new JLabel(score.getPosition() + ".");
-      top.add(label, "width 10:20:40");
-      label = new JLabel(score.getUserInitials());
-      top.add(label);
-      label = new JLabel(score.getScore());
+      label = new JLabel(score.toString());
+      label.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
       top.add(label, "wrap");
     }
 
@@ -49,8 +46,9 @@ public class HighscoreDialog extends JDialog implements ActionListener {
     label.setFont(font);
     root.add(label, "wrap");
     JTextArea textArea = new JTextArea(highscore.getRaw());
-    textArea.setColumns(30);
+    textArea.setColumns(60);
     textArea.setRows(20);
+    textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
     textArea.setLineWrap(true);
     textArea.setEditable(false);
     textArea.setWrapStyleWord(true);
