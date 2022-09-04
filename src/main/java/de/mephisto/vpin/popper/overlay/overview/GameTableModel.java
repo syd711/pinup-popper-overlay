@@ -34,15 +34,15 @@ public class GameTableModel extends AbstractTableModel {
     if(columnIndex == 1) {
       return gameInfo.getRom();
     }
-//    if(columnIndex == 2) {
-//      if(StringUtils.isEmpty(gameInfo.getRom())) {
-//        return "No rom information found for table.";
-//      }
-//      if(!gameInfo.hasHighscore()) {
-//        return "No highscore files found.";
-//      }
-//      return "";
-//    }
+    if(columnIndex == 2) {
+      if(StringUtils.isEmpty(gameInfo.getRom())) {
+        return "No rom information found for table.";
+      }
+      if(!gameInfo.hasHighscore()) {
+        return "No highscore files found.";
+      }
+      return "";
+    }
 
     return "";
   }

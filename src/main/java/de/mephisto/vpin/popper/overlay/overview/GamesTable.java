@@ -23,38 +23,43 @@ public class GamesTable extends JTable {
 
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setColumnSelectionAllowed(false);
-//    getSelectionModel().addListSelectionListener(this);
+    getSelectionModel().addListSelectionListener(this);
     setRowHeight(20);
 
     getColumnModel().getColumn(0).setPreferredWidth(160);
     getColumnModel().getColumn(1).setPreferredWidth(60);
     getColumnModel().getColumn(2).setPreferredWidth(240);
 
-//    List<GameInfo> games = gameRepository.getGameInfos();
-//    setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-//      @Override
-//      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-//        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//        c.setBackground(Color.WHITE);
-//        if (column == 0) {
-//          GameInfo game = games.get(row);
-//          if (StringUtils.isEmpty(game.getRom())) {
-//            c.setBackground(Color.RED);
-//          }
-//        }
-//
-//        return c;
-//      }
-//    });
+    List<GameInfo> games = gameRepository.getGameInfos();
+    setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+      @Override
+      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        c.setBackground(Color.WHITE);
+        if(isSelected) {
+          c.setBackground(Color.LIGHT_GRAY);
+        }
+
+        if (column == 0) {
+          GameInfo game = games.get(row);
+          if (StringUtils.isEmpty(game.getRom())) {
+            c.setBackground(Color.RED);
+          }
+        }
+
+        table.repaint();
+        return c;
+      }
+    });
   }
 
   public void valueChanged(ListSelectionEvent e) {
-//    List<GameInfo> gameInfos = gameRepository.getGameInfos();
-//    int[] selectedRow = getSelectedRows();
-//    if (selectedRow.length > 0) {
-//      int row = selectedRow[0];
-//      GameInfo gameInfo = gameInfos.get(row);
-//      overviewTab.getHighscoreButton().setEnabled(gameInfo.hasHighscore());
-//    }
+    List<GameInfo> gameInfos = gameRepository.getGameInfos();
+    int[] selectedRow = getSelectedRows();
+    if (selectedRow.length > 0) {
+      int row = selectedRow[0];
+      GameInfo gameInfo = gameInfos.get(row);
+      overviewTab.getHighscoreButton().setEnabled(gameInfo.hasHighscore());
+    }
   }
 }

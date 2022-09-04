@@ -9,7 +9,6 @@ public class GameTableColumnModel extends DefaultTableColumnModel {
     firstColumn.setHeaderValue("Table");
     addColumn(firstColumn);
     TableColumn secondColumn = new TableColumn(1);
-    secondColumn.setPreferredWidth(100);
     secondColumn.setHeaderValue("ROM");
     addColumn(secondColumn);
     TableColumn thirdColumn = new TableColumn(2);
