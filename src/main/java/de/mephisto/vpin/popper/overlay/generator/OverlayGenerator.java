@@ -1,6 +1,8 @@
 package de.mephisto.vpin.popper.overlay.generator;
 
+import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.popper.overlay.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,13 @@ public class OverlayGenerator {
       GraphicsConfiguration gc = gd.getDefaultConfiguration();
 
       BufferedImage rotated = create(backgroundImage, Math.PI / 2, gc);
-      OverlayGraphics.drawGames(rotated, gameRepository);
+
+      int selection = Config.getOverlayConfig().getInt("overlay.tableOfTheMonth");
+      GameInfo gameOfTheMonth = null;
+      if(selection > 0) {
+        gameOfTheMonth = gameRepository.getGameInfo(selection);
+      }
+      OverlayGraphics.drawGames(rotated, gameRepository, gameOfTheMonth);
 
       BufferedImage rotatedTwice = create(rotated, -Math.PI / 2, gc);
       writeImage(rotatedTwice);

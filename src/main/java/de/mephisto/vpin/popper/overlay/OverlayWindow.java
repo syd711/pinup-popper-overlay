@@ -1,7 +1,8 @@
-package de.mephisto.vpin.popper.overlay.generator;
+package de.mephisto.vpin.popper.overlay;
 
+import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
 import de.mephisto.vpin.popper.overlay.util.Config;
-import org.apache.commons.configuration2.Configuration;
+import de.mephisto.vpin.util.PropertiesStore;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
@@ -21,7 +22,7 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
 
 
   public OverlayWindow() throws Exception {
-    Configuration overlayConfig = Config.getOverlayConfig();
+    PropertiesStore overlayConfig = Config.getOverlayConfig();
     String hotkey = overlayConfig.getString("overlay.hotkey");
     keyChecker = new KeyChecker(hotkey);
 

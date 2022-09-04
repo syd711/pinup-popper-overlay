@@ -1,5 +1,6 @@
 package de.mephisto.vpin.popper.overlay.util;
 
+import de.mephisto.vpin.util.PropertiesStore;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -19,45 +20,23 @@ import java.io.InputStream;
  */
 public class Config {
   private final static Logger LOG = LoggerFactory.getLogger(Config.class);
-  private final static String GENERATOR_CONFIG_FILENAME = "./resources/4k-generator.properties";
-  private final static String OVERLAY_CONFIG_FILENAME = "./resources/overlay.properties";
+  private final static String GENERATOR_CONFIG_FILENAME = "4k-generator.properties";
+  private final static String OVERLAY_CONFIG_FILENAME = "overlay.properties";
 
-  private static Configuration generatorConfig;
-  private static Configuration overlayConfig;
+  private static PropertiesStore generatorConfig;
+  private static PropertiesStore overlayConfig;
 
-  public static Configuration getGeneratorConfig() {
+  public static PropertiesStore getGeneratorConfig() {
     if(generatorConfig == null) {
-      generatorConfig = Config.create(new File(GENERATOR_CONFIG_FILENAME));
+      generatorConfig = PropertiesStore.create(GENERATOR_CONFIG_FILENAME);
     }
     return generatorConfig;
   }
 
-  public static Configuration getOverlayConfig() {
+  public static PropertiesStore getOverlayConfig() {
     if(overlayConfig == null) {
-      overlayConfig = Config.create(new File(OVERLAY_CONFIG_FILENAME));
+      overlayConfig = PropertiesStore.create(OVERLAY_CONFIG_FILENAME);
     }
     return overlayConfig;
-  }
-
-  public static Configuration create(File file) {
-    try {
-      FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
-          new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
-              .configure(new Parameters().properties()
-                  .setThrowExceptionOnMissing(true)
-                  .setListDelimiterHandler(new DefaultListDelimiterHandler(';'))
-                  .setIncludesAllowed(false));
-
-      FileBasedConfiguration config = builder.getConfiguration();
-      FileHandler fileHandler = new FileHandler(config);
-      InputStream resourceAsStream = new FileInputStream(file);
-      fileHandler.load(resourceAsStream);
-      resourceAsStream.close();
-
-      return config;
-    } catch (Throwable e) {
-      LOG.error("Error loading " + file.getAbsolutePath() + ": " + e.getMessage(), e);
-    }
-    return null;
   }
 }

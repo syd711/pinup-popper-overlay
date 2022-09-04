@@ -40,16 +40,15 @@ public class OverlayGraphics {
 
   public static final String RESOURCES = "./resources/";
 
-  public static void drawGames(BufferedImage image, GameRepository gameRepository) throws Exception {
-    List<GameInfo> gameInfos = gameRepository.getGameInfos();
-    GameInfo gameOfTheMonth = gameInfos.get(1);
-
+  public static void drawGames(BufferedImage image, GameRepository gameRepository, GameInfo gameOfTheMonth) throws Exception {
     registerFonts();
     setRendingHints(image);
     setDefaultColor(image);
     applyAlphaComposites(image);
 
-    renderTableOfTheMonth(image, gameOfTheMonth);
+    if(gameOfTheMonth != null) {
+      renderTableOfTheMonth(image, gameOfTheMonth);
+    }
     renderHighscoreList(image, gameOfTheMonth, gameRepository);
   }
 
@@ -79,7 +78,8 @@ public class OverlayGraphics {
 
   private static void setDefaultColor(BufferedImage image) {
     Graphics g = image.getGraphics();
-    g.setColor(Color.decode(Config.getGeneratorConfig().getString("overlay.font.color")));
+    String fontColor = Config.getGeneratorConfig().getString("overlay.font.color");
+    g.setColor(Color.decode(fontColor));
   }
 
   private static void applyAlphaComposites(BufferedImage image) {
@@ -180,7 +180,12 @@ public class OverlayGraphics {
     String text = HIGHSCORE_TEXT;
     int highscoreTextWidth = g.getFontMetrics().stringWidth(text);
 
+    //check initial Y start depending on the game of the month
     int highscoreTitleY = imageHeight - ((ROW_COUNT * ROW_HEIGHT) + (ROW_COUNT * ROW_SEPARATOR) + TITLE_FONT_SIZE + (TITLE_FONT_SIZE / 2));
+    if(gameOfTheMonth == null) {
+      highscoreTitleY = TITLE_Y_OFFSET + TITLE_FONT_SIZE + (TITLE_FONT_SIZE / 2);
+    }
+
     g.drawString(text, imageWidth / 2 - highscoreTextWidth / 2, highscoreTitleY);
 
     int tableIndex = 1;

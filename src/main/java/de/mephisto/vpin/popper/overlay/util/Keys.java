@@ -1,11 +1,29 @@
 package de.mephisto.vpin.popper.overlay.util;
 
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Strg/Ctrl-Left: 2
+ * Strg/Ctrl-Right: 32
+ *
+ * Shift-Left: 1
+ * Shift-Right: 16
+ *
+ * Alt-Left: 8
+ */
 public class Keys {
 
+  private static Map<String, Integer> MODIFIERS;
+
+  static {
+    MODIFIERS = new HashMap<>();
+    MODIFIERS.put("Left-SHIFT", 1);
+    MODIFIERS.put("Right-SHIFT", 16);
+    MODIFIERS.put("Left-CTRL", 2);
+    MODIFIERS.put("Right-CTRL", 32);
+    MODIFIERS.put("ALT", 8);
+  }
   public static int[] KEY_CODES = {KeyEvent.VK_F1, KeyEvent.VK_F2, KeyEvent.VK_F3, KeyEvent.VK_F4, KeyEvent.VK_F5,
       KeyEvent.VK_F6, KeyEvent.VK_F7, KeyEvent.VK_F8, KeyEvent.VK_F9, KeyEvent.VK_F10, KeyEvent.VK_F11, KeyEvent.VK_F12,
       KeyEvent.VK_A,
@@ -44,14 +62,6 @@ public class Keys {
       KeyEvent.VK_7,
       KeyEvent.VK_8,
       KeyEvent.VK_9,
-      KeyEvent.VK_PLUS,
-      KeyEvent.VK_MINUS,
-      KeyEvent.VK_HOME,
-      KeyEvent.VK_END,
-      KeyEvent.VK_DELETE,
-      KeyEvent.VK_INSERT,
-      KeyEvent.VK_PAGE_DOWN,
-      KeyEvent.VK_PAGE_UP,
   };
 
   public static List<String> getKeyNames() {
@@ -60,6 +70,24 @@ public class Keys {
       result.add(getKeyDisplayName(keyCode));
     }
     return result;
+  }
+
+  public static String getModifierName(int number) {
+    Set<Map.Entry<String, Integer>> entries = MODIFIERS.entrySet();
+    for (Map.Entry<String, Integer> entry : entries) {
+      if(entry.getValue() == number) {
+        return entry.getKey();
+      }
+    }
+    return null;
+  }
+
+  public static List<String> getModifierNames() {
+    return new ArrayList<>(MODIFIERS.keySet());
+  }
+
+  public static int getModifier(String name) {
+    return MODIFIERS.get(name);
   }
 
   private static String getKeyDisplayName(int code) {

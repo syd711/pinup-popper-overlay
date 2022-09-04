@@ -3,6 +3,7 @@ package de.mephisto.vpin.popper.overlay;
 import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGraphics;
 import de.mephisto.vpin.popper.overlay.util.Config;
+import de.mephisto.vpin.util.PropertiesStore;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -42,7 +43,7 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
   @Override
   public void start(Stage primaryStage) throws Exception {
     this.stage = primaryStage;
-    Configuration overlayConfig = Config.getOverlayConfig();
+    PropertiesStore overlayConfig = Config.getOverlayConfig();
     String hotkey = overlayConfig.getString("overlay.hotkey");
     keyChecker = new KeyChecker(hotkey);
 

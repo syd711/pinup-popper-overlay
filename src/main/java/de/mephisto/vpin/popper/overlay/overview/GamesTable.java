@@ -43,7 +43,7 @@ public class GamesTable extends JTable {
         if (StringUtils.isEmpty(game.getRom())) {
           c.setBackground(Color.decode("#FF9999"));
         }
-        else if(!game.isHighscoreSupported() || !game.hasHighscore()) {
+        else if(!game.hasHighscore()) {
           c.setBackground(Color.decode("#FFCC33"));
         }
 
