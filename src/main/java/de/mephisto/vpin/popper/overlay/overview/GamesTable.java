@@ -1,24 +1,60 @@
 package de.mephisto.vpin.popper.overlay.overview;
 
+import de.mephisto.vpin.games.GameInfo;
+import de.mephisto.vpin.games.GameRepository;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.util.List;
 
 public class GamesTable extends JTable {
 
-  public GamesTable(GameTableModel tableModel, GameTableColumnModel columnModel) {
+  private final OverviewTab overviewTab;
+  private final GameRepository gameRepository;
+
+  public GamesTable(OverviewTab overviewTab, GameRepository gameRepository, GameTableModel tableModel, GameTableColumnModel columnModel) {
     super(tableModel, columnModel);
+    this.overviewTab = overviewTab;
+    this.gameRepository = gameRepository;
+
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    setColumnSelectionAllowed(false);
+//    getSelectionModel().addListSelectionListener(this);
     setRowHeight(20);
-    setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-      @Override
-      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//        c.setBackground(row % 2 == 0 ? Color.LIGHT_GRAY : Color.WHITE);
-        return c;
-      }
-    });
 
+    getColumnModel().getColumn(0).setPreferredWidth(160);
+    getColumnModel().getColumn(1).setPreferredWidth(60);
+    getColumnModel().getColumn(2).setPreferredWidth(240);
 
+//    List<GameInfo> games = gameRepository.getGameInfos();
+//    setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+//      @Override
+//      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//        c.setBackground(Color.WHITE);
+//        if (column == 0) {
+//          GameInfo game = games.get(row);
+//          if (StringUtils.isEmpty(game.getRom())) {
+//            c.setBackground(Color.RED);
+//          }
+//        }
+//
+//        return c;
+//      }
+//    });
+  }
+
+  public void valueChanged(ListSelectionEvent e) {
+//    List<GameInfo> gameInfos = gameRepository.getGameInfos();
+//    int[] selectedRow = getSelectedRows();
+//    if (selectedRow.length > 0) {
+//      int row = selectedRow[0];
+//      GameInfo gameInfo = gameInfos.get(row);
+//      overviewTab.getHighscoreButton().setEnabled(gameInfo.hasHighscore());
+//    }
   }
 }

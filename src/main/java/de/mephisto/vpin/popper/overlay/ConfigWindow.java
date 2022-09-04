@@ -3,6 +3,7 @@ package de.mephisto.vpin.popper.overlay;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.overview.OverviewTab;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
+import de.mephisto.vpin.popper.overlay.settings.SettingsTab;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,23 +31,22 @@ public class ConfigWindow extends JFrame {
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    ImageIcon icon = createImageIcon("logo-small.png");
+    ImageIcon icon = createImageIcon("pinball.png");
     tabbedPane.addTab("Overview", icon, new OverviewTab(gameRepository),"");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 
-
-    JComponent panel2 = makeTextPanel("Panel #2");
-    tabbedPane.addTab("Overlay Settings", icon, panel2,
-        "Does twice as much nothing");
+    icon = createImageIcon("settings.png");
+    tabbedPane.addTab("Settings", icon, new SettingsTab(gameRepository), "Table of the Month, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    JComponent panel3 = makeTextPanel("Panel #3");
+    JComponent panel3 = makeTextPanel();
     tabbedPane.addTab("Tab 3", icon, panel3,
         "Still does nothing");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
     add(tabbedPane);
+    tabbedPane.setBackgroundAt(0, Color.WHITE);
 
     // frame size 300 width and 300 height
     setSize(1024,800);
@@ -59,9 +59,6 @@ public class ConfigWindow extends JFrame {
     setTitle("VPin Overlay");
     setIconImage(ResourceLoader.getResource("logo.png"));
 
-
-
-    // now frame will be visible, by default it is not visible
     setVisible(true);
 
 
@@ -89,7 +86,7 @@ public class ConfigWindow extends JFrame {
     }
   }
 
-  private JComponent makeTextPanel(String s) {
+  private JComponent makeTextPanel() {
     return new JPanel();
   }
 

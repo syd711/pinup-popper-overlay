@@ -2,6 +2,7 @@ package de.mephisto.vpin.popper.overlay.overview;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
@@ -33,6 +34,15 @@ public class GameTableModel extends AbstractTableModel {
     if(columnIndex == 1) {
       return gameInfo.getRom();
     }
+//    if(columnIndex == 2) {
+//      if(StringUtils.isEmpty(gameInfo.getRom())) {
+//        return "No rom information found for table.";
+//      }
+//      if(!gameInfo.hasHighscore()) {
+//        return "No highscore files found.";
+//      }
+//      return "";
+//    }
 
     return "";
   }
