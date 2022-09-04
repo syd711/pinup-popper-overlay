@@ -27,7 +27,7 @@ public class HighscoreDialog extends JDialog implements ActionListener {
     JPanel top = new JPanel();
     top.setLayout(new MigLayout("gap rel 0", "grow"));
     Highscore highscore = gameInfo.getHighscore();
-    JLabel label = new JLabel("Parsed Highscores");
+    JLabel label = new JLabel("Overlay Value");
     label.setFont(font);
     top.add(label, "wrap");
 

@@ -33,12 +33,12 @@ public class OverviewTab extends JPanel {
   }
 
   private void addButtons(JToolBar toolBar) {
-    JButton button = makeNavigationButton("reload.png", "tableRescan", "Rescan the roms of all tables", "Rescan all tables");
+    JButton button = makeNavigationButton("reload.png", "tableRescan", "Rescan All Tables", "Rescan all tables");
     toolBar.add(button);
-    button = makeNavigationButton("refresh.png", "tableRefresh", "Refreshes the table list", "Refresh all tables");
+    button = makeNavigationButton("refresh.png", "tableRefresh", "Refresh List", "Refresh all tables");
     toolBar.add(button);
     toolBar.addSeparator();
-    highscoreButton = makeNavigationButton("highscores.png", "tableHighscore", "Show Table Highscore", "Show Table Highscore");
+    highscoreButton = makeNavigationButton("highscores.png", "tableHighscore", "Show Highscore", "Show Table Highscore");
     highscoreButton.setEnabled(false);
     toolBar.add(highscoreButton);
   }
@@ -60,7 +60,7 @@ public class OverviewTab extends JPanel {
                                        String toolTipText,
                                        String altText) {
     //Create and initialize the button.
-    JButton button = new JButton();
+    JButton button = new JButton(toolTipText);
     button.setActionCommand(actionCommand);
     button.setToolTipText(toolTipText);
     button.addActionListener(actionListener);
