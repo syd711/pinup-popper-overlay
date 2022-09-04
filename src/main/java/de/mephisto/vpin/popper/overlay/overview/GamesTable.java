@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.List;
@@ -36,15 +35,16 @@ public class GamesTable extends JTable {
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         c.setBackground(Color.WHITE);
-        if(isSelected) {
+        if (isSelected) {
           c.setBackground(Color.LIGHT_GRAY);
         }
 
-        if (column == 0) {
-          GameInfo game = games.get(row);
-          if (StringUtils.isEmpty(game.getRom())) {
-            c.setBackground(Color.RED);
-          }
+        GameInfo game = games.get(row);
+        if (StringUtils.isEmpty(game.getRom())) {
+          c.setBackground(Color.decode("#FF9999"));
+        }
+        else if(!game.isHighscoreSupported() || !game.hasHighscore()) {
+          c.setBackground(Color.decode("#FFCC33"));
         }
 
         table.repaint();

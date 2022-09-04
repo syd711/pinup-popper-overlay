@@ -31,22 +31,23 @@ public class ConfigWindow extends JFrame {
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    ImageIcon icon = createImageIcon("pinball.png");
-    tabbedPane.addTab("Overview", icon, new OverviewTab(gameRepository),"");
+    tabbedPane.addTab("Overview", null, new OverviewTab(this, gameRepository),"");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-
-    icon = createImageIcon("settings.png");
-    tabbedPane.addTab("Settings", icon, new SettingsTab(gameRepository), "Table of the Month, Key-Bindings, etc.");
+    tabbedPane.addTab("Settings", null, new SettingsTab(this, gameRepository), "Table of the Month, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
     JComponent panel3 = makeTextPanel();
-    tabbedPane.addTab("Tab 3", icon, panel3,
-        "Still does nothing");
+    tabbedPane.addTab("Tab 3", null, panel3,"Still does nothing");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
-    add(tabbedPane);
+
+    tabbedPane.setBackground(Color.WHITE);
     tabbedPane.setBackgroundAt(0, Color.WHITE);
+    tabbedPane.setBackgroundAt(1, Color.WHITE);
+    tabbedPane.setBackgroundAt(2, Color.WHITE);
+    add(tabbedPane);
+
 
     // frame size 300 width and 300 height
     setSize(1024,800);

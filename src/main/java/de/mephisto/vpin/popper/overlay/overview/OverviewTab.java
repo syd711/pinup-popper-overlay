@@ -1,6 +1,7 @@
 package de.mephisto.vpin.popper.overlay.overview;
 
 import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 
 import javax.swing.*;
@@ -11,10 +12,14 @@ public class OverviewTab extends JPanel {
   private final GamesTable gamesTable;
   private OverviewTabActionListener actionListener;
   private JButton highscoreButton;
+  private ConfigWindow configWindow;
 
 
-  public OverviewTab(GameRepository repository) {
+  public OverviewTab(ConfigWindow configWindow, GameRepository repository) {
     super(new BorderLayout());
+    this.configWindow = configWindow;
+
+    setBackground(Color.WHITE);
     this.actionListener = new OverviewTabActionListener(repository, this);
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
@@ -44,6 +49,10 @@ public class OverviewTab extends JPanel {
 
   public GamesTable getGamesTable() {
     return gamesTable;
+  }
+
+  public ConfigWindow getConfigWindow() {
+    return configWindow;
   }
 
   private JButton makeNavigationButton(String imageName,

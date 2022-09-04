@@ -1,5 +1,7 @@
 package de.mephisto.vpin.popper.overlay;
 
+import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
+import de.mephisto.vpin.popper.overlay.generator.OverlayGraphics;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import javafx.application.Application;
 import javafx.application.Platform;
