@@ -7,8 +7,11 @@ import de.mephisto.vpin.popper.overlay.util.Keys;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class SettingsTabActionListener implements ActionListener {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(SettingsTabActionListener.class);
@@ -27,16 +30,27 @@ public class SettingsTabActionListener implements ActionListener {
     if (cmd.equals("tableOfTheMonthSelector")) {
       GameInfo selectedItem = (GameInfo) ((JComboBox) e.getSource()).getSelectedItem();
       String value = "";
-      if(selectedItem != null) {
+      if (selectedItem != null) {
         value = String.valueOf(selectedItem.getId());
       }
       Config.getOverlayConfig().set("overlay.challengedTable", value);
     }
-    else if(cmd.equals("modifierCombo")) {
+    else if (cmd.equals("modifierCombo")) {
       this.saveOverlayKeyBinding();
     }
-    else if(cmd.equals("keyCombo")) {
+    else if (cmd.equals("keyCombo")) {
       this.saveOverlayKeyBinding();
+    }
+    else if (cmd.equals("generateOverlay")) {
+      this.settingsTab.generateOverlay();
+    }
+    else if (cmd.equals("showOverlay")) {
+      try {
+        File file = new File("./resources", "overlay.png");
+        Desktop.getDesktop().open(file);
+      } catch (IOException ex) {
+        LOG.error("Failed to open overlay file: " + ex.getMessage(), ex);
+      }
     }
   }
 
@@ -44,11 +58,11 @@ public class SettingsTabActionListener implements ActionListener {
     String key = (String) settingsTab.getKeyCombo().getSelectedItem();
     String modifier = (String) settingsTab.getModifierCombo().getSelectedItem();
 
-    if(key.length() == 1) {
+    if (key.length() == 1) {
       key = key.toLowerCase();
     }
 
-    if(modifier != null) {
+    if (modifier != null) {
       int modifierNum = Keys.getModifier(modifier);
       key = modifierNum + "+" + key;
     }

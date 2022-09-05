@@ -18,8 +18,13 @@ public class OverlayGenerator {
   private final GameRepository gameRepository;
 
   public static void main(String[] args) throws Exception {
+    generateOverlay();
+  }
+
+  public static void generateOverlay() throws Exception {
     new OverlayGenerator(GameRepository.create()).generate();
   }
+
 
   OverlayGenerator(GameRepository gameRepository) {
     this.gameRepository = gameRepository;
