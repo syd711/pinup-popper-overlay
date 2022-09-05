@@ -33,7 +33,7 @@ public class SettingsTab extends JPanel {
     JComboBox tableSelection = new JComboBox(data);
     tableSelection.setActionCommand("tableOfTheMonthSelector");
     tableSelection.addActionListener(this.actionListener);
-    int selection = Config.getOverlayConfig().getInt("overlay.tableOfTheMonth");
+    int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
     if(selection > 0) {
       GameInfo gameInfo = repository.getGameInfo(selection);
       tableSelection.setSelectedItem(gameInfo);

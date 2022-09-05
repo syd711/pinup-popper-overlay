@@ -1,6 +1,7 @@
 package de.mephisto.vpin.popper.overlay.util;
 
 import de.mephisto.vpin.util.PropertiesStore;
+import de.mephisto.vpin.util.SystemInfo;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -20,7 +21,8 @@ import java.io.InputStream;
  */
 public class Config {
   private final static Logger LOG = LoggerFactory.getLogger(Config.class);
-  private final static String GENERATOR_CONFIG_FILENAME = "4k-generator.properties";
+  private final static String GENERATOR_CONFIG_4K_FILENAME = "4k-generator.properties";
+  private final static String GENERATOR_CONFIG_2K_FILENAME = "2k-generator.properties";
   private final static String OVERLAY_CONFIG_FILENAME = "overlay.properties";
 
   private static PropertiesStore generatorConfig;
@@ -28,7 +30,12 @@ public class Config {
 
   public static PropertiesStore getGeneratorConfig() {
     if(generatorConfig == null) {
-      generatorConfig = PropertiesStore.create(GENERATOR_CONFIG_FILENAME);
+      if(SystemInfo.getInstance().getScreenSize().width > 3000) {
+        generatorConfig = PropertiesStore.create(GENERATOR_CONFIG_4K_FILENAME);
+      }
+      else {
+        generatorConfig = PropertiesStore.create(GENERATOR_CONFIG_2K_FILENAME);
+      }
     }
     return generatorConfig;
   }

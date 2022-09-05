@@ -30,7 +30,7 @@ public class SettingsTabActionListener implements ActionListener {
       if(selectedItem != null) {
         value = String.valueOf(selectedItem.getId());
       }
-      Config.getOverlayConfig().set("overlay.tableOfTheMonth", value);
+      Config.getOverlayConfig().set("overlay.challengedTable", value);
     }
     else if(cmd.equals("modifierCombo")) {
       this.saveOverlayKeyBinding();

@@ -19,7 +19,6 @@ import java.util.List;
 public class OverlayGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGraphics.class);
 
-  private final static int ROW_COUNT = Config.getGeneratorConfig().getInt("overlay.highscores.count");
   private final static int ROW_HEIGHT = Config.getGeneratorConfig().getInt("overlay.highscores.row.height");
   private final static int ROW_SEPARATOR = Config.getGeneratorConfig().getInt("overlay.highscores.row.separator");
   private final static int ROW_PADDING_LEFT = Config.getGeneratorConfig().getInt("overlay.highscores.row.padding.left");
@@ -46,10 +45,11 @@ public class OverlayGraphics {
     setDefaultColor(image);
     applyAlphaComposites(image);
 
-    if(gameOfTheMonth != null) {
-      renderTableOfTheMonth(image, gameOfTheMonth);
+    int highscoreListYOffset = TITLE_Y_OFFSET + TITLE_FONT_SIZE;
+    if (gameOfTheMonth != null) {
+      highscoreListYOffset = renderTableChallenge(image, gameOfTheMonth);
     }
-    renderHighscoreList(image, gameOfTheMonth, gameRepository);
+    renderHighscoreList(image, gameOfTheMonth, gameRepository, highscoreListYOffset);
   }
 
   /**
@@ -115,26 +115,28 @@ public class OverlayGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private static void renderTableOfTheMonth(BufferedImage image, GameInfo gameOfTheMonth) throws Exception {
-    Graphics g = image.getGraphics();
-    int imageWidth = image.getWidth();
-
-    g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
-
-    String title = TITLE_TEXT;
-    int titleWidth = g.getFontMetrics().stringWidth(title);
-    int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE + TITLE_Y_OFFSET;
-    g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
-
-    g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.BOLD, HIGHSCORE_TABLE_FONT_SIZE));
-    String tableOfTheMonth = gameOfTheMonth.getGameDisplayName();
-    int width = g.getFontMetrics().stringWidth(tableOfTheMonth);
-    int tableNameY = titleY + ROW_SEPARATOR + TITLE_FONT_SIZE;
-    g.drawString(tableOfTheMonth, imageWidth / 2 - width / 2, tableNameY);
-
-    g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
+  private static int renderTableChallenge(BufferedImage image, GameInfo gameOfTheMonth) throws Exception {
     Highscore highscore = gameOfTheMonth.getHighscore();
+    int returnOffset = TITLE_Y_OFFSET;
     if (highscore != null) {
+      Graphics g = image.getGraphics();
+      int imageWidth = image.getWidth();
+
+      g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
+
+      String title = TITLE_TEXT;
+      int titleWidth = g.getFontMetrics().stringWidth(title);
+      int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE + TITLE_Y_OFFSET;
+      g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
+
+      g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.BOLD, HIGHSCORE_TABLE_FONT_SIZE));
+      String challengedTable = gameOfTheMonth.getGameDisplayName();
+      int width = g.getFontMetrics().stringWidth(challengedTable);
+      int tableNameY = titleY + ROW_SEPARATOR + TITLE_FONT_SIZE;
+      g.drawString(challengedTable, imageWidth / 2 - width / 2, tableNameY);
+
+      g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
+
       int count = 0;
       int scoreWidth = 0;
 
@@ -164,14 +166,17 @@ public class OverlayGraphics {
       }
 
       File wheelIconFile = gameOfTheMonth.getWheelIconFile();
+      int wheelY = tableNameY + ROW_SEPARATOR;
+      returnOffset = wheelY * 2 + HIGHSCORE_TABLE_FONT_SIZE * 2;
       if (wheelIconFile.exists()) {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        g.drawImage(wheelImage, imageWidth / 2 - totalScoreAndWheelWidth / 2, tableNameY + ROW_SEPARATOR, wheelWidth, wheelWidth, null);
+        g.drawImage(wheelImage, imageWidth / 2 - totalScoreAndWheelWidth / 2, wheelY, wheelWidth, wheelWidth, null);
       }
     }
+    return returnOffset;
   }
 
-  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository) throws Exception {
+  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
     int imageWidth = image.getWidth();
     int imageHeight = image.getHeight();
@@ -180,16 +185,10 @@ public class OverlayGraphics {
     String text = HIGHSCORE_TEXT;
     int highscoreTextWidth = g.getFontMetrics().stringWidth(text);
 
-    //check initial Y start depending on the game of the month
-    int highscoreTitleY = imageHeight - ((ROW_COUNT * ROW_HEIGHT) + (ROW_COUNT * ROW_SEPARATOR) + TITLE_FONT_SIZE + (TITLE_FONT_SIZE / 2));
-    if(gameOfTheMonth == null) {
-      highscoreTitleY = TITLE_Y_OFFSET + TITLE_FONT_SIZE + (TITLE_FONT_SIZE / 2);
-    }
-
-    g.drawString(text, imageWidth / 2 - highscoreTextWidth / 2, highscoreTitleY);
+    g.drawString(text, imageWidth / 2 - highscoreTextWidth / 2, highscoreListYOffset);
 
     int tableIndex = 1;
-    int yStart = highscoreTitleY + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
+    int yStart = highscoreListYOffset + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
     List<GameInfo> gameInfos = gameRepository.getGameInfos();
     gameInfos.sort((o1, o2) -> (int) (o2.getLastPlayed().getTime() - o1.getLastPlayed().getTime()));
@@ -219,9 +218,14 @@ public class OverlayGraphics {
 
       yStart = yStart + ROW_HEIGHT + ROW_SEPARATOR;
       tableIndex++;
-      if (tableIndex > ROW_COUNT) {
+      if (!isRemainingSpaceAvailable(imageHeight, yStart)) {
         break;
       }
     }
+  }
+
+  private static boolean isRemainingSpaceAvailable(int imageHeight, int positionY) {
+    int remaining = imageHeight - positionY;
+    return remaining > (ROW_HEIGHT + ROW_SEPARATOR + TITLE_Y_OFFSET);
   }
 }

@@ -28,7 +28,7 @@ public class OverlayGenerator {
   public BufferedImage generate() throws Exception {
     try {
       long start = System.currentTimeMillis();
-      BufferedImage backgroundImage = ImageIO.read(new File("./resources", "background.jpg"));
+      BufferedImage backgroundImage = ImageIO.read(new File("./resources", Config.getGeneratorConfig().getString("overlay.background")));
 
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
       GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -36,7 +36,7 @@ public class OverlayGenerator {
 
       BufferedImage rotated = create(backgroundImage, Math.PI / 2, gc);
 
-      int selection = Config.getOverlayConfig().getInt("overlay.tableOfTheMonth");
+      int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
       GameInfo gameOfTheMonth = null;
       if(selection > 0) {
         gameOfTheMonth = gameRepository.getGameInfo(selection);
