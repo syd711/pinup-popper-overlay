@@ -34,18 +34,12 @@ public class ConfigWindow extends JFrame {
     tabbedPane.addTab("Overview", null, new OverviewTab(this, gameRepository),"");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Settings", null, new SettingsTab(this, gameRepository), "Table of the Month, Key-Bindings, etc.");
+    tabbedPane.addTab("Settings", null, new SettingsTab(this, gameRepository), "Table Challenge, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
-    JComponent panel3 = makeTextPanel();
-    tabbedPane.addTab("Tab 3", null, panel3,"Still does nothing");
-    tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-
 
     tabbedPane.setBackground(Color.WHITE);
     tabbedPane.setBackgroundAt(0, Color.WHITE);
     tabbedPane.setBackgroundAt(1, Color.WHITE);
-    tabbedPane.setBackgroundAt(2, Color.WHITE);
     add(tabbedPane);
 
 
@@ -55,9 +49,10 @@ public class ConfigWindow extends JFrame {
     int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
     int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);
     setLocation(x, y);
+    setResizable(false);
 
     // setting the title of Frame
-    setTitle("VPin Overlay");
+    setTitle("PinUP Popper Overlay");
     setIconImage(ResourceLoader.getResource("logo.png"));
 
     setVisible(true);

@@ -18,11 +18,11 @@ public class OverlayGenerator {
   private final GameRepository gameRepository;
 
   public static void main(String[] args) throws Exception {
-    new OverlayGenerator().generate();
+    new OverlayGenerator(GameRepository.create()).generate();
   }
 
-  OverlayGenerator() {
-    gameRepository = GameRepository.create();
+  OverlayGenerator(GameRepository gameRepository) {
+    this.gameRepository = gameRepository;
   }
 
   public BufferedImage generate() throws Exception {
@@ -53,6 +53,9 @@ public class OverlayGenerator {
       LOG.error("Failed to generate overlay: " + e.getMessage(),e );
       throw e;
     }
+    finally {
+      gameRepository.shutdown();
+    }
   }
 
   private void writeImage(BufferedImage rotated1) throws IOException {
@@ -60,7 +63,7 @@ public class OverlayGenerator {
     ImageIO.write(rotated1, "png", outputfile);
   }
 
-  private static BufferedImage create(BufferedImage image, double angle, GraphicsConfiguration gc) {
+  public static BufferedImage create(BufferedImage image, double angle, GraphicsConfiguration gc) {
     double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
     int w = image.getWidth(), h = image.getHeight();
     int neww = (int) Math.floor(w * cos + h * sin), newh = (int) Math.floor(h

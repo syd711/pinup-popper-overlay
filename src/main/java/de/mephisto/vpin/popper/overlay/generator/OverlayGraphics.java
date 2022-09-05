@@ -47,7 +47,7 @@ public class OverlayGraphics {
 
     int highscoreListYOffset = TITLE_Y_OFFSET + TITLE_FONT_SIZE;
     if (gameOfTheMonth != null) {
-      highscoreListYOffset = renderTableChallenge(image, gameOfTheMonth);
+      highscoreListYOffset = renderTableChallenge(image, gameOfTheMonth, highscoreListYOffset);
     }
     renderHighscoreList(image, gameOfTheMonth, gameRepository, highscoreListYOffset);
   }
@@ -115,9 +115,9 @@ public class OverlayGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private static int renderTableChallenge(BufferedImage image, GameInfo gameOfTheMonth) throws Exception {
-    Highscore highscore = gameOfTheMonth.getHighscore();
-    int returnOffset = TITLE_Y_OFFSET;
+  private static int renderTableChallenge(BufferedImage image, GameInfo challengedGame, int highscoreListYOffset) throws Exception {
+    Highscore highscore = challengedGame.getHighscore(true);
+    int returnOffset = highscoreListYOffset;
     if (highscore != null) {
       Graphics g = image.getGraphics();
       int imageWidth = image.getWidth();
@@ -130,7 +130,7 @@ public class OverlayGraphics {
       g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
 
       g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.BOLD, HIGHSCORE_TABLE_FONT_SIZE));
-      String challengedTable = gameOfTheMonth.getGameDisplayName();
+      String challengedTable = challengedGame.getGameDisplayName();
       int width = g.getFontMetrics().stringWidth(challengedTable);
       int tableNameY = titleY + ROW_SEPARATOR + TITLE_FONT_SIZE;
       g.drawString(challengedTable, imageWidth / 2 - width / 2, tableNameY);
@@ -165,7 +165,7 @@ public class OverlayGraphics {
         g.drawString(score, imageWidth / 2 - totalScoreAndWheelWidth / 2 + wheelWidth + ROW_SEPARATOR, scoreY);
       }
 
-      File wheelIconFile = gameOfTheMonth.getWheelIconFile();
+      File wheelIconFile = challengedGame.getWheelIconFile();
       int wheelY = tableNameY + ROW_SEPARATOR;
       returnOffset = wheelY * 2 + HIGHSCORE_TABLE_FONT_SIZE * 2;
       if (wheelIconFile.exists()) {
@@ -194,7 +194,7 @@ public class OverlayGraphics {
     gameInfos.sort((o1, o2) -> (int) (o2.getLastPlayed().getTime() - o1.getLastPlayed().getTime()));
 
     for (GameInfo game : gameInfos) {
-      Highscore highscore = game.getHighscore();
+      Highscore highscore = game.getHighscore(true);
       if (highscore == null) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;

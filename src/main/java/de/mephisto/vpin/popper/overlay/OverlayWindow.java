@@ -30,8 +30,6 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
         UIManager.getCrossPlatformLookAndFeelClassName());
 
     this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-
-    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation(0, 0);
     setUndecorated(true);
     setAlwaysOnTop(true);
@@ -55,7 +53,6 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
 
   @Override
   public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-
   }
 
   @Override

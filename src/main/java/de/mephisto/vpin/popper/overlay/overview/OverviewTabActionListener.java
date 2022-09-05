@@ -178,5 +178,10 @@ public class OverviewTabActionListener implements ActionListener {
       latestScan = gameInfo;
       tablesToScan--;
     }
+
+    @Override
+    public void highscoreChanged() {
+
+    }
   }
 }

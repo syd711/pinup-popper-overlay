@@ -17,7 +17,7 @@ ECHO Writing run.bat
 
 (
   echo cd /D %cd%
-  echo start jdk/bin/java -jar overlay.jar
+  echo start jdk/bin/javaw -jar overlay.jar
 ) > run.bat
 
 
@@ -36,6 +36,12 @@ ECHO Writing autostart.bat
   echo start jdk/bin/javaw -jar overlay.jar
 ) > autostart.bat
 
+ECHO Writing generateOverlay.bat
+
+(
+  echo cd /D %cd%
+  echo start jdk/bin/java -jar overlay.jar overlay
+) > generateOverlay.bat
 
 ECHO Writing install-autostart.bat
 
