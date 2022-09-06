@@ -2,6 +2,7 @@ package de.mephisto.vpin.popper.overlay.settings;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,10 @@ public class SettingsTabActionListener implements ActionListener {
     }
     else if (cmd.equals("showOverlay")) {
       try {
-        File file = new File("./resources", "overlay.png");
+        File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
+        if(!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
+          file = new File("./resources/", Config.getOverlayGeneratorConfig().get("overlay.background"));
+        }
         Desktop.getDesktop().open(file);
       } catch (IOException ex) {
         LOG.error("Failed to open overlay file: " + ex.getMessage(), ex);

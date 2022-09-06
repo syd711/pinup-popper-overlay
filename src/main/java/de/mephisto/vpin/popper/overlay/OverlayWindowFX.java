@@ -1,6 +1,7 @@
 package de.mephisto.vpin.popper.overlay;
 
 import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
+import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGraphics;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.util.PropertiesStore;
@@ -30,8 +31,6 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
 
   private KeyChecker keyChecker;
 
-  private final File file = new File("./resources", "overlay.png");
-
   private boolean visible = false;
 
   private Stage stage;
@@ -49,7 +48,7 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
 
     Platform.setImplicitExit(false);
 
-    FileInputStream inputstream = new FileInputStream(file);
+    FileInputStream inputstream = new FileInputStream(OverlayGenerator.GENERATED_OVERLAY_FILE);
     Image image = new Image(inputstream);
     ImageView imageView = new ImageView(image);
     imageView.setPreserveRatio(true);

@@ -3,6 +3,7 @@ package de.mephisto.vpin.popper.overlay.settings;
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
+import de.mephisto.vpin.popper.overlay.generator.GraphicsGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
@@ -92,13 +93,15 @@ public class SettingsTab extends JPanel {
     generateButton = new JButton("Generate Overlay");
     generateButton.setActionCommand("generateOverlay");
     generateButton.addActionListener(this.actionListener);
-    settingsPanel.add(generateButton, "wrap");
+    settingsPanel.add(generateButton, "span 4");
+    settingsPanel.add(new JLabel(""), "wrap");
 
     settingsPanel.add(new JLabel(""));
     JButton showOverlayButton = new JButton("Show Overlay");
     showOverlayButton.setActionCommand("showOverlay");
     showOverlayButton.addActionListener(this.actionListener);
-    settingsPanel.add(showOverlayButton, "wrap");
+    settingsPanel.add(showOverlayButton, "span 4");
+    settingsPanel.add(new JLabel(""), "wrap");
 
 
     JPanel previewPanel = new JPanel();
@@ -112,13 +115,12 @@ public class SettingsTab extends JPanel {
 
   private ImageIcon getPreviewImage() {
     try {
-      BufferedImage backgroundImage = ImageIO.read(new File("./resources", "overlay.png"));
-
-      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      GraphicsDevice gd = ge.getDefaultScreenDevice();
-      GraphicsConfiguration gc = gd.getDefaultConfiguration();
-
-      BufferedImage image = OverlayGenerator.create(backgroundImage, Math.PI / 2, gc);
+      File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
+      if(!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
+        file = new File("./resources/", Config.getOverlayGeneratorConfig().get("overlay.background"));
+      }
+      BufferedImage backgroundImage = ImageIO.read(file);
+      BufferedImage image = GraphicsGenerator.rotateRight(backgroundImage);
       int percentage = 700 * 100 / image.getHeight();
       Image newimg = image.getScaledInstance(image.getWidth() * percentage / 100, image.getHeight() * percentage / 100, Image.SCALE_SMOOTH); // scale it the smooth way
       return new ImageIcon(newimg);  // transform it back

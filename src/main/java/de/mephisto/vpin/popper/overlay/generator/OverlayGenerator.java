@@ -6,14 +6,13 @@ import de.mephisto.vpin.popper.overlay.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
-public class OverlayGenerator {
+public class OverlayGenerator extends GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGenerator.class);
+
+  public final static File GENERATED_OVERLAY_FILE = new File("./resources", "overlay.jpg");
 
   private final GameRepository gameRepository;
 
@@ -25,60 +24,30 @@ public class OverlayGenerator {
     new OverlayGenerator(GameRepository.create()).generate();
   }
 
-
   OverlayGenerator(GameRepository gameRepository) {
     this.gameRepository = gameRepository;
   }
 
   public BufferedImage generate() throws Exception {
     try {
-      long start = System.currentTimeMillis();
-      BufferedImage backgroundImage = ImageIO.read(new File("./resources", Config.getGeneratorConfig().getString("overlay.background")));
-
-      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      GraphicsDevice gd = ge.getDefaultScreenDevice();
-      GraphicsConfiguration gc = gd.getDefaultConfiguration();
-
-      BufferedImage rotated = create(backgroundImage, Math.PI / 2, gc);
+      BufferedImage backgroundImage = super.loadBackground(new File("./resources", Config.getOverlayGeneratorConfig().getString("overlay.background")));
+      BufferedImage rotated = super.rotateRight(backgroundImage);
 
       int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
       GameInfo gameOfTheMonth = null;
-      if(selection > 0) {
+      if (selection > 0) {
         gameOfTheMonth = gameRepository.getGameInfo(selection);
       }
       OverlayGraphics.drawGames(rotated, gameRepository, gameOfTheMonth);
 
-      BufferedImage rotatedTwice = create(rotated, -Math.PI / 2, gc);
-      writeImage(rotatedTwice);
-      long duration = System.currentTimeMillis() - start;
-      LOG.info("Generation took " + duration + "ms");
-
+      BufferedImage rotatedTwice = super.rotateLeft(rotated);
+      super.writeImage(rotatedTwice, GENERATED_OVERLAY_FILE);
       return rotatedTwice;
     } catch (Exception e) {
-      LOG.error("Failed to generate overlay: " + e.getMessage(),e );
+      LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;
-    }
-    finally {
+    } finally {
       gameRepository.shutdown();
     }
-  }
-
-  private void writeImage(BufferedImage rotated1) throws IOException {
-    File outputfile = new File("./resources", "overlay.png");
-    ImageIO.write(rotated1, "png", outputfile);
-  }
-
-  public static BufferedImage create(BufferedImage image, double angle, GraphicsConfiguration gc) {
-    double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
-    int w = image.getWidth(), h = image.getHeight();
-    int neww = (int) Math.floor(w * cos + h * sin), newh = (int) Math.floor(h
-        * cos + w * sin);
-    int transparency = image.getColorModel().getTransparency();
-    BufferedImage result = gc.createCompatibleImage(neww, newh, transparency);
-    Graphics2D g = result.createGraphics();
-    g.translate((neww - w) / 2, (newh - h) / 2);
-    g.rotate(angle, w / 2, h / 2);
-    g.drawRenderedImage(image, null);
-    return result;
   }
 }

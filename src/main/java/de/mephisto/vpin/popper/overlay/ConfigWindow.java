@@ -31,11 +31,13 @@ public class ConfigWindow extends JFrame {
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Overview", null, new OverviewTab(this, gameRepository),"");
+    tabbedPane.addTab("Settings", null, new SettingsTab(this, gameRepository), "Table Challenge, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Settings", null, new SettingsTab(this, gameRepository), "Table Challenge, Key-Bindings, etc.");
+    tabbedPane.addTab("Tables", null, new OverviewTab(this, gameRepository),"");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+
+
 
     tabbedPane.setBackground(Color.WHITE);
     tabbedPane.setBackgroundAt(0, Color.WHITE);

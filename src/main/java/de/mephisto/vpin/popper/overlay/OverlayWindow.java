@@ -1,6 +1,7 @@
 package de.mephisto.vpin.popper.overlay;
 
 import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
+import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.util.PropertiesStore;
 import org.jnativehook.GlobalScreen;
@@ -9,14 +10,12 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class OverlayWindow extends JFrame implements NativeKeyListener {
 
   private final KeyChecker keyChecker;
-  private final File file = new File("./resources", "overlay.png");
 
   private boolean visible = false;
 
@@ -36,7 +35,7 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
 
     // no layout manager
     setLayout(new BorderLayout());
-    ImageIcon icon = new ImageIcon(file.getAbsolutePath());
+    ImageIcon icon = new ImageIcon(OverlayGenerator.GENERATED_OVERLAY_FILE.getAbsolutePath());
     this.add(new JLabel(icon), BorderLayout.CENTER);
 
     Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
