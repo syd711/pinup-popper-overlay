@@ -5,6 +5,7 @@ import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
+import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
@@ -49,7 +50,7 @@ public class SettingsTabActionListener implements ActionListener {
       try {
         File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
         if(!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
-          file = new File("./resources/", Config.getOverlayGeneratorConfig().get("overlay.background"));
+          file = new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().get("overlay.background"));
         }
         Desktop.getDesktop().open(file);
       } catch (IOException ex) {

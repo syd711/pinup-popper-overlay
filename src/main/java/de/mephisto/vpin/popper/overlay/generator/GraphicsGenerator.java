@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
@@ -15,6 +16,12 @@ public class GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(GraphicsGenerator.class);
 
   protected BufferedImage loadBackground(File file) throws Exception {
+//    ImageIcon imageIcon = new ImageIcon(file.getAbsolutePath());
+//    Image tmpImage = imageIcon.getImage();
+//    BufferedImage bufferedImage = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_ARGB);
+//    bufferedImage.getGraphics().drawImage(tmpImage, 0, 0, null);
+//    tmpImage.flush();
+//    return bufferedImage;
     return ImageIO.read(file);
   }
 
@@ -32,12 +39,21 @@ public class GraphicsGenerator {
     return create(image, Math.PI / 2, gc);
   }
 
-  protected BufferedImage writeImage(BufferedImage image, File file) throws IOException {
+  protected BufferedImage writeJPG(BufferedImage image, File file) throws IOException {
     long writeDuration = System.currentTimeMillis();
     BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(file));
     ImageIO.write(image, "JPG", imageOutputStream);
     long duration = System.currentTimeMillis() - writeDuration;
-    LOG.info("Writing image took " + duration + "ms.");
+    LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
+    return image;
+  }
+
+  protected BufferedImage writePNG(BufferedImage image, File file) throws IOException {
+    long writeDuration = System.currentTimeMillis();
+    BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(file));
+    ImageIO.write(image, "PNG", imageOutputStream);
+    long duration = System.currentTimeMillis() - writeDuration;
+    LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
     return image;
   }
 

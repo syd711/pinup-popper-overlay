@@ -5,6 +5,7 @@ import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.highscores.Highscore;
 import de.mephisto.vpin.highscores.Score;
 import de.mephisto.vpin.popper.overlay.util.Config;
+import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +39,9 @@ public class OverlayGraphics extends VPinGraphics {
   private final static int TITLE_FONT_SIZE = Config.getOverlayGeneratorConfig().getInt("overlay.title.font.size");
 
 
-  public static final String RESOURCES = "./resources/";
-
   public static void drawGames(BufferedImage image, GameRepository gameRepository, GameInfo gameOfTheMonth) throws Exception {
-    Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(RESOURCES + HIGHSCORE_FONT_FILE));
-    Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(RESOURCES + TITLE_FONT_FILE));
+    Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + HIGHSCORE_FONT_FILE));
+    Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + TITLE_FONT_FILE));
 
     registerFonts(Arrays.asList(scoreFont, textFont));
     setRendingHints(image);

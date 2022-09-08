@@ -7,6 +7,7 @@ import de.mephisto.vpin.popper.overlay.generator.GraphicsGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
+import de.mephisto.vpin.util.SystemInfo;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,7 @@ public class SettingsTab extends JPanel {
     try {
       File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
       if(!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
-        file = new File("./resources/", Config.getOverlayGeneratorConfig().get("overlay.background"));
+        file = new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().get("overlay.background"));
       }
       BufferedImage backgroundImage = ImageIO.read(file);
       BufferedImage image = GraphicsGenerator.rotateRight(backgroundImage);

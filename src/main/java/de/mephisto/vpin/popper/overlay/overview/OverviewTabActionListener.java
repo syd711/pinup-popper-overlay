@@ -2,6 +2,7 @@ package de.mephisto.vpin.popper.overlay.overview;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.games.HighscoreChangedEvent;
 import de.mephisto.vpin.games.RepositoryListener;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import org.slf4j.Logger;
@@ -180,8 +181,7 @@ public class OverviewTabActionListener implements ActionListener {
     }
 
     @Override
-    public void highscoreChanged() {
-
+    public void highscoreChanged(HighscoreChangedEvent highscoreChangedEvent) {
     }
   }
 }

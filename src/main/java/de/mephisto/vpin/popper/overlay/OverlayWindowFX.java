@@ -1,5 +1,8 @@
 package de.mephisto.vpin.popper.overlay;
 
+import de.mephisto.vpin.games.GameInfo;
+import de.mephisto.vpin.games.HighscoreChangedEvent;
+import de.mephisto.vpin.games.RepositoryListener;
 import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGraphics;
@@ -15,18 +18,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.apache.commons.configuration2.Configuration;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class OverlayWindowFX extends Application implements NativeKeyListener {
+public class OverlayWindowFX extends Application implements NativeKeyListener, RepositoryListener {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayGraphics.class);
 
   private KeyChecker keyChecker;
@@ -97,6 +98,16 @@ public class OverlayWindowFX extends Application implements NativeKeyListener {
 
   @Override
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+
+  }
+
+  @Override
+  public void gameScanned(GameInfo gameInfo) {
+
+  }
+
+  @Override
+  public void highscoreChanged(HighscoreChangedEvent highscoreChangedEvent) {
 
   }
 }

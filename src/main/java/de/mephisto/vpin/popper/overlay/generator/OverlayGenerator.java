@@ -3,6 +3,7 @@ package de.mephisto.vpin.popper.overlay.generator;
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.util.Config;
+import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ import java.io.File;
 public class OverlayGenerator extends GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayGenerator.class);
 
-  public final static File GENERATED_OVERLAY_FILE = new File("./resources", "overlay.jpg");
+  public final static File GENERATED_OVERLAY_FILE = new File(SystemInfo.RESOURCES, "overlay.jpg");
 
   private final GameRepository gameRepository;
 
@@ -30,7 +31,7 @@ public class OverlayGenerator extends GraphicsGenerator {
 
   public BufferedImage generate() throws Exception {
     try {
-      BufferedImage backgroundImage = super.loadBackground(new File("./resources", Config.getOverlayGeneratorConfig().getString("overlay.background")));
+      BufferedImage backgroundImage = super.loadBackground(new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
       BufferedImage rotated = super.rotateRight(backgroundImage);
 
       int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
@@ -41,7 +42,7 @@ public class OverlayGenerator extends GraphicsGenerator {
       OverlayGraphics.drawGames(rotated, gameRepository, gameOfTheMonth);
 
       BufferedImage rotatedTwice = super.rotateLeft(rotated);
-      super.writeImage(rotatedTwice, GENERATED_OVERLAY_FILE);
+      super.writeJPG(rotatedTwice, GENERATED_OVERLAY_FILE);
       return rotatedTwice;
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);

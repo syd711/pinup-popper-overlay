@@ -1,18 +1,26 @@
 package de.mephisto.vpin.popper.overlay;
 
+import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.games.HighscoreChangedEvent;
+import de.mephisto.vpin.games.RepositoryListener;
 import de.mephisto.vpin.popper.overlay.overview.OverviewTab;
+import de.mephisto.vpin.popper.overlay.overview.OverviewTabActionListener;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 import de.mephisto.vpin.popper.overlay.settings.SettingsTab;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class ConfigWindow extends JFrame {
+public class ConfigWindow extends JFrame implements RepositoryListener {
+  private final static Logger LOG = LoggerFactory.getLogger(ConfigWindow.class);
 
   private static ConfigWindow instance;
+  private final GameRepository gameRepository;
 
   public static ConfigWindow getInstance() {
     return instance;
@@ -25,7 +33,8 @@ public class ConfigWindow extends JFrame {
     UIManager.setLookAndFeel(
         UIManager.getCrossPlatformLookAndFeelClassName());
 
-    GameRepository gameRepository = GameRepository.create();
+    gameRepository = GameRepository.create();
+    gameRepository.addListener(this);
 
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -94,5 +103,15 @@ public class ConfigWindow extends JFrame {
 
   public static void main(String[] args) throws Exception {
     new ConfigWindow();
+  }
+
+  @Override
+  public void gameScanned(GameInfo gameInfo) {
+
+  }
+
+  @Override
+  public void highscoreChanged(HighscoreChangedEvent highscoreChangedEvent) {
+    LOG.info("Highscore changed for " + highscoreChangedEvent.getGameInfo());
   }
 }

@@ -61,4 +61,19 @@ public class VPinGraphics {
       g2d.dispose();
     }
   }
+
+  static void drawBorder(BufferedImage image) {
+    int strokeWidth = 10;
+    Graphics2D graphics = (Graphics2D) image.getGraphics();
+    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    graphics.setStroke(new BasicStroke(strokeWidth));
+    Dimension arcs = new Dimension(32,32); //Border corners arcs {width,height}, change this to whatever you want
+
+    int width = image.getWidth();
+    int height = image.getHeight();
+
+    //Draws the rounded panel with borders.
+    graphics.setColor(Color.WHITE);
+    graphics.drawRoundRect(strokeWidth/2, strokeWidth/2, width-strokeWidth, height-strokeWidth, arcs.width, arcs.height);//paint background
+  }
 }
