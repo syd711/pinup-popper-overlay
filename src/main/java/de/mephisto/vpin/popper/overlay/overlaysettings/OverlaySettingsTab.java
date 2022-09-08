@@ -7,6 +7,7 @@ import de.mephisto.vpin.popper.overlay.generator.GraphicsGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
+import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
 import de.mephisto.vpin.util.SystemInfo;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
@@ -25,21 +26,25 @@ public class OverlaySettingsTab extends JPanel {
 
   private final ConfigWindow configWindow;
   private final OverlaySettingsTabActionListener actionListener;
-  private final JComboBox modifierCombo;
-  private final JComboBox keyCombo;
-  private final JLabel iconLabel;
-  private final JButton generateButton;
+  private GameRepository repository;
+
+  final JComboBox modifierCombo;
+  final JComboBox keyCombo;
+
+  final JLabel iconLabel;
+  final JButton generateButton;
 
   public OverlaySettingsTab(ConfigWindow configWindow, GameRepository repository) {
     this.configWindow = configWindow;
     actionListener = new OverlaySettingsTabActionListener(this, repository);
+    this.repository = repository;
     setBackground(Color.WHITE);
 
     setLayout(new BorderLayout());
 
     JPanel settingsPanel = new JPanel();
     settingsPanel.setBackground(Color.WHITE);
-    settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left"));
+    settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
     this.add(settingsPanel, BorderLayout.WEST);
 
     List<GameInfo> gameInfos = repository.getActiveGameInfos();
@@ -92,35 +97,35 @@ public class OverlaySettingsTab extends JPanel {
 
 
 
-    settingsPanel.add(new JLabel(""));
-    JButton fontChooserButton = new JButton("Choose Font");
-    fontChooserButton.setActionCommand("titleFont");
-    fontChooserButton.addActionListener(this.actionListener);
-    settingsPanel.add(fontChooserButton, "span 4");
-    settingsPanel.add(new JLabel(""), "wrap");
+    /******************************** Generator Fields ****************************************************************/
 
-    settingsPanel.add(new JLabel(""));
-//    JButton fontChooserButton = new JButton("Choose Font");
-//    fontChooserButton.setActionCommand("titleFont");
-//    fontChooserButton.addActionListener(this.actionListener);
-    JColorChooser jColorChooser = new JColorChooser();
-    jColorChooser.setBackground(Color.WHITE);
-    settingsPanel.add(jColorChooser , "span 4");
-    settingsPanel.add(new JLabel(""), "wrap");
+    WidgetFactory.createTextField(settingsPanel, "Challenge Title:", Config.getOverlayGeneratorConfig(), "overlay.title.text", "Table of the Month");
+    WidgetFactory.createTextField(settingsPanel, "Highscores Title:", Config.getOverlayGeneratorConfig(), "overlay.highscores.text", "Latest Highscores");
+    WidgetFactory.createFontSelector(settingsPanel, "Title Font:", Config.getOverlayGeneratorConfig(), "overlay.title.font");
+    WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", Config.getOverlayGeneratorConfig(), "overlay.table.font");
+    WidgetFactory.createFontSelector(settingsPanel, "Score Font:", Config.getOverlayGeneratorConfig(), "overlay.score.font");
+    WidgetFactory.createColorChooser(settingsPanel, "Font Color:", Config.getOverlayGeneratorConfig(), "overlay.font.color");
+    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", Config.getOverlayGeneratorConfig(), "overlay.title.y.offset", 80);
+    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", Config.getOverlayGeneratorConfig(), "overlay.highscores.row.padding.left", 60);
+    WidgetFactory.createSlider(settingsPanel, "Brighten Image:", Config.getOverlayGeneratorConfig(), "overlay.alphacomposite.white");
+    WidgetFactory.createSlider(settingsPanel, "Darken Image:", Config.getOverlayGeneratorConfig(), "overlay.alphacomposite.black");
+
 
     settingsPanel.add(new JLabel(""));
     generateButton = new JButton("Generate Overlay");
     generateButton.setActionCommand("generateOverlay");
     generateButton.addActionListener(this.actionListener);
-    settingsPanel.add(generateButton, "span 4");
-    settingsPanel.add(new JLabel(""), "wrap");
 
-    settingsPanel.add(new JLabel(""));
     JButton showOverlayButton = new JButton("Show Overlay");
     showOverlayButton.setActionCommand("showOverlay");
     showOverlayButton.addActionListener(this.actionListener);
-    settingsPanel.add(showOverlayButton, "span 4");
+
+    settingsPanel.add(generateButton, "span 3");
+    settingsPanel.add(showOverlayButton);
     settingsPanel.add(new JLabel(""), "wrap");
+
+
+    /******************************** Preview *************************************************************************/
 
 
     JPanel previewPanel = new JPanel();
@@ -140,7 +145,7 @@ public class OverlaySettingsTab extends JPanel {
       }
       BufferedImage backgroundImage = ImageIO.read(file);
       BufferedImage image = GraphicsGenerator.rotateRight(backgroundImage);
-      int percentage = 700 * 100 / image.getHeight();
+      int percentage = 900 * 100 / image.getHeight();
       Image newimg = image.getScaledInstance(image.getWidth() * percentage / 100, image.getHeight() * percentage / 100, Image.SCALE_SMOOTH); // scale it the smooth way
       return new ImageIcon(newimg);  // transform it back
 
@@ -153,19 +158,11 @@ public class OverlaySettingsTab extends JPanel {
   public void generateOverlay() {
     try {
       generateButton.setEnabled(false);
-      OverlayGenerator.generateOverlay();
+      OverlayGenerator.generateOverlay(repository);
       iconLabel.setIcon(getPreviewImage());
       generateButton.setEnabled(true);
     } catch (Exception e) {
       JOptionPane.showMessageDialog(this.configWindow, "Error generating overlay: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
-  }
-
-  public JComboBox getModifierCombo() {
-    return modifierCombo;
-  }
-
-  public JComboBox getKeyCombo() {
-    return keyCombo;
   }
 }

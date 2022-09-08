@@ -10,6 +10,8 @@ import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,19 +49,6 @@ public class OverlaySettingsTabActionListener implements ActionListener {
     else if (cmd.equals("generateOverlay")) {
       this.overlaySettingsTab.generateOverlay();
     }
-    else if (cmd.equals("titleFont")) {
-      JFontChooser fontChooser = new JFontChooser();
-      fontChooser.setSelectedFontSize(Config.getOverlayGeneratorConfig().getInt("overlay.title.font.size"));
-//      fontChooser.setSelectedFontStyle(Font.I);
-      int result = fontChooser.showDialog(overlaySettingsTab);
-      if (result == JFontChooser.OK_OPTION) {
-        Font font = fontChooser.getSelectedFont();
-        System.out.println("Selected Font : " + font);
-      }
-    }
-    else if(cmd.equals("fontColor")) {
-      JColorChooser colorChooser = new JColorChooser();
-    }
     else if (cmd.equals("showOverlay")) {
       try {
         File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
@@ -74,8 +63,8 @@ public class OverlaySettingsTabActionListener implements ActionListener {
   }
 
   private void saveOverlayKeyBinding() {
-    String key = (String) overlaySettingsTab.getKeyCombo().getSelectedItem();
-    String modifier = (String) overlaySettingsTab.getModifierCombo().getSelectedItem();
+    String key = (String) overlaySettingsTab.keyCombo.getSelectedItem();
+    String modifier = (String) overlaySettingsTab.modifierCombo.getSelectedItem();
 
     if (key.length() == 1) {
       key = key.toLowerCase();
@@ -88,4 +77,5 @@ public class OverlaySettingsTabActionListener implements ActionListener {
 
     Config.getOverlayConfig().set("overlay.hotkey", key);
   }
+
 }

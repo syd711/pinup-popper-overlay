@@ -18,11 +18,11 @@ public class OverlayGenerator extends GraphicsGenerator {
   private final GameRepository gameRepository;
 
   public static void main(String[] args) throws Exception {
-    generateOverlay();
+    generateOverlay(GameRepository.create());
   }
 
-  public static void generateOverlay() throws Exception {
-    new OverlayGenerator(GameRepository.create()).generate();
+  public static void generateOverlay(GameRepository repository) throws Exception {
+    new OverlayGenerator(repository).generate();
   }
 
   OverlayGenerator(GameRepository gameRepository) {

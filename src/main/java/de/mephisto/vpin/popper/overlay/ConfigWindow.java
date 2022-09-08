@@ -51,7 +51,7 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
     tabbedPane.setBackgroundAt(1, Color.WHITE);
     add(tabbedPane);
 
-    setSize(1224,800);
+    setSize(1336,990);
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
     int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);

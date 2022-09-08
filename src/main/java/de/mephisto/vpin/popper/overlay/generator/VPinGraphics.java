@@ -1,6 +1,5 @@
 package de.mephisto.vpin.popper.overlay.generator;
 
-import de.mephisto.vpin.popper.overlay.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,8 @@ public class VPinGraphics {
 
   static void setDefaultColor(BufferedImage image, String fontColor) {
     Graphics g = image.getGraphics();
-    g.setColor(Color.decode(fontColor));
+    Color decode = Color.decode(fontColor);
+    g.setColor(decode);
   }
 
   static void applyAlphaComposites(BufferedImage image, float alphaWhite, float alphaBlack) {
@@ -44,19 +44,21 @@ public class VPinGraphics {
     int imageHeight = image.getHeight();
 
     if (alphaWhite > 0) {
+      float value = alphaWhite / 100;
       Graphics2D g2d = (Graphics2D) g.create();
       g2d.setColor(Color.WHITE);
       Rectangle rect = new Rectangle(0, 0, imageWidth, imageHeight);
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaWhite));
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, value));
       g2d.fill(rect);
       g2d.dispose();
     }
 
     if (alphaBlack > 0) {
+      float value = alphaBlack / 100;
       Graphics2D g2d = (Graphics2D) g.create();
       g2d.setColor(Color.BLACK);
       Rectangle rect = new Rectangle(0, 0, imageWidth, imageHeight);
-      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaBlack));
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, value));
       g2d.fill(rect);
       g2d.dispose();
     }
