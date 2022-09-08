@@ -29,17 +29,16 @@ public class HighscoreCardGraphics extends VPinGraphics {
   private final static String HIGHSCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.highscore.font.name");
   private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.highscore.table.font.size");
 
-  private final static String TITLE_FONT_FILE = Config.getCardGeneratorConfig().getString("card.title.font.file");
   private final static String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
   private final static int TITLE_Y_OFFSET = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
   private final static int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
 
 
   public static void drawHighscores(BufferedImage image, GameInfo game) throws Exception {
-    Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + HIGHSCORE_FONT_FILE));
-    Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + TITLE_FONT_FILE));
+//    Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + HIGHSCORE_FONT_FILE));
+//    Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + TITLE_FONT_FILE));
 
-    registerFonts(Arrays.asList(scoreFont, textFont));
+//    registerFonts(Arrays.asList(scoreFont, textFont));
     setRendingHints(image);
     setDefaultColor(image, Config.getCardGeneratorConfig().getString("card.font.color"));
 

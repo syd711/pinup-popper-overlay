@@ -1,4 +1,4 @@
-package de.mephisto.vpin.popper.overlay.settings;
+package de.mephisto.vpin.popper.overlay.overlaysettings;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
@@ -20,19 +20,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
-public class SettingsTab extends JPanel {
-  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(SettingsTab.class);
+public class OverlaySettingsTab extends JPanel {
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlaySettingsTab.class);
 
   private final ConfigWindow configWindow;
-  private final SettingsTabActionListener actionListener;
+  private final OverlaySettingsTabActionListener actionListener;
   private final JComboBox modifierCombo;
   private final JComboBox keyCombo;
   private final JLabel iconLabel;
   private final JButton generateButton;
 
-  public SettingsTab(ConfigWindow configWindow, GameRepository repository) {
+  public OverlaySettingsTab(ConfigWindow configWindow, GameRepository repository) {
     this.configWindow = configWindow;
-    actionListener = new SettingsTabActionListener(this, repository);
+    actionListener = new OverlaySettingsTabActionListener(this, repository);
     setBackground(Color.WHITE);
 
     setLayout(new BorderLayout());
@@ -89,6 +89,24 @@ public class SettingsTab extends JPanel {
     settingsPanel.add(modifierCombo);
     settingsPanel.add(new JLabel("+"));
     settingsPanel.add(keyCombo, "wrap");
+
+
+
+    settingsPanel.add(new JLabel(""));
+    JButton fontChooserButton = new JButton("Choose Font");
+    fontChooserButton.setActionCommand("titleFont");
+    fontChooserButton.addActionListener(this.actionListener);
+    settingsPanel.add(fontChooserButton, "span 4");
+    settingsPanel.add(new JLabel(""), "wrap");
+
+    settingsPanel.add(new JLabel(""));
+//    JButton fontChooserButton = new JButton("Choose Font");
+//    fontChooserButton.setActionCommand("titleFont");
+//    fontChooserButton.addActionListener(this.actionListener);
+    JColorChooser jColorChooser = new JColorChooser();
+    jColorChooser.setBackground(Color.WHITE);
+    settingsPanel.add(jColorChooser , "span 4");
+    settingsPanel.add(new JLabel(""), "wrap");
 
     settingsPanel.add(new JLabel(""));
     generateButton = new JButton("Generate Overlay");

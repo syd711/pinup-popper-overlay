@@ -1,9 +1,10 @@
-package de.mephisto.vpin.popper.overlay.settings;
+package de.mephisto.vpin.popper.overlay.overlaysettings;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
+import de.mephisto.vpin.popper.overlay.util.JFontChooser;
 import de.mephisto.vpin.popper.overlay.util.Keys;
 import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,14 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class SettingsTabActionListener implements ActionListener {
-  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(SettingsTabActionListener.class);
+public class OverlaySettingsTabActionListener implements ActionListener {
+  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlaySettingsTabActionListener.class);
 
-  private final SettingsTab settingsTab;
+  private final OverlaySettingsTab overlaySettingsTab;
   private final GameRepository repository;
 
-  public SettingsTabActionListener(SettingsTab settingsTab, GameRepository repository) {
-    this.settingsTab = settingsTab;
+  public OverlaySettingsTabActionListener(OverlaySettingsTab overlaySettingsTab, GameRepository repository) {
+    this.overlaySettingsTab = overlaySettingsTab;
     this.repository = repository;
   }
 
@@ -44,12 +45,25 @@ public class SettingsTabActionListener implements ActionListener {
       this.saveOverlayKeyBinding();
     }
     else if (cmd.equals("generateOverlay")) {
-      this.settingsTab.generateOverlay();
+      this.overlaySettingsTab.generateOverlay();
+    }
+    else if (cmd.equals("titleFont")) {
+      JFontChooser fontChooser = new JFontChooser();
+      fontChooser.setSelectedFontSize(Config.getOverlayGeneratorConfig().getInt("overlay.title.font.size"));
+//      fontChooser.setSelectedFontStyle(Font.I);
+      int result = fontChooser.showDialog(overlaySettingsTab);
+      if (result == JFontChooser.OK_OPTION) {
+        Font font = fontChooser.getSelectedFont();
+        System.out.println("Selected Font : " + font);
+      }
+    }
+    else if(cmd.equals("fontColor")) {
+      JColorChooser colorChooser = new JColorChooser();
     }
     else if (cmd.equals("showOverlay")) {
       try {
         File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
-        if(!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
+        if (!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
           file = new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().get("overlay.background"));
         }
         Desktop.getDesktop().open(file);
@@ -60,8 +74,8 @@ public class SettingsTabActionListener implements ActionListener {
   }
 
   private void saveOverlayKeyBinding() {
-    String key = (String) settingsTab.getKeyCombo().getSelectedItem();
-    String modifier = (String) settingsTab.getModifierCombo().getSelectedItem();
+    String key = (String) overlaySettingsTab.getKeyCombo().getSelectedItem();
+    String modifier = (String) overlaySettingsTab.getModifierCombo().getSelectedItem();
 
     if (key.length() == 1) {
       key = key.toLowerCase();

@@ -4,10 +4,9 @@ import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.games.HighscoreChangedEvent;
 import de.mephisto.vpin.games.RepositoryListener;
+import de.mephisto.vpin.popper.overlay.overlaysettings.OverlaySettingsTab;
 import de.mephisto.vpin.popper.overlay.overview.OverviewTab;
-import de.mephisto.vpin.popper.overlay.overview.OverviewTabActionListener;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
-import de.mephisto.vpin.popper.overlay.settings.SettingsTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +39,11 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Settings", null, new SettingsTab(this, gameRepository), "Table Challenge, Key-Bindings, etc.");
+    tabbedPane.addTab("Overlay Settings", null, new OverlaySettingsTab(this, gameRepository), "Table Challenge, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
     tabbedPane.addTab("Tables", null, new OverviewTab(this, gameRepository),"");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-
 
 
     tabbedPane.setBackground(Color.WHITE);
@@ -53,9 +51,7 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
     tabbedPane.setBackgroundAt(1, Color.WHITE);
     add(tabbedPane);
 
-
-    // frame size 300 width and 300 height
-    setSize(1024,800);
+    setSize(1224,800);
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
     int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);
@@ -91,14 +87,6 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
       if (value instanceof javax.swing.plaf.FontUIResource)
         UIManager.put (key, f);
     }
-  }
-
-  private JComponent makeTextPanel() {
-    return new JPanel();
-  }
-
-  private ImageIcon createImageIcon(String s) {
-    return new ImageIcon(ResourceLoader.getResource(s));
   }
 
   public static void main(String[] args) throws Exception {
