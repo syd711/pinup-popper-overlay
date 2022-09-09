@@ -60,7 +60,7 @@ public class OverlayGraphics extends VPinGraphics {
     ROW_HEIGHT = TABLE_FONT_SIZE + ROW_SEPARATOR + SCORE_FONT_SIZE;
   }
 
-  public static void drawGames(BufferedImage image, GameRepository gameRepository, GameInfo gameOfTheMonth) throws Exception {
+  public static void drawGames(BufferedImage image, GameRepository repository, GameInfo gameOfTheMonth) throws Exception {
     initValues();
     float alphaWhite = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.white");
     float alphaBlack = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.black");
@@ -70,7 +70,7 @@ public class OverlayGraphics extends VPinGraphics {
     if (gameOfTheMonth != null) {
       highscoreListYOffset = renderTableChallenge(image, gameOfTheMonth, highscoreListYOffset);
     }
-    renderHighscoreList(image, gameOfTheMonth, gameRepository, highscoreListYOffset);
+    renderHighscoreList(image, gameOfTheMonth, repository, highscoreListYOffset);
   }
 
   /**
@@ -140,7 +140,7 @@ public class OverlayGraphics extends VPinGraphics {
     return returnOffset;
   }
 
-  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository, int highscoreListYOffset) throws Exception {
+  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository repository, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
     setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
@@ -154,7 +154,7 @@ public class OverlayGraphics extends VPinGraphics {
 
     int yStart = highscoreListYOffset + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
-    List<GameInfo> gameInfos = gameRepository.getGameInfos();
+    List<GameInfo> gameInfos = repository.getGameInfos();
     gameInfos.sort((o1, o2) -> (int) (o2.getLastPlayed().getTime() - o1.getLastPlayed().getTime()));
 
     for (GameInfo game : gameInfos) {

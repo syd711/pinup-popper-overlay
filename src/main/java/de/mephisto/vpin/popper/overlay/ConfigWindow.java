@@ -20,7 +20,7 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
   private final static Logger LOG = LoggerFactory.getLogger(ConfigWindow.class);
 
   private static ConfigWindow instance;
-  private final GameRepository gameRepository;
+  private final GameRepository repository;
 
   public static ConfigWindow getInstance() {
     return instance;
@@ -33,20 +33,20 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
     UIManager.setLookAndFeel(
         UIManager.getCrossPlatformLookAndFeelClassName());
 
-    gameRepository = GameRepository.create();
-    gameRepository.addListener(this);
+    repository = GameRepository.create();
+    repository.addListener(this);
 
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Highscore Overlay Settings", null, new OverlaySettingsTab(this, gameRepository), "Table Challenge, Key-Bindings, etc.");
+    tabbedPane.addTab("Highscore Overlay Settings", null, new OverlaySettingsTab(this, repository), "Table Challenge, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Highscore Cards Settings", null, new CardSettingsTab(this, gameRepository), "Highscore Generation Settings");
+    tabbedPane.addTab("Highscore Cards Settings", null, new CardSettingsTab(this, repository), "Highscore Generation Settings");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    tabbedPane.addTab("Tables", null, new OverviewTab(this, gameRepository),"");
+    tabbedPane.addTab("Tables", null, new OverviewTab(this, repository),"");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 

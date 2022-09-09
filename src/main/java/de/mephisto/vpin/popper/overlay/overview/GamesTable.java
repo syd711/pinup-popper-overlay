@@ -13,12 +13,12 @@ import java.util.List;
 public class GamesTable extends JTable {
 
   private final OverviewTab overviewTab;
-  private final GameRepository gameRepository;
+  private final GameRepository repository;
 
-  public GamesTable(OverviewTab overviewTab, GameRepository gameRepository, GameTableModel tableModel, GameTableColumnModel columnModel) {
+  public GamesTable(OverviewTab overviewTab, GameRepository repository, GameTableModel tableModel, GameTableColumnModel columnModel) {
     super(tableModel, columnModel);
     this.overviewTab = overviewTab;
-    this.gameRepository = gameRepository;
+    this.repository = repository;
 
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setColumnSelectionAllowed(false);
@@ -29,7 +29,7 @@ public class GamesTable extends JTable {
     getColumnModel().getColumn(1).setPreferredWidth(60);
     getColumnModel().getColumn(2).setPreferredWidth(240);
 
-    List<GameInfo> games = gameRepository.getGameInfos();
+    List<GameInfo> games = repository.getGameInfos();
     setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
       @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -54,7 +54,7 @@ public class GamesTable extends JTable {
   }
 
   public void valueChanged(ListSelectionEvent e) {
-    List<GameInfo> gameInfos = gameRepository.getGameInfos();
+    List<GameInfo> gameInfos = repository.getGameInfos();
     int[] selectedRow = getSelectedRows();
     if (selectedRow.length > 0) {
       int row = selectedRow[0];

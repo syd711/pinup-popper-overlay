@@ -15,7 +15,7 @@ public class OverlayGenerator extends GraphicsGenerator {
 
   public final static File GENERATED_OVERLAY_FILE = new File(SystemInfo.RESOURCES, "overlay.jpg");
 
-  private final GameRepository gameRepository;
+  private final GameRepository repository;
 
   public static void main(String[] args) throws Exception {
     generateOverlay(GameRepository.create());
@@ -25,8 +25,8 @@ public class OverlayGenerator extends GraphicsGenerator {
     new OverlayGenerator(repository).generate();
   }
 
-  OverlayGenerator(GameRepository gameRepository) {
-    this.gameRepository = gameRepository;
+  OverlayGenerator(GameRepository repository) {
+    this.repository = repository;
   }
 
   public BufferedImage generate() throws Exception {
@@ -37,9 +37,9 @@ public class OverlayGenerator extends GraphicsGenerator {
       int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
       GameInfo gameOfTheMonth = null;
       if (selection > 0) {
-        gameOfTheMonth = gameRepository.getGameInfo(selection);
+        gameOfTheMonth = repository.getGameInfo(selection);
       }
-      OverlayGraphics.drawGames(rotated, gameRepository, gameOfTheMonth);
+      OverlayGraphics.drawGames(rotated, repository, gameOfTheMonth);
 
       BufferedImage rotatedTwice = rotateLeft(rotated);
       super.writeJPG(rotatedTwice, GENERATED_OVERLAY_FILE);
@@ -48,7 +48,7 @@ public class OverlayGenerator extends GraphicsGenerator {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;
     } finally {
-      gameRepository.shutdown();
+      repository.shutdown();
     }
   }
 }

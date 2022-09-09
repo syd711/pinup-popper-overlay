@@ -5,6 +5,7 @@ import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.util.PropertiesStore;
 import de.mephisto.vpin.util.SystemInfo;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
@@ -44,6 +45,39 @@ public class WidgetFactory {
     parent.add(tableSelection, "span 3");
     parent.add(new JLabel(""), "width 30:200:200");
     parent.add(new JLabel(""), "wrap");
+  }
+
+  public static JComboBox createCombobox(JPanel parent, List<String> values, String title, PropertiesStore store, String property) {
+    Vector<String> data = new Vector<>(values);
+    data.add(0, null);
+    final JComboBox combo = new JComboBox(data);
+    combo.addActionListener(e -> {
+      String selectedItem = (String) combo.getSelectedItem();
+      if(selectedItem == null) {
+        selectedItem = "";
+      }
+      store.set(property, selectedItem);
+    });
+    String selection = store.getString(property);
+    if (!StringUtils.isEmpty(selection)) {
+      combo.setSelectedItem(selection);
+    }
+
+    parent.add(new JLabel(title));
+    parent.add(combo, "span 3");
+    parent.add(new JLabel(""), "width 30:200:200");
+    parent.add(new JLabel(""), "wrap");
+
+    return combo;
+  }
+
+  public static JLabel createLabel(JPanel parent, String title, Color color) {
+    parent.add(new JLabel(""));
+    JLabel label = new JLabel(title);
+    label.setForeground(color);
+    parent.add(label, "span 4");
+    parent.add(new JLabel(""), "wrap");
+    return label;
   }
 
   public static void createTextField(JPanel parent, String title, PropertiesStore store, String property, String defaultValue) {

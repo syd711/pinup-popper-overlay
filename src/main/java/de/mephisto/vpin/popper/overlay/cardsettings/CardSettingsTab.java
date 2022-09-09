@@ -5,12 +5,12 @@ import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.generator.HighscoreCardGenerator;
-import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
 import de.mephisto.vpin.util.PropertiesStore;
 import de.mephisto.vpin.util.SystemInfo;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
@@ -20,7 +20,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CardSettingsTab extends JPanel {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(CardSettingsTab.class);
@@ -48,7 +50,18 @@ public class CardSettingsTab extends JPanel {
     this.add(settingsPanel, BorderLayout.WEST);
 
 
-    WidgetFactory.createTableSelector(repository, settingsPanel, "Sample Table", store, "card.sampleTable");
+    List<String> values = Arrays.stream(PopperScreen.values()).sequential().map(e -> e.toString()).collect(Collectors.toList());
+    JComboBox screenCombo = WidgetFactory.createCombobox(settingsPanel, values, "PinUP Popper Screen:", store, "popper.screen");
+    String warning = "Selecting a PinUP Popper screen will enable highscore card generation.<br/>Existing media will be overwritten for this screen!";
+    String msg = "<html><body>" + warning + "</body></html>";
+    JLabel warnLabel = WidgetFactory.createLabel(settingsPanel, msg, Color.RED);
+
+    JLabel separator = new JLabel("");
+    separator.setPreferredSize(new Dimension(1, 30));
+    settingsPanel.add(separator, "wrap");
+
+    WidgetFactory.createTableSelector(repository, settingsPanel, "Sample Table:", store, "card.sampleTable");
+
 
     /******************************** Generator Fields ****************************************************************/
     WidgetFactory.createFileChooser(settingsPanel, "Background Image:", "Select File", store, "card.background", "background4k.jpg");
@@ -66,10 +79,11 @@ public class CardSettingsTab extends JPanel {
 
     settingsPanel.add(new JLabel(""));
     generateButton = new JButton("Generate Sample Card");
+    generateButton.setEnabled(false);
     generateButton.setActionCommand("generateCard");
     generateButton.addActionListener(this.actionListener);
 
-    JButton showOverlayButton = new JButton("Show Sample Card");
+    JButton showOverlayButton = new JButton("Show Card Image");
     showOverlayButton.setActionCommand("showCard");
     showOverlayButton.addActionListener(this.actionListener);
 
@@ -77,6 +91,16 @@ public class CardSettingsTab extends JPanel {
     settingsPanel.add(showOverlayButton);
     settingsPanel.add(new JLabel(""), "wrap");
 
+
+    String selection = (String) screenCombo.getSelectedItem();
+    generateButton.setEnabled(!StringUtils.isEmpty(selection));
+    warnLabel.setVisible(!StringUtils.isEmpty(selection));
+    screenCombo.addActionListener(e -> {
+      String s = (String) screenCombo.getSelectedItem();
+      generateButton.setEnabled(!StringUtils.isEmpty(s));
+      warnLabel.setVisible(!StringUtils.isEmpty(selection));
+      warnLabel.repaint();
+    });
 
     /******************************** Preview *************************************************************************/
 
@@ -97,9 +121,9 @@ public class CardSettingsTab extends JPanel {
     try {
       List<GameInfo> gameInfos = repository.getGameInfos();
       GameInfo gameInfo = this.getSampleGame();
-      if(gameInfo != null) {
+      if (gameInfo != null) {
         File file = new File(SystemInfo.RESOURCES, Config.getCardGeneratorConfig().get("card.background"));
-        File mediaFile = gameInfo.getPopperScreenMedia(PopperScreen.Other2);
+        File mediaFile = gameInfo.getPopperScreenMedia(getScreen());
         if (mediaFile.exists()) {
           file = mediaFile;
         }
@@ -112,6 +136,10 @@ public class CardSettingsTab extends JPanel {
       LOG.error("Error loading card preview: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  private PopperScreen getScreen() {
+    return PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen"));
   }
 
   GameInfo getSampleGame() {
@@ -133,7 +161,7 @@ public class CardSettingsTab extends JPanel {
     try {
       iconLabel.setVisible(false);
       generateButton.setEnabled(false);
-      HighscoreCardGenerator.generateCard(getSampleGame(), PopperScreen.Other2);
+      HighscoreCardGenerator.generateCard(getSampleGame(), getScreen());
       iconLabel.setIcon(getPreviewImage());
       generateButton.setEnabled(true);
       iconLabel.setVisible(true);
@@ -144,9 +172,9 @@ public class CardSettingsTab extends JPanel {
 
   public void showGeneratedCard() {
     try {
-      GameInfo game= this.getSampleGame();
-      if(game != null) {
-        File file = game.getPopperScreenMedia(PopperScreen.Other2);
+      GameInfo game = this.getSampleGame();
+      if (game != null) {
+        File file = game.getPopperScreenMedia(getScreen());
         if (file.exists()) {
           Desktop.getDesktop().open(file);
         }

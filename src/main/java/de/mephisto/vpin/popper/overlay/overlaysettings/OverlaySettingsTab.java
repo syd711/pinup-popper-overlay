@@ -51,7 +51,6 @@ public class OverlaySettingsTab extends JPanel {
     settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
     this.add(settingsPanel, BorderLayout.WEST);
 
-    WidgetFactory.createTableSelector(repository, settingsPanel, "Challenged Table", store, "overlay.challengedTable");
 
     Vector<String> modifierNames = new Vector<>(Keys.getModifierNames());
     modifierNames.insertElementAt(null, 0);
@@ -84,6 +83,12 @@ public class OverlaySettingsTab extends JPanel {
     settingsPanel.add(keyCombo, "wrap");
 
 
+    JLabel separator = new JLabel("");
+    separator.setPreferredSize(new Dimension(1, 30));
+    settingsPanel.add(separator, "wrap");
+
+    WidgetFactory.createTableSelector(repository, settingsPanel, "Challenged Table:", store, "overlay.challengedTable");
+
     /******************************** Generator Fields ****************************************************************/
     WidgetFactory.createFileChooser(settingsPanel, "Background Image:", "Select File", store, "overlay.background", "background4k.jpg");
     WidgetFactory.createTextField(settingsPanel, "Challenge Title:", store, "overlay.title.text", "Table of the Month");
@@ -103,7 +108,7 @@ public class OverlaySettingsTab extends JPanel {
     generateButton.setActionCommand("generateOverlay");
     generateButton.addActionListener(this.actionListener);
 
-    JButton showOverlayButton = new JButton("Show Overlay File");
+    JButton showOverlayButton = new JButton("Show Overlay Image");
     showOverlayButton.setActionCommand("showOverlay");
     showOverlayButton.addActionListener(this.actionListener);
 
