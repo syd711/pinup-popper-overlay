@@ -41,7 +41,7 @@ public class OverviewTabActionListener implements ActionListener {
       GamesTable gamesTable = overviewTab.getGamesTable();
       int selectedRow = gamesTable.getSelectedRow();
       GameInfo gameInfo = gameInfos.get(selectedRow);
-      if (gameInfo.hasHighscore()) {
+      if (gameInfo.getHighscore() != null) {
         new HighscoreDialog(this.overviewTab.getConfigWindow(), gameInfo, "Highscore for " + gameInfo.getGameDisplayName());
       }
     }

@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.util.Locale;
 
 public class WidgetFactory {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
@@ -82,6 +83,7 @@ public class WidgetFactory {
   public static void createColorChooser(JPanel parent, String label, PropertiesStore store, String property) {
     parent.add(new JLabel(label));
     final JColorChooser fontColorChooser = new JColorChooser();
+    fontColorChooser.setLocale(Locale.ENGLISH);
     fontColorChooser.getSelectionModel().addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {

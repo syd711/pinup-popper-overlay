@@ -19,7 +19,7 @@ public class HighscoreCardGenerator extends GraphicsGenerator {
       BufferedImage backgroundImage = super.loadBackground(sourceFile);
       HighscoreCardGraphics.drawHighscores(backgroundImage, game);
 
-      File target = game.getPopperMediaFile(screen);
+      File target = game.getPopperScreenMedia(screen);
       if(sourceFile.getName().endsWith(".png")) {
         super.writePNG(backgroundImage, target);
       }

@@ -53,7 +53,7 @@ public class HighscoreCardGraphics extends VPinGraphics {
    * The upper section, usually with the three topscores.
    */
   private static void renderTableChallenge(BufferedImage image, GameInfo challengedGame) throws Exception {
-    Highscore highscore = challengedGame.getHighscore(true);
+    Highscore highscore = challengedGame.getHighscore();
     if (highscore != null) {
       Graphics g = image.getGraphics();
       int imageWidth = image.getWidth();

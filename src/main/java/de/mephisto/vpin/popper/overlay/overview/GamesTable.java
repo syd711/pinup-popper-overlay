@@ -43,7 +43,7 @@ public class GamesTable extends JTable {
         if (StringUtils.isEmpty(game.getRom())) {
           c.setBackground(Color.decode("#FF9999"));
         }
-        else if(!game.hasHighscore()) {
+        else if(game.getHighscore() == null) {
           c.setBackground(Color.decode("#FFCC33"));
         }
 
@@ -59,7 +59,7 @@ public class GamesTable extends JTable {
     if (selectedRow.length > 0) {
       int row = selectedRow[0];
       GameInfo gameInfo = gameInfos.get(row);
-      overviewTab.getHighscoreButton().setEnabled(gameInfo.hasHighscore());
+      overviewTab.getHighscoreButton().setEnabled(gameInfo.getHighscore() != null);
     }
   }
 }

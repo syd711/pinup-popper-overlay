@@ -63,7 +63,7 @@ public class OverlayGraphics extends VPinGraphics {
   public static void drawGames(BufferedImage image, GameRepository gameRepository, GameInfo gameOfTheMonth) throws Exception {
     initValues();
     setRendingHints(image);
-    setDefaultColor(image, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
+    setDefaultColor(image, "#FF0000");//Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
 
     float alphaWhite = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.white");
     float alphaBlack = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.black");
@@ -80,7 +80,7 @@ public class OverlayGraphics extends VPinGraphics {
    * The upper section, usually with the three topscores.
    */
   private static int renderTableChallenge(BufferedImage image, GameInfo challengedGame, int highscoreListYOffset) throws Exception {
-    Highscore highscore = challengedGame.getHighscore(true);
+    Highscore highscore = challengedGame.getHighscore();
     int returnOffset = highscoreListYOffset;
     if (highscore != null) {
       Graphics g = image.getGraphics();
@@ -159,7 +159,7 @@ public class OverlayGraphics extends VPinGraphics {
     gameInfos.sort((o1, o2) -> (int) (o2.getLastPlayed().getTime() - o1.getLastPlayed().getTime()));
 
     for (GameInfo game : gameInfos) {
-      Highscore highscore = game.getHighscore(true);
+      Highscore highscore = game.getHighscore();
       if (highscore == null) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;
