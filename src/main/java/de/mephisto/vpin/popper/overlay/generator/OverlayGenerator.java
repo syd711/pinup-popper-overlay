@@ -32,7 +32,7 @@ public class OverlayGenerator extends GraphicsGenerator {
   public BufferedImage generate() throws Exception {
     try {
       BufferedImage backgroundImage = super.loadBackground(new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
-      BufferedImage rotated = super.rotateRight(backgroundImage);
+      BufferedImage rotated = rotateRight(backgroundImage);
 
       int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
       GameInfo gameOfTheMonth = null;
@@ -41,7 +41,7 @@ public class OverlayGenerator extends GraphicsGenerator {
       }
       OverlayGraphics.drawGames(rotated, gameRepository, gameOfTheMonth);
 
-      BufferedImage rotatedTwice = super.rotateLeft(rotated);
+      BufferedImage rotatedTwice = rotateLeft(rotated);
       super.writeJPG(rotatedTwice, GENERATED_OVERLAY_FILE);
       return rotatedTwice;
     } catch (Exception e) {

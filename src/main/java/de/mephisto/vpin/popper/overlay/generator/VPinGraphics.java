@@ -12,8 +12,7 @@ public class VPinGraphics {
   /**
    * Enables the anti aliasing for fonts
    */
-  static void setRendingHints(BufferedImage image) {
-    Graphics g = image.getGraphics();
+  private static void setRendingHints(Graphics g) {
     Graphics2D g2d = (Graphics2D) g;
     g2d.setRenderingHint(
         RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -32,10 +31,10 @@ public class VPinGraphics {
     }
   }
 
-  static void setDefaultColor(BufferedImage image, String fontColor) {
-    Graphics g = image.getGraphics();
+  static void setDefaultColor(Graphics g, String fontColor) {
     Color decode = Color.decode(fontColor);
     g.setColor(decode);
+    setRendingHints(g);
   }
 
   static void applyAlphaComposites(BufferedImage image, float alphaWhite, float alphaBlack) {
@@ -64,18 +63,18 @@ public class VPinGraphics {
     }
   }
 
-  static void drawBorder(BufferedImage image) {
-    int strokeWidth = 10;
+  static void drawBorder(BufferedImage image, int strokeWidth) {
+    if(strokeWidth <= 0) {
+      return;
+    }
+
     Graphics2D graphics = (Graphics2D) image.getGraphics();
     graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     graphics.setStroke(new BasicStroke(strokeWidth));
-    Dimension arcs = new Dimension(32,32); //Border corners arcs {width,height}, change this to whatever you want
-
     int width = image.getWidth();
     int height = image.getHeight();
 
-    //Draws the rounded panel with borders.
     graphics.setColor(Color.WHITE);
-    graphics.drawRoundRect(strokeWidth/2, strokeWidth/2, width-strokeWidth, height-strokeWidth, arcs.width, arcs.height);//paint background
+    graphics.drawRect(strokeWidth/2, strokeWidth/2, width-strokeWidth, height-strokeWidth);
   }
 }

@@ -62,9 +62,6 @@ public class OverlayGraphics extends VPinGraphics {
 
   public static void drawGames(BufferedImage image, GameRepository gameRepository, GameInfo gameOfTheMonth) throws Exception {
     initValues();
-    setRendingHints(image);
-    setDefaultColor(image, "#FF0000");//Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
-
     float alphaWhite = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.white");
     float alphaBlack = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.black");
     applyAlphaComposites(image, alphaWhite, alphaBlack);
@@ -84,6 +81,7 @@ public class OverlayGraphics extends VPinGraphics {
     int returnOffset = highscoreListYOffset;
     if (highscore != null) {
       Graphics g = image.getGraphics();
+      setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
       int imageWidth = image.getWidth();
 
       g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
@@ -144,6 +142,7 @@ public class OverlayGraphics extends VPinGraphics {
 
   private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository gameRepository, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
+    setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
     int imageHeight = image.getHeight();
 
@@ -177,6 +176,9 @@ public class OverlayGraphics extends VPinGraphics {
 
       int x = ROW_HEIGHT + ROW_PADDING_LEFT + ROW_HEIGHT / 3;
       g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_SIZE, TABLE_FONT_SIZE));
+
+      String tableName = game.getGameDisplayName();
+      tableName = "<p color=\"#00FF00\"" + tableName + "</p>";
       g.drawString(game.getGameDisplayName(), x, yStart + SCORE_FONT_SIZE);
 
       g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));

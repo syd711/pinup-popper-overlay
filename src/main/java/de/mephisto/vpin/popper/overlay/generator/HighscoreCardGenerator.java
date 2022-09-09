@@ -13,7 +13,11 @@ import java.io.File;
 public class HighscoreCardGenerator extends GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardGenerator.class);
 
-  public BufferedImage generate(GameInfo game, PopperScreen screen) throws Exception {
+  public static BufferedImage generateCard(GameInfo game, PopperScreen screen) throws Exception {
+    return new HighscoreCardGenerator().generate(game, screen);
+  }
+
+  BufferedImage generate(GameInfo game, PopperScreen screen) throws Exception {
     try {
       File sourceFile = new File("./resources", Config.getCardGeneratorConfig().get("card.background"));
       BufferedImage backgroundImage = super.loadBackground(sourceFile);

@@ -7,10 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(GraphicsGenerator.class);
@@ -22,6 +19,9 @@ public class GraphicsGenerator {
 //    bufferedImage.getGraphics().drawImage(tmpImage, 0, 0, null);
 //    tmpImage.flush();
 //    return bufferedImage;
+    if(!file.exists()) {
+      throw new FileNotFoundException("File not found " + file.getAbsolutePath());
+    }
     return ImageIO.read(file);
   }
 
@@ -43,6 +43,7 @@ public class GraphicsGenerator {
     long writeDuration = System.currentTimeMillis();
     BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(file));
     ImageIO.write(image, "JPG", imageOutputStream);
+    imageOutputStream.close();
     long duration = System.currentTimeMillis() - writeDuration;
     LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
     return image;
@@ -52,6 +53,7 @@ public class GraphicsGenerator {
     long writeDuration = System.currentTimeMillis();
     BufferedOutputStream imageOutputStream = new BufferedOutputStream(new FileOutputStream(file));
     ImageIO.write(image, "PNG", imageOutputStream);
+    imageOutputStream.close();
     long duration = System.currentTimeMillis() - writeDuration;
     LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
     return image;

@@ -54,7 +54,7 @@ public class JFontChooser extends JComponent
       };
   private static final String[] DEFAULT_FONT_SIZE_STRINGS =
       {
-          "36", "48", "72", "80", "90", "100", "110", "120", "130", "140", "150"
+          "20","30", "40", "50", "70", "80", "90", "100", "110", "120", "130", "140", "150"
       };
 
   // instance variables

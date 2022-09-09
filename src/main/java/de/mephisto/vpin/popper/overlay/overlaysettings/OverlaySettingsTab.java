@@ -8,12 +8,14 @@ import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
 import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
+import de.mephisto.vpin.util.PropertiesStore;
 import de.mephisto.vpin.util.SystemInfo;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -38,6 +40,8 @@ public class OverlaySettingsTab extends JPanel {
     this.configWindow = configWindow;
     actionListener = new OverlaySettingsTabActionListener(this, repository);
     this.repository = repository;
+    PropertiesStore store = Config.getOverlayGeneratorConfig();
+
     setBackground(Color.WHITE);
 
     setLayout(new BorderLayout());
@@ -47,24 +51,8 @@ public class OverlaySettingsTab extends JPanel {
     settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
     this.add(settingsPanel, BorderLayout.WEST);
 
-    List<GameInfo> gameInfos = repository.getActiveGameInfos();
-    Vector<GameInfo> data = new Vector<>(gameInfos);
-    data.insertElementAt(null, 0);
-    JComboBox tableSelection = new JComboBox(data);
-    tableSelection.setActionCommand("tableOfTheMonthSelector");
-    tableSelection.addActionListener(this.actionListener);
-    int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
-    if (selection > 0) {
-      GameInfo gameInfo = repository.getGameInfo(selection);
-      tableSelection.setSelectedItem(gameInfo);
-    }
+    WidgetFactory.createTableSelector(repository, settingsPanel, "Challenged Table", store, "overlay.challengedTable");
 
-    settingsPanel.add(new JLabel("Active Table Challenge:"));
-    settingsPanel.add(tableSelection, "span 3");
-    settingsPanel.add(new JLabel(""), "width 30:200:200");
-    settingsPanel.add(new JLabel(""), "wrap");
-
-    data.insertElementAt(null, 0);
     Vector<String> modifierNames = new Vector<>(Keys.getModifierNames());
     modifierNames.insertElementAt(null, 0);
     modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
@@ -96,19 +84,18 @@ public class OverlaySettingsTab extends JPanel {
     settingsPanel.add(keyCombo, "wrap");
 
 
-
     /******************************** Generator Fields ****************************************************************/
-
-    WidgetFactory.createTextField(settingsPanel, "Challenge Title:", Config.getOverlayGeneratorConfig(), "overlay.title.text", "Table of the Month");
-    WidgetFactory.createTextField(settingsPanel, "Highscores Title:", Config.getOverlayGeneratorConfig(), "overlay.highscores.text", "Latest Highscores");
-    WidgetFactory.createFontSelector(settingsPanel, "Title Font:", Config.getOverlayGeneratorConfig(), "overlay.title.font");
-    WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", Config.getOverlayGeneratorConfig(), "overlay.table.font");
-    WidgetFactory.createFontSelector(settingsPanel, "Score Font:", Config.getOverlayGeneratorConfig(), "overlay.score.font");
-    WidgetFactory.createColorChooser(settingsPanel, "Font Color:", Config.getOverlayGeneratorConfig(), "overlay.font.color");
-    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", Config.getOverlayGeneratorConfig(), "overlay.title.y.offset", 80);
-    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", Config.getOverlayGeneratorConfig(), "overlay.highscores.row.padding.left", 60);
-    WidgetFactory.createSlider(settingsPanel, "Brighten Image:", Config.getOverlayGeneratorConfig(), "overlay.alphacomposite.white");
-    WidgetFactory.createSlider(settingsPanel, "Darken Image:", Config.getOverlayGeneratorConfig(), "overlay.alphacomposite.black");
+    WidgetFactory.createFileChooser(settingsPanel, "Background Image:", "Select File", store, "overlay.background", "background4k.jpg");
+    WidgetFactory.createTextField(settingsPanel, "Challenge Title:", store, "overlay.title.text", "Table of the Month");
+    WidgetFactory.createTextField(settingsPanel, "Highscores Title:", store, "overlay.highscores.text", "Latest Highscores");
+    WidgetFactory.createFontSelector(settingsPanel, "Title Font:", store, "overlay.title.font");
+    WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", store, "overlay.table.font");
+    WidgetFactory.createFontSelector(settingsPanel, "Score Font:", store, "overlay.score.font");
+    WidgetFactory.createColorChooser(settingsPanel, "Font Color:", store, "overlay.font.color");
+    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "overlay.title.y.offset", 80);
+    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "overlay.highscores.row.padding.left", 60);
+    WidgetFactory.createSlider(settingsPanel, "Brighten Image:", store, "overlay.alphacomposite.white");
+    WidgetFactory.createSlider(settingsPanel, "Darken Image:", store, "overlay.alphacomposite.black");
 
 
     settingsPanel.add(new JLabel(""));
@@ -116,7 +103,7 @@ public class OverlaySettingsTab extends JPanel {
     generateButton.setActionCommand("generateOverlay");
     generateButton.addActionListener(this.actionListener);
 
-    JButton showOverlayButton = new JButton("Show Overlay");
+    JButton showOverlayButton = new JButton("Show Overlay File");
     showOverlayButton.setActionCommand("showOverlay");
     showOverlayButton.addActionListener(this.actionListener);
 
@@ -129,9 +116,11 @@ public class OverlaySettingsTab extends JPanel {
 
 
     JPanel previewPanel = new JPanel();
-    previewPanel.setBorder(BorderFactory.createTitledBorder("Overlay Preview"));
+    previewPanel.setBackground(Color.BLACK);
+    TitledBorder b = BorderFactory.createTitledBorder("Overlay Preview");
+    b.setTitleColor(Color.WHITE);
+    previewPanel.setBorder(b);
     add(previewPanel, BorderLayout.CENTER);
-    previewPanel.setBackground(Color.WHITE);
     previewPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left"));
     iconLabel = new JLabel(getPreviewImage());
     previewPanel.add(iconLabel, "wrap");
@@ -140,7 +129,7 @@ public class OverlaySettingsTab extends JPanel {
   private ImageIcon getPreviewImage() {
     try {
       File file = OverlayGenerator.GENERATED_OVERLAY_FILE;
-      if(!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
+      if (!OverlayGenerator.GENERATED_OVERLAY_FILE.exists()) {
         file = new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().get("overlay.background"));
       }
       BufferedImage backgroundImage = ImageIO.read(file);
@@ -157,10 +146,12 @@ public class OverlaySettingsTab extends JPanel {
 
   public void generateOverlay() {
     try {
+      iconLabel.setVisible(false);
       generateButton.setEnabled(false);
       OverlayGenerator.generateOverlay(repository);
       iconLabel.setIcon(getPreviewImage());
       generateButton.setEnabled(true);
+      iconLabel.setVisible(true);
     } catch (Exception e) {
       JOptionPane.showMessageDialog(this.configWindow, "Error generating overlay: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }

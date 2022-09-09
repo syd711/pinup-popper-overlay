@@ -4,7 +4,6 @@ import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.highscores.Highscore;
 import de.mephisto.vpin.highscores.Score;
 import de.mephisto.vpin.popper.overlay.util.Config;
-import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,67 +11,89 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HighscoreCardGraphics extends VPinGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardGraphics.class);
 
-  private final static int ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
-  private final static int ROW_PADDING_LEFT = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
+  private static int ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
+  private static int ROW_PADDING_LEFT = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
 
-  private final static String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text");
+  private static String TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text");
 
-  private final static String HIGHSCORE_FONT_FILE = Config.getCardGeneratorConfig().getString("card.highscore.font.file");
-  private final static String HIGHSCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.highscore.font.name");
-  private final static int HIGHSCORE_TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.highscore.table.font.size");
+  private static String SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
+  private static int SCORE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.score.font.style");
+  private static int SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size");
 
-  private final static String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
-  private final static int TITLE_Y_OFFSET = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
-  private final static int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
+  private static String TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
+  private static int TITLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.title.font.style");
+  private static int TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
 
+  private static String TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
+  private static int TABLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.table.font.style");
+  private static int TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size");
+
+  private static int TITLE_Y_OFFSET = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
+
+  private static void initValues() {
+    ROW_SEPARATOR = Config.getCardGeneratorConfig().getInt("card.highscores.row.separator");
+    ROW_PADDING_LEFT = Config.getCardGeneratorConfig().getInt("card.highscores.row.padding.left");
+
+    TITLE_TEXT = Config.getCardGeneratorConfig().getString("card.title.text");
+
+    SCORE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.score.font.name");
+    SCORE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.score.font.style");
+    SCORE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.score.font.size");
+
+    TITLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.title.font.name");
+    TITLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.title.font.style");
+    TITLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.title.font.size");
+
+    TABLE_FONT_NAME = Config.getCardGeneratorConfig().getString("card.table.font.name");
+    TABLE_FONT_STYLE = Config.getCardGeneratorConfig().getInt("card.table.font.style");
+    TABLE_FONT_SIZE = Config.getCardGeneratorConfig().getInt("card.table.font.size");
+
+    TITLE_Y_OFFSET = Config.getCardGeneratorConfig().getInt("card.title.y.offset");
+  }
 
   public static void drawHighscores(BufferedImage image, GameInfo game) throws Exception {
-//    Font scoreFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + HIGHSCORE_FONT_FILE));
-//    Font textFont = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(SystemInfo.RESOURCES + TITLE_FONT_FILE));
-
-//    registerFonts(Arrays.asList(scoreFont, textFont));
-    setRendingHints(image);
-    setDefaultColor(image, Config.getCardGeneratorConfig().getString("card.font.color"));
+    initValues();
 
     float alphaWhite = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.white");
     float alphaBlack = Config.getCardGeneratorConfig().getFloat("card.alphacomposite.black");
     applyAlphaComposites(image, alphaWhite, alphaBlack);
     renderTableChallenge(image, game);
-    drawBorder(image);
+
+    int borderWidth = Config.getCardGeneratorConfig().getInt("card.border.width");
+    drawBorder(image, borderWidth);
   }
 
   /**
    * The upper section, usually with the three topscores.
    */
-  private static void renderTableChallenge(BufferedImage image, GameInfo challengedGame) throws Exception {
-    Highscore highscore = challengedGame.getHighscore();
+  private static void renderTableChallenge(BufferedImage image, GameInfo game) throws Exception {
+    Highscore highscore = game.getHighscore();
     if (highscore != null) {
       Graphics g = image.getGraphics();
+      setDefaultColor(g, Config.getCardGeneratorConfig().getString("card.font.color"));
       int imageWidth = image.getWidth();
 
-      g.setFont(new Font(TITLE_FONT_NAME, Font.PLAIN, TITLE_FONT_SIZE));
+      g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
 
       String title = TITLE_TEXT;
       int titleWidth = g.getFontMetrics().stringWidth(title);
-      int titleY = ROW_SEPARATOR + TITLE_FONT_SIZE + TITLE_Y_OFFSET;
+      int titleY = TITLE_FONT_SIZE + TITLE_Y_OFFSET;
       g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
 
-      g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
-      String challengedTable = challengedGame.getGameDisplayName();
-      int width = g.getFontMetrics().stringWidth(challengedTable);
-      int tableNameY = titleY + ROW_SEPARATOR + TITLE_FONT_SIZE;
-      g.drawString(challengedTable, imageWidth / 2 - width / 2, tableNameY);
+      g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
+      String tableName = game.getGameDisplayName();
+      int width = g.getFontMetrics().stringWidth(tableName);
+      int tableNameY = titleY + TABLE_FONT_SIZE + TABLE_FONT_SIZE/2;
+      g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
 
-      g.setFont(new Font(HIGHSCORE_FONT_NAME, Font.PLAIN, HIGHSCORE_TABLE_FONT_SIZE));
 
+      g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
       int count = 0;
       int scoreWidth = 0;
 
@@ -99,7 +120,7 @@ public class HighscoreCardGraphics extends VPinGraphics {
         g.drawString(score, ROW_PADDING_LEFT + wheelWidth + ROW_SEPARATOR, scoreY);
       }
 
-      File wheelIconFile = challengedGame.getWheelIconFile();
+      File wheelIconFile = game.getWheelIconFile();
       int wheelY = tableNameY + ROW_SEPARATOR;
       if (wheelIconFile.exists()) {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
