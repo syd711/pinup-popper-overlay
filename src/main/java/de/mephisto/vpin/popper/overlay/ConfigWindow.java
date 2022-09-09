@@ -22,6 +22,8 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
   private static ConfigWindow instance;
   private final GameRepository repository;
 
+  public static final Color DEFAULT_BG_COLOR = Color.WHITE;// Color.decode("#EEEEEE");
+
   public static ConfigWindow getInstance() {
     return instance;
   }
@@ -30,8 +32,9 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
     ConfigWindow.instance = this;
 
     setUIFont (new javax.swing.plaf.FontUIResource("Tahoma",Font.PLAIN,14));
-    UIManager.setLookAndFeel(
-        UIManager.getCrossPlatformLookAndFeelClassName());
+//    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+    UIManager.setLookAndFeel ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+
 
     repository = GameRepository.create();
     repository.addListener(this);
@@ -50,13 +53,13 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 
-    tabbedPane.setBackground(Color.WHITE);
-    tabbedPane.setBackgroundAt(0, Color.WHITE);
-    tabbedPane.setBackgroundAt(1, Color.WHITE);
-    tabbedPane.setBackgroundAt(2, Color.WHITE);
+    tabbedPane.setBackground(DEFAULT_BG_COLOR);
+    tabbedPane.setBackgroundAt(0, DEFAULT_BG_COLOR);
+    tabbedPane.setBackgroundAt(1, DEFAULT_BG_COLOR);
+    tabbedPane.setBackgroundAt(2, DEFAULT_BG_COLOR);
     add(tabbedPane);
 
-    setSize(1336,990);
+    setSize(1346,990);
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
     int y = (int) ((dimension.getHeight() - this.getHeight()) / 2);

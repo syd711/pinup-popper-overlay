@@ -27,11 +27,12 @@ import java.util.stream.Collectors;
 public class CardSettingsTab extends JPanel {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(CardSettingsTab.class);
 
-  private final ConfigWindow configWindow;
-  private final CardSettingsTabActionListener actionListener;
-  private final JButton generateAllButton;
   private GameRepository repository;
 
+  private final ConfigWindow configWindow;
+
+  private final CardSettingsTabActionListener actionListener;
+  private final JButton generateAllButton;
   final JLabel iconLabel;
   final JButton generateButton;
 
@@ -41,12 +42,12 @@ public class CardSettingsTab extends JPanel {
     this.repository = repository;
     PropertiesStore store = Config.getCardGeneratorConfig();
 
-    setBackground(Color.WHITE);
+    setBackground(ConfigWindow.DEFAULT_BG_COLOR);
 
     setLayout(new BorderLayout());
 
     JPanel settingsPanel = new JPanel();
-    settingsPanel.setBackground(Color.WHITE);
+    settingsPanel.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
     this.add(settingsPanel, BorderLayout.WEST);
 
@@ -93,7 +94,6 @@ public class CardSettingsTab extends JPanel {
     settingsPanel.add(new JLabel(""), "wrap");
 
 
-
     settingsPanel.add(new JLabel(""));
     generateAllButton = new JButton("Generate All Cards (!)");
     generateAllButton.setEnabled(false);
@@ -136,12 +136,12 @@ public class CardSettingsTab extends JPanel {
       GameInfo gameInfo = this.getSampleGame();
       if (gameInfo != null && getScreen() != null) {
         File file = new File(SystemInfo.RESOURCES, Config.getCardGeneratorConfig().get("card.background"));
-        File mediaFile = gameInfo.getPopperScreenMedia(getScreen());
-        if (mediaFile.exists()) {
-          file = mediaFile;
+        File sampleFile = HighscoreCardGenerator.SAMPLE_FILE;
+        if (sampleFile.exists()) {
+          file = sampleFile;
         }
         BufferedImage image = ImageIO.read(file);
-        int percentage = 40;
+        int percentage = 48;
         Image newimg = image.getScaledInstance(image.getWidth() * percentage / 100, image.getHeight() * percentage / 100, Image.SCALE_SMOOTH); // scale it the smooth way
         return new ImageIcon(newimg);  // transform it back
       }
@@ -153,7 +153,7 @@ public class CardSettingsTab extends JPanel {
 
   private PopperScreen getScreen() {
     String screen = Config.getCardGeneratorConfig().getString("popper.screen");
-    if(!StringUtils.isEmpty(screen)) {
+    if (!StringUtils.isEmpty(screen)) {
       return PopperScreen.valueOf(screen);
     }
     return null;
@@ -178,7 +178,7 @@ public class CardSettingsTab extends JPanel {
     try {
       iconLabel.setVisible(false);
       generateButton.setEnabled(false);
-      HighscoreCardGenerator.generateCard(getSampleGame(), getScreen());
+      HighscoreCardGenerator.generateCard(getSampleGame(), getScreen(), HighscoreCardGenerator.SAMPLE_FILE);
       iconLabel.setIcon(getPreviewImage());
       generateButton.setEnabled(true);
       iconLabel.setVisible(true);
@@ -190,11 +190,11 @@ public class CardSettingsTab extends JPanel {
   public void generateAllCards() {
     try {
       int warning = JOptionPane.showConfirmDialog(this.configWindow, "This will overwrite all existing media for screen '" + getScreen() + "'.\nContinue?", "Warning", JOptionPane.YES_NO_OPTION);
-      if(warning == JOptionPane.OK_OPTION) {
+      if (warning == JOptionPane.OK_OPTION) {
         generateButton.setEnabled(false);
         List<GameInfo> gameInfos = repository.getGameInfos();
         for (GameInfo gameInfo : gameInfos) {
-          if(gameInfo.getHighscore() != null) {
+          if (gameInfo.getHighscore() != null) {
             HighscoreCardGenerator.generateCard(gameInfo, getScreen());
           }
         }
@@ -208,12 +208,9 @@ public class CardSettingsTab extends JPanel {
 
   public void showGeneratedCard() {
     try {
-      GameInfo game = this.getSampleGame();
-      if (game != null) {
-        File file = game.getPopperScreenMedia(getScreen());
-        if (file.exists()) {
-          Desktop.getDesktop().open(file);
-        }
+      File file = HighscoreCardGenerator.SAMPLE_FILE;
+      if (file.exists()) {
+        Desktop.getDesktop().open(file);
       }
     } catch (IOException ex) {
       LOG.error("Failed to open card file: " + ex.getMessage(), ex);

@@ -42,12 +42,12 @@ public class OverlaySettingsTab extends JPanel {
     this.repository = repository;
     PropertiesStore store = Config.getOverlayGeneratorConfig();
 
-    setBackground(Color.WHITE);
+    setBackground(ConfigWindow.DEFAULT_BG_COLOR);
 
     setLayout(new BorderLayout());
 
     JPanel settingsPanel = new JPanel();
-    settingsPanel.setBackground(Color.WHITE);
+    settingsPanel.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
     this.add(settingsPanel, BorderLayout.WEST);
 
@@ -121,14 +121,14 @@ public class OverlaySettingsTab extends JPanel {
 
 
     JPanel previewPanel = new JPanel();
+    previewPanel.setLayout(new BorderLayout());
     previewPanel.setBackground(Color.BLACK);
     TitledBorder b = BorderFactory.createTitledBorder("Overlay Preview");
     b.setTitleColor(Color.WHITE);
     previewPanel.setBorder(b);
     add(previewPanel, BorderLayout.CENTER);
-    previewPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left"));
     iconLabel = new JLabel(getPreviewImage());
-    previewPanel.add(iconLabel, "wrap");
+    previewPanel.add(iconLabel, BorderLayout.CENTER);
   }
 
   private ImageIcon getPreviewImage() {

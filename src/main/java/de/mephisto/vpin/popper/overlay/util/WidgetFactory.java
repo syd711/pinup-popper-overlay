@@ -2,6 +2,7 @@ package de.mephisto.vpin.popper.overlay.util;
 
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.util.PropertiesStore;
 import de.mephisto.vpin.util.SystemInfo;
 import org.apache.commons.io.FileUtils;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Locale;
 import java.util.Vector;
 
 public class WidgetFactory {
@@ -24,6 +24,7 @@ public class WidgetFactory {
 
   public static void createTableSelector(GameRepository repository, JPanel parent, String title, PropertiesStore store, String property) {
     List<GameInfo> gameInfos = repository.getActiveGameInfos();
+//    List<GameInfo> collect = gameInfos.stream().filter(g -> g.getHighscore() != null).collect(Collectors.toList());
     Vector<GameInfo> data = new Vector<>(gameInfos);
     data.insertElementAt(null, 0);
     final JComboBox tableSelection = new JComboBox(data);
@@ -84,8 +85,8 @@ public class WidgetFactory {
     parent.add(new JLabel(title));
     String value = store.getString(property, defaultValue);
     final JTextField field = new JTextField(value);
-    field.setMinimumSize(new Dimension(300, 26));
-    parent.add(field, "span 4");
+    field.setMinimumSize(new Dimension(330, 26));
+    parent.add(field, "span 5");
     parent.add(new JLabel(""), "wrap");
     field.addActionListener(e -> {
       String text = field.getText();
@@ -181,7 +182,7 @@ public class WidgetFactory {
     parent.add(new JLabel(title));
     int value = store.getInt(property);
     JSlider slider = new JSlider(0, 100, value);
-    slider.setBackground(Color.WHITE);
+    slider.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     slider.setMajorTickSpacing(50);
     slider.setMinorTickSpacing(1);
     slider.setPaintLabels(true);
@@ -194,19 +195,15 @@ public class WidgetFactory {
   }
 
   public static void createColorChooser(JPanel parent, String label, PropertiesStore store, String property) {
-    String value = store.getString(property, "#FFFFFF");
-
+    String value = store.getString(property);
     parent.add(new JLabel(label));
-    final JColorChooser fontColorChooser = new JColorChooser();
-    fontColorChooser.setLocale(Locale.ENGLISH);
-    fontColorChooser.setColor(Color.decode(value));
-    fontColorChooser.getSelectionModel().addChangeListener(e -> {
-      Color color = fontColorChooser.getColor();
-      String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-      store.set(property, hex);
+    JButton open = new JButton("Select Color");
+    JLabel valueLabel = new JLabel(value);
+    open.addActionListener(e-> {
+      new ColorDialog(parent, valueLabel, store, property);
     });
-    fontColorChooser.setBackground(Color.WHITE);
-    parent.add(fontColorChooser, "span 4");
+    parent.add(valueLabel, "span 3");
+    parent.add(open, "span 2");
     parent.add(new JLabel(""), "wrap");
   }
 }

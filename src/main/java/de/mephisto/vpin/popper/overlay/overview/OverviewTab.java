@@ -19,7 +19,7 @@ public class OverviewTab extends JPanel {
     super(new BorderLayout());
     this.configWindow = configWindow;
 
-    setBackground(Color.WHITE);
+    setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     this.actionListener = new OverviewTabActionListener(repository, this);
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 

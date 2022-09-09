@@ -4,6 +4,7 @@ import de.mephisto.vpin.PopperScreen;
 import de.mephisto.vpin.games.GameInfo;
 import de.mephisto.vpin.games.GameRepository;
 import de.mephisto.vpin.popper.overlay.util.Config;
+import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,17 +14,30 @@ import java.io.File;
 public class HighscoreCardGenerator extends GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardGenerator.class);
 
+  public static File SAMPLE_FILE = new File(SystemInfo.RESOURCES, "highscore-card-sample.png");
+
   public static BufferedImage generateCard(GameInfo game, PopperScreen screen) throws Exception {
-    return new HighscoreCardGenerator().generate(game, screen);
+    return generateCard(game, screen, null);
   }
 
-  BufferedImage generate(GameInfo game, PopperScreen screen) throws Exception {
+  public static BufferedImage generateCard(GameInfo game, PopperScreen screen, File target) throws Exception {
+    return new HighscoreCardGenerator().generate(game, screen, target);
+  }
+
+  BufferedImage generate(GameInfo game, PopperScreen screen, File target) throws Exception {
     try {
       File sourceFile = new File("./resources", Config.getCardGeneratorConfig().get("card.background"));
       BufferedImage backgroundImage = super.loadBackground(sourceFile);
       HighscoreCardGraphics.drawHighscores(backgroundImage, game);
 
-      File target = game.getPopperScreenMedia(screen);
+      if(target == null) {
+        target = game.getPopperScreenMedia(screen);
+      }
+
+      if(target.exists()) {
+        target.delete();
+      }
+
       if(sourceFile.getName().endsWith(".png")) {
         super.writePNG(backgroundImage, target);
       }
@@ -41,7 +55,7 @@ public class HighscoreCardGenerator extends GraphicsGenerator {
     GameRepository repository = GameRepository.create();
     try {
       GameInfo gameInfo = repository.getGameByRom("STLE");
-      new HighscoreCardGenerator().generate(gameInfo, PopperScreen.Other2);
+      new HighscoreCardGenerator().generate(gameInfo, PopperScreen.Other2, HighscoreCardGenerator.SAMPLE_FILE);
     } catch (Exception e) {
       e.printStackTrace();
     }
