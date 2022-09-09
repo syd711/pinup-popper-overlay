@@ -29,6 +29,7 @@ public class CardSettingsTab extends JPanel {
 
   private final ConfigWindow configWindow;
   private final CardSettingsTabActionListener actionListener;
+  private final JButton generateAllButton;
   private GameRepository repository;
 
   final JLabel iconLabel;
@@ -83,23 +84,36 @@ public class CardSettingsTab extends JPanel {
     generateButton.setActionCommand("generateCard");
     generateButton.addActionListener(this.actionListener);
 
-    JButton showOverlayButton = new JButton("Show Card Image");
-    showOverlayButton.setActionCommand("showCard");
-    showOverlayButton.addActionListener(this.actionListener);
+    JButton showActiveCardButton = new JButton("Show Active Card Image");
+    showActiveCardButton.setActionCommand("showCard");
+    showActiveCardButton.addActionListener(this.actionListener);
 
     settingsPanel.add(generateButton, "span 3");
-    settingsPanel.add(showOverlayButton);
+    settingsPanel.add(showActiveCardButton);
+    settingsPanel.add(new JLabel(""), "wrap");
+
+
+
+    settingsPanel.add(new JLabel(""));
+    generateAllButton = new JButton("Generate All Cards (!)");
+    generateAllButton.setEnabled(false);
+    generateAllButton.setActionCommand("generateAllCards");
+    generateAllButton.addActionListener(this.actionListener);
+    settingsPanel.add(generateAllButton, "span 3");
     settingsPanel.add(new JLabel(""), "wrap");
 
 
     String selection = (String) screenCombo.getSelectedItem();
     generateButton.setEnabled(!StringUtils.isEmpty(selection));
+    generateAllButton.setEnabled(!StringUtils.isEmpty(selection));
+    showActiveCardButton.setEnabled(!StringUtils.isEmpty(selection));
     warnLabel.setVisible(!StringUtils.isEmpty(selection));
     screenCombo.addActionListener(e -> {
       String s = (String) screenCombo.getSelectedItem();
       generateButton.setEnabled(!StringUtils.isEmpty(s));
-      warnLabel.setVisible(!StringUtils.isEmpty(selection));
-      warnLabel.repaint();
+      generateAllButton.setEnabled(!StringUtils.isEmpty(s));
+      showActiveCardButton.setEnabled(!StringUtils.isEmpty(s));
+      warnLabel.setVisible(!StringUtils.isEmpty(s));
     });
 
     /******************************** Preview *************************************************************************/
@@ -119,9 +133,8 @@ public class CardSettingsTab extends JPanel {
 
   private ImageIcon getPreviewImage() {
     try {
-      List<GameInfo> gameInfos = repository.getGameInfos();
       GameInfo gameInfo = this.getSampleGame();
-      if (gameInfo != null) {
+      if (gameInfo != null && getScreen() != null) {
         File file = new File(SystemInfo.RESOURCES, Config.getCardGeneratorConfig().get("card.background"));
         File mediaFile = gameInfo.getPopperScreenMedia(getScreen());
         if (mediaFile.exists()) {
@@ -139,7 +152,11 @@ public class CardSettingsTab extends JPanel {
   }
 
   private PopperScreen getScreen() {
-    return PopperScreen.valueOf(Config.getCardGeneratorConfig().getString("popper.screen"));
+    String screen = Config.getCardGeneratorConfig().getString("popper.screen");
+    if(!StringUtils.isEmpty(screen)) {
+      return PopperScreen.valueOf(screen);
+    }
+    return null;
   }
 
   GameInfo getSampleGame() {
@@ -157,7 +174,7 @@ public class CardSettingsTab extends JPanel {
     return null;
   }
 
-  public void generateOverlay() {
+  public void generateSampleCard() {
     try {
       iconLabel.setVisible(false);
       generateButton.setEnabled(false);
@@ -165,6 +182,25 @@ public class CardSettingsTab extends JPanel {
       iconLabel.setIcon(getPreviewImage());
       generateButton.setEnabled(true);
       iconLabel.setVisible(true);
+    } catch (Exception e) {
+      JOptionPane.showMessageDialog(this.configWindow, "Error generating overlay: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+  }
+
+  public void generateAllCards() {
+    try {
+      int warning = JOptionPane.showConfirmDialog(this.configWindow, "This will overwrite all existing media for screen '" + getScreen() + "'.\nContinue?", "Warning", JOptionPane.YES_NO_OPTION);
+      if(warning == JOptionPane.OK_OPTION) {
+        generateButton.setEnabled(false);
+        List<GameInfo> gameInfos = repository.getGameInfos();
+        for (GameInfo gameInfo : gameInfos) {
+          if(gameInfo.getHighscore() != null) {
+            HighscoreCardGenerator.generateCard(gameInfo, getScreen());
+          }
+        }
+        generateButton.setEnabled(true);
+      }
+
     } catch (Exception e) {
       JOptionPane.showMessageDialog(this.configWindow, "Error generating overlay: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
