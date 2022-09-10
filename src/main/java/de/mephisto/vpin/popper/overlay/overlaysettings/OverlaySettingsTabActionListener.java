@@ -1,17 +1,14 @@
 package de.mephisto.vpin.popper.overlay.overlaysettings;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
-import de.mephisto.vpin.popper.overlay.util.JFontChooser;
 import de.mephisto.vpin.popper.overlay.util.Keys;
 import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,11 +19,11 @@ public class OverlaySettingsTabActionListener implements ActionListener {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlaySettingsTabActionListener.class);
 
   private final OverlaySettingsTab overlaySettingsTab;
-  private final GameRepository repository;
+  private final VPinService service;
 
-  public OverlaySettingsTabActionListener(OverlaySettingsTab overlaySettingsTab, GameRepository repository) {
+  public OverlaySettingsTabActionListener(OverlaySettingsTab overlaySettingsTab, VPinService service) {
     this.overlaySettingsTab = overlaySettingsTab;
-    this.repository = repository;
+    this.service = service;
   }
 
   @Override

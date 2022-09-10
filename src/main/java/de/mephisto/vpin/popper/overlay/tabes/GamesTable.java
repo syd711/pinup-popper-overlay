@@ -1,7 +1,7 @@
-package de.mephisto.vpin.popper.overlay.overview;
+package de.mephisto.vpin.popper.overlay.tabes;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -12,13 +12,15 @@ import java.util.List;
 
 public class GamesTable extends JTable {
 
-  private final OverviewTab overviewTab;
-  private final GameRepository repository;
+  private final TablesTab tablesTab;
+  private final VPinService service;
 
-  public GamesTable(OverviewTab overviewTab, GameRepository repository, GameTableModel tableModel, GameTableColumnModel columnModel) {
+  private GameInfo selection;
+
+  public GamesTable(TablesTab overviewTab, VPinService service, GameTableModel tableModel, GameTableColumnModel columnModel) {
     super(tableModel, columnModel);
-    this.overviewTab = overviewTab;
-    this.repository = repository;
+    this.tablesTab = overviewTab;
+    this.service = service;
 
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     setColumnSelectionAllowed(false);
@@ -26,10 +28,12 @@ public class GamesTable extends JTable {
     setRowHeight(20);
 
     getColumnModel().getColumn(0).setPreferredWidth(160);
-    getColumnModel().getColumn(1).setPreferredWidth(60);
-    getColumnModel().getColumn(2).setPreferredWidth(240);
+    getColumnModel().getColumn(1).setPreferredWidth(40);
+    getColumnModel().getColumn(2).setPreferredWidth(40);
+    getColumnModel().getColumn(3).setPreferredWidth(30);
+    getColumnModel().getColumn(4).setPreferredWidth(240);
 
-    List<GameInfo> games = repository.getGameInfos();
+    List<GameInfo> games = service.getGameInfos();
     setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
       @Override
       public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -43,7 +47,7 @@ public class GamesTable extends JTable {
         if (StringUtils.isEmpty(game.getRom())) {
           c.setBackground(Color.decode("#FF9999"));
         }
-        else if(game.getHighscore() == null) {
+        else if(!game.hasHighscore()) {
           c.setBackground(Color.decode("#FFCC33"));
         }
 
@@ -53,13 +57,19 @@ public class GamesTable extends JTable {
     });
   }
 
+  public GameInfo getSelection() {
+    return selection;
+  }
+
   public void valueChanged(ListSelectionEvent e) {
-    List<GameInfo> gameInfos = repository.getGameInfos();
+    List<GameInfo> gameInfos = service.getGameInfos();
     int[] selectedRow = getSelectedRows();
     if (selectedRow.length > 0) {
       int row = selectedRow[0];
-      GameInfo gameInfo = gameInfos.get(row);
-      overviewTab.getHighscoreButton().setEnabled(gameInfo.getHighscore() != null);
+      this.selection = gameInfos.get(row);
+      tablesTab.highscoreButton.setEnabled(selection != null);
+      tablesTab.scanButton.setEnabled(selection != null);
+      tablesTab.highscoreButton.setEnabled(selection != null && selection.hasHighscore());
     }
   }
 }

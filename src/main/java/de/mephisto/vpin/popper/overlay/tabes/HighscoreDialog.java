@@ -1,6 +1,6 @@
-package de.mephisto.vpin.popper.overlay.overview;
+package de.mephisto.vpin.popper.overlay.tabes;
 
-import de.mephisto.vpin.games.GameInfo;
+import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.highscores.Highscore;
 import de.mephisto.vpin.highscores.Score;
 import net.miginfocom.swing.MigLayout;
@@ -26,7 +26,7 @@ public class HighscoreDialog extends JDialog implements ActionListener {
 
     JPanel top = new JPanel();
     top.setLayout(new MigLayout("gap rel 0", "grow"));
-    Highscore highscore = gameInfo.getHighscore();
+    Highscore highscore = gameInfo.resolveHighscore();
     JLabel label = new JLabel("Overlay Value");
     label.setFont(font);
     top.add(label, "wrap");

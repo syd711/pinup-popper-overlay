@@ -1,6 +1,6 @@
 package de.mephisto.vpin.popper.overlay.cardsettings;
 
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.VPinService;
 import org.slf4j.LoggerFactory;
 
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ public class CardSettingsTabActionListener implements ActionListener {
 
   private final CardSettingsTab cardSettingsTab;
 
-  public CardSettingsTabActionListener(CardSettingsTab cardSettingsTab, GameRepository repository) {
+  public CardSettingsTabActionListener(CardSettingsTab cardSettingsTab, VPinService service) {
     this.cardSettingsTab = cardSettingsTab;
   }
 

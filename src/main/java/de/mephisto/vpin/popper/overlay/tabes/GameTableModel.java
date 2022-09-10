@@ -1,7 +1,7 @@
-package de.mephisto.vpin.popper.overlay.overview;
+package de.mephisto.vpin.popper.overlay.tabes;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.table.AbstractTableModel;
@@ -11,7 +11,7 @@ public class GameTableModel extends AbstractTableModel {
 
   private final List<GameInfo> gameInfos;
 
-  public GameTableModel(GameRepository repository) {
+  public GameTableModel(VPinService repository) {
     gameInfos = repository.getGameInfos();
   }
 
@@ -32,13 +32,19 @@ public class GameTableModel extends AbstractTableModel {
       return gameInfo.getGameDisplayName();
     }
     if(columnIndex == 1) {
-      return gameInfo.getRom();
+      return gameInfo.getEmulatorName();
     }
     if(columnIndex == 2) {
+      return gameInfo.getRom();
+    }
+    if(columnIndex == 3) {
+      return gameInfo.getNumberPlays();
+    }
+    if(columnIndex == 4) {
       if(StringUtils.isEmpty(gameInfo.getRom())) {
         return "No rom information found for table.";
       }
-      else if(gameInfo.getHighscore() == null) {
+      else if(!gameInfo.hasHighscore()) {
         return "No highscore files found.";
       }
       return "";

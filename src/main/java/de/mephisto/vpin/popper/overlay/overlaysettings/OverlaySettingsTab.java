@@ -1,7 +1,6 @@
 package de.mephisto.vpin.popper.overlay.overlaysettings;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.generator.GraphicsGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
@@ -19,7 +18,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -28,7 +26,7 @@ public class OverlaySettingsTab extends JPanel {
 
   private final ConfigWindow configWindow;
   private final OverlaySettingsTabActionListener actionListener;
-  private GameRepository repository;
+  private VPinService service;
 
   final JComboBox modifierCombo;
   final JComboBox keyCombo;
@@ -36,10 +34,10 @@ public class OverlaySettingsTab extends JPanel {
   final JLabel iconLabel;
   final JButton generateButton;
 
-  public OverlaySettingsTab(ConfigWindow configWindow, GameRepository repository) {
+  public OverlaySettingsTab(ConfigWindow configWindow, VPinService service) {
     this.configWindow = configWindow;
-    actionListener = new OverlaySettingsTabActionListener(this, repository);
-    this.repository = repository;
+    actionListener = new OverlaySettingsTabActionListener(this, service);
+    this.service = service;
     PropertiesStore store = Config.getOverlayGeneratorConfig();
 
     setBackground(ConfigWindow.DEFAULT_BG_COLOR);
@@ -87,7 +85,7 @@ public class OverlaySettingsTab extends JPanel {
     separator.setPreferredSize(new Dimension(1, 30));
     settingsPanel.add(separator, "wrap");
 
-    WidgetFactory.createTableSelector(repository, settingsPanel, "Challenged Table:", store, "overlay.challengedTable");
+    WidgetFactory.createTableSelector(service, settingsPanel, "Challenged Table:", store, "overlay.challengedTable");
 
     /******************************** Generator Fields ****************************************************************/
     WidgetFactory.createFileChooser(settingsPanel, "Background Image:", "Select File", store, "overlay.background", "background4k.jpg");
@@ -99,8 +97,8 @@ public class OverlaySettingsTab extends JPanel {
     WidgetFactory.createColorChooser(settingsPanel, "Font Color:", store, "overlay.font.color");
     WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "overlay.title.y.offset", 80);
     WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "overlay.highscores.row.padding.left", 60);
-    WidgetFactory.createSlider(settingsPanel, "Brighten Image:", store, "overlay.alphacomposite.white");
-    WidgetFactory.createSlider(settingsPanel, "Darken Image:", store, "overlay.alphacomposite.black");
+    WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "overlay.alphacomposite.white");
+    WidgetFactory.createSlider(settingsPanel, "Darken Background:", store, "overlay.alphacomposite.black");
 
 
     settingsPanel.add(new JLabel(""));
@@ -153,7 +151,7 @@ public class OverlaySettingsTab extends JPanel {
     try {
       iconLabel.setVisible(false);
       generateButton.setEnabled(false);
-      OverlayGenerator.generateOverlay(repository);
+      OverlayGenerator.generateOverlay(service);
       iconLabel.setIcon(getPreviewImage());
       generateButton.setEnabled(true);
       iconLabel.setVisible(true);

@@ -1,29 +1,33 @@
-package de.mephisto.vpin.popper.overlay.overview;
+package de.mephisto.vpin.popper.overlay.tabes;
 
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
-import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class OverviewTab extends JPanel {
+public class TablesTab extends JPanel {
 
-  private final GamesTable gamesTable;
-  private OverviewTabActionListener actionListener;
-  private JButton highscoreButton;
-  private ConfigWindow configWindow;
+  private TablesTabActionListener actionListener;
+
+  GamesTable gamesTable;
+  ConfigWindow configWindow;
+  JButton highscoreButton;
+  JButton scanButton;
 
 
-  public OverviewTab(ConfigWindow configWindow, GameRepository repository) {
+  public TablesTab(ConfigWindow configWindow, VPinService repository) {
     super(new BorderLayout());
     this.configWindow = configWindow;
 
     setBackground(ConfigWindow.DEFAULT_BG_COLOR);
-    this.actionListener = new OverviewTabActionListener(repository, this);
+    this.actionListener = new TablesTabActionListener(repository, this);
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-    JToolBar toolBar = new JToolBar("Overview Toolbar");
+    JPanel toolBar = new JPanel();
+    toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+    toolBar.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
+    toolBar.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 4));
     this.addButtons(toolBar);
     this.add(toolBar, BorderLayout.NORTH);
 
@@ -32,27 +36,19 @@ public class OverviewTab extends JPanel {
     this.add(sp, BorderLayout.CENTER);
   }
 
-  private void addButtons(JToolBar toolBar) {
-    JButton button = makeNavigationButton("reload.png", "tableRescan", "Rescan All Tables", "Rescan all tables");
-    toolBar.add(button);
-    button = makeNavigationButton("refresh.png", "tableRefresh", "Refresh List", "Refresh all tables");
-    toolBar.add(button);
-    toolBar.addSeparator();
+  private void addButtons(JPanel toolBar) {
+    JButton refreshButton = makeNavigationButton("refresh.png", "tableRefresh", "Refresh List", "Refresh all tables");
+    toolBar.add(refreshButton);
+    scanButton = makeNavigationButton("reload.png", "tableRescan", "Rescan Table", "Rescan tables");
+    scanButton.setEnabled(false);
+    toolBar.add(scanButton);
     highscoreButton = makeNavigationButton("highscores.png", "tableHighscore", "Show Highscore", "Show Table Highscore");
     highscoreButton.setEnabled(false);
     toolBar.add(highscoreButton);
   }
 
-  public JButton getHighscoreButton() {
-    return highscoreButton;
-  }
-
   public GamesTable getGamesTable() {
     return gamesTable;
-  }
-
-  public ConfigWindow getConfigWindow() {
-    return configWindow;
   }
 
   private JButton makeNavigationButton(String imageName,
@@ -64,7 +60,7 @@ public class OverviewTab extends JPanel {
     button.setActionCommand(actionCommand);
     button.setToolTipText(toolTipText);
     button.addActionListener(actionListener);
-    button.setIcon(new ImageIcon(ResourceLoader.getResource(imageName)));
+//    button.setIcon(new ImageIcon(ResourceLoader.getResource(imageName)));
 
     return button;
   }

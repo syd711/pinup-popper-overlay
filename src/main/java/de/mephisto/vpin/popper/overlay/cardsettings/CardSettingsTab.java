@@ -1,8 +1,8 @@
 package de.mephisto.vpin.popper.overlay.cardsettings;
 
-import de.mephisto.vpin.PopperScreen;
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.popper.PopperScreen;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.generator.HighscoreCardGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class CardSettingsTab extends JPanel {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(CardSettingsTab.class);
 
-  private GameRepository repository;
+  private VPinService service;
 
   private final ConfigWindow configWindow;
 
@@ -36,10 +36,10 @@ public class CardSettingsTab extends JPanel {
   final JLabel iconLabel;
   final JButton generateButton;
 
-  public CardSettingsTab(ConfigWindow configWindow, GameRepository repository) {
+  public CardSettingsTab(ConfigWindow configWindow, VPinService service) {
     this.configWindow = configWindow;
-    actionListener = new CardSettingsTabActionListener(this, repository);
-    this.repository = repository;
+    actionListener = new CardSettingsTabActionListener(this, service);
+    this.service = service;
     PropertiesStore store = Config.getCardGeneratorConfig();
 
     setBackground(ConfigWindow.DEFAULT_BG_COLOR);
@@ -54,15 +54,13 @@ public class CardSettingsTab extends JPanel {
 
     List<String> values = Arrays.stream(PopperScreen.values()).sequential().map(e -> e.toString()).collect(Collectors.toList());
     JComboBox screenCombo = WidgetFactory.createCombobox(settingsPanel, values, "PinUP Popper Screen:", store, "popper.screen");
-    String warning = "Selecting a PinUP Popper screen will enable highscore card generation.<br/>Existing media will be overwritten for this screen!";
-    String msg = "<html><body>" + warning + "</body></html>";
-    JLabel warnLabel = WidgetFactory.createLabel(settingsPanel, msg, Color.RED);
+    JLabel warnLabel = WidgetFactory.createLabel(settingsPanel, getScreenStatusMessage(store.getString("popper.screen")), Color.RED);
 
     JLabel separator = new JLabel("");
     separator.setPreferredSize(new Dimension(1, 30));
     settingsPanel.add(separator, "wrap");
 
-    WidgetFactory.createTableSelector(repository, settingsPanel, "Sample Table:", store, "card.sampleTable");
+    WidgetFactory.createTableSelector(service, settingsPanel, "Sample Table:", store, "card.sampleTable");
 
 
     /******************************** Generator Fields ****************************************************************/
@@ -74,8 +72,8 @@ public class CardSettingsTab extends JPanel {
     WidgetFactory.createColorChooser(settingsPanel, "Font Color:", store, "card.font.color");
     WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "card.title.y.offset", 80);
     WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "card.highscores.row.padding.left", 60);
-    WidgetFactory.createSlider(settingsPanel, "Brighten Image:", store, "card.alphacomposite.white");
-    WidgetFactory.createSlider(settingsPanel, "Darken Image:", store, "card.alphacomposite.black");
+    WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "card.alphacomposite.white");
+    WidgetFactory.createSlider(settingsPanel, "Darken Background:", store, "card.alphacomposite.black");
     WidgetFactory.createSlider(settingsPanel, "Border Size:", store, "card.border.width");
 
 
@@ -113,6 +111,7 @@ public class CardSettingsTab extends JPanel {
       generateButton.setEnabled(!StringUtils.isEmpty(s));
       generateAllButton.setEnabled(!StringUtils.isEmpty(s));
       showActiveCardButton.setEnabled(!StringUtils.isEmpty(s));
+      warnLabel.setText(getScreenStatusMessage(s));
       warnLabel.setVisible(!StringUtils.isEmpty(s));
     });
 
@@ -129,6 +128,20 @@ public class CardSettingsTab extends JPanel {
     iconLabel = new JLabel(getPreviewImage());
     iconLabel.setBackground(Color.BLACK);
     previewPanel.add(iconLabel);
+  }
+
+  private String getScreenStatusMessage(String screenName) {
+    if(!StringUtils.isEmpty(screenName)) {
+      PopperScreen screen = PopperScreen.valueOf(screenName);
+      String validationMsg = service.validateScreenConfiguration(screen);
+
+      String warning = "Selecting a PinUP Popper screen will enable highscore card generation.<br/>Existing media will be overwritten for this screen!";
+      if(validationMsg != null) {
+        warning += "<br/><br/>Configuration Error:<br/><b>" + validationMsg + "</b>";
+      }
+      return "<html><body>" + warning + "</body></html>";
+    }
+    return "";
   }
 
   private ImageIcon getPreviewImage() {
@@ -162,12 +175,12 @@ public class CardSettingsTab extends JPanel {
   GameInfo getSampleGame() {
     int gameId = Config.getCardGeneratorConfig().getInt("card.sampleTable");
     if (gameId > 0) {
-      return repository.getGameInfo(gameId);
+      return service.getGameInfo(gameId);
     }
 
-    List<GameInfo> gameInfos = repository.getGameInfos();
+    List<GameInfo> gameInfos = service.getGameInfos();
     for (GameInfo gameInfo : gameInfos) {
-      if (gameInfo.getHighscore() != null) {
+      if (gameInfo.resolveHighscore() != null) {
         return gameInfo;
       }
     }
@@ -176,6 +189,12 @@ public class CardSettingsTab extends JPanel {
 
   public void generateSampleCard() {
     try {
+      GameInfo sampleGame = getSampleGame();
+      if(sampleGame.resolveHighscore() == null) {
+        JOptionPane.showMessageDialog(this, "No highscore files found for " + sampleGame.toString() + ".", "Error", JOptionPane.INFORMATION_MESSAGE);
+        return;
+      }
+
       iconLabel.setVisible(false);
       generateButton.setEnabled(false);
       HighscoreCardGenerator.generateCard(getSampleGame(), getScreen(), HighscoreCardGenerator.SAMPLE_FILE);
@@ -192,9 +211,9 @@ public class CardSettingsTab extends JPanel {
       int warning = JOptionPane.showConfirmDialog(this.configWindow, "This will overwrite all existing media for screen '" + getScreen() + "'.\nContinue?", "Warning", JOptionPane.YES_NO_OPTION);
       if (warning == JOptionPane.OK_OPTION) {
         generateButton.setEnabled(false);
-        List<GameInfo> gameInfos = repository.getGameInfos();
+        List<GameInfo> gameInfos = service.getGameInfos();
         for (GameInfo gameInfo : gameInfos) {
-          if (gameInfo.getHighscore() != null) {
+          if (gameInfo.resolveHighscore() != null) {
             HighscoreCardGenerator.generateCard(gameInfo, getScreen());
           }
         }

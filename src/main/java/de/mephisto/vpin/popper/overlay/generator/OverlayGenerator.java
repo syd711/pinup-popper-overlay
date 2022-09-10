@@ -1,7 +1,7 @@
 package de.mephisto.vpin.popper.overlay.generator;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.Logger;
@@ -15,18 +15,18 @@ public class OverlayGenerator extends GraphicsGenerator {
 
   public final static File GENERATED_OVERLAY_FILE = new File(SystemInfo.RESOURCES, "overlay.jpg");
 
-  private final GameRepository repository;
+  private final VPinService service;
 
   public static void main(String[] args) throws Exception {
-    generateOverlay(GameRepository.create());
+    generateOverlay(VPinService.create());
   }
 
-  public static void generateOverlay(GameRepository repository) throws Exception {
-    new OverlayGenerator(repository).generate();
+  public static void generateOverlay(VPinService service) throws Exception {
+    new OverlayGenerator(service).generate();
   }
 
-  OverlayGenerator(GameRepository repository) {
-    this.repository = repository;
+  OverlayGenerator(VPinService service) {
+    this.service = service;
   }
 
   public BufferedImage generate() throws Exception {
@@ -37,9 +37,9 @@ public class OverlayGenerator extends GraphicsGenerator {
       int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
       GameInfo gameOfTheMonth = null;
       if (selection > 0) {
-        gameOfTheMonth = repository.getGameInfo(selection);
+        gameOfTheMonth = service.getGameInfo(selection);
       }
-      OverlayGraphics.drawGames(rotated, repository, gameOfTheMonth);
+      OverlayGraphics.drawGames(rotated, service, gameOfTheMonth);
 
       BufferedImage rotatedTwice = rotateLeft(rotated);
       super.writeJPG(rotatedTwice, GENERATED_OVERLAY_FILE);
@@ -48,7 +48,7 @@ public class OverlayGenerator extends GraphicsGenerator {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;
     } finally {
-      repository.shutdown();
+      service.shutdown();
     }
   }
 }

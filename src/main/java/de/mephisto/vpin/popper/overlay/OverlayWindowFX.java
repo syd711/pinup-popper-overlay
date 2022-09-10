@@ -1,11 +1,12 @@
 package de.mephisto.vpin.popper.overlay;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.HighscoreChangedEvent;
-import de.mephisto.vpin.games.RepositoryListener;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.highscores.HighscoreChangedEvent;
+import de.mephisto.vpin.ServiceListener;
 import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGraphics;
+import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.util.PropertiesStore;
 import javafx.application.Application;
@@ -27,7 +28,7 @@ import java.io.FileInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class OverlayWindowFX extends Application implements NativeKeyListener, RepositoryListener {
+public class OverlayWindowFX extends Application implements NativeKeyListener, ServiceListener {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(OverlayGraphics.class);
 
   private KeyChecker keyChecker;
@@ -66,6 +67,8 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, R
     stage.setFullScreenExitHint("");
     stage.setFullScreen(true);
     stage.setAlwaysOnTop(true);
+    stage.setTitle("Highscore Overlay");
+    stage.getIcons().add(new Image(ResourceLoader.class.getResourceAsStream("logo.png")));
     stage.setHeight(screen.getVisualBounds().getWidth());
     stage.setWidth(screen.getVisualBounds().getHeight());
 
@@ -86,6 +89,7 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, R
     if (keyChecker.matches(nativeKeyEvent)) {
       this.visible = !visible;
       Platform.runLater(() -> {
+        LOG.info("Toggle show");
         if (this.visible) {
           stage.show();
         }

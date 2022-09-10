@@ -1,6 +1,6 @@
 package de.mephisto.vpin.popper.overlay.generator;
 
-import de.mephisto.vpin.games.GameInfo;
+import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.highscores.Highscore;
 import de.mephisto.vpin.highscores.Score;
 import de.mephisto.vpin.popper.overlay.util.Config;
@@ -73,7 +73,7 @@ public class HighscoreCardGraphics extends VPinGraphics {
    * The upper section, usually with the three topscores.
    */
   private static void renderTableChallenge(BufferedImage image, GameInfo game) throws Exception {
-    Highscore highscore = game.getHighscore();
+    Highscore highscore = game.resolveHighscore();
     if (highscore != null) {
       Graphics g = image.getGraphics();
       setDefaultColor(g, Config.getCardGeneratorConfig().getString("card.font.color"));

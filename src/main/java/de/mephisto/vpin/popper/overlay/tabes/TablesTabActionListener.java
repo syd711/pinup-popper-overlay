@@ -1,10 +1,12 @@
-package de.mephisto.vpin.popper.overlay.overview;
+package de.mephisto.vpin.popper.overlay.tabes;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
-import de.mephisto.vpin.games.HighscoreChangedEvent;
-import de.mephisto.vpin.games.RepositoryListener;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
+import de.mephisto.vpin.highscores.HighscoreChangedEvent;
+import de.mephisto.vpin.ServiceListener;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
+import de.mephisto.vpin.roms.RomScanListener;
+import de.mephisto.vpin.roms.RomScannedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,35 +16,40 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class OverviewTabActionListener implements ActionListener {
-  private final static Logger LOG = LoggerFactory.getLogger(OverviewTabActionListener.class);
+public class TablesTabActionListener implements ActionListener {
+  private final static Logger LOG = LoggerFactory.getLogger(TablesTabActionListener.class);
 
-  private final GameRepository repository;
-  private final OverviewTab overviewTab;
+  private final VPinService service;
+  private final TablesTab tablesTab;
   private ProgressWorker progressWorker;
   private JLabel statusLabel;
 
-  public OverviewTabActionListener(GameRepository repository, OverviewTab overviewTab) {
-    this.repository = repository;
-    this.overviewTab = overviewTab;
+  public TablesTabActionListener(VPinService service, TablesTab tablesTab) {
+    this.service = service;
+    this.tablesTab = tablesTab;
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     if (e.getActionCommand().equals("tableRescan")) {
-      this.rescanTables();
+      GameInfo selection = tablesTab.getGamesTable().getSelection();
+      if(selection != null) {
+        tablesTab.scanButton.setEnabled(false);
+        service.rescanRom(selection);
+        tablesTab.scanButton.setEnabled(true);
+      }
     }
     else if (e.getActionCommand().equals("cancelScan")) {
       this.progressWorker.cancel(true);
       this.progressWorker.destroy();
     }
     else if (e.getActionCommand().equals("tableHighscore")) {
-      List<GameInfo> gameInfos = repository.getGameInfos();
-      GamesTable gamesTable = overviewTab.getGamesTable();
+      List<GameInfo> gameInfos = service.getGameInfos();
+      GamesTable gamesTable = tablesTab.getGamesTable();
       int selectedRow = gamesTable.getSelectedRow();
       GameInfo gameInfo = gameInfos.get(selectedRow);
-      if (gameInfo.getHighscore() != null) {
-        new HighscoreDialog(this.overviewTab.getConfigWindow(), gameInfo, "Highscore for " + gameInfo.getGameDisplayName());
+      if (gameInfo.resolveHighscore() != null) {
+        new HighscoreDialog(this.tablesTab.configWindow, gameInfo, "Highscore for " + gameInfo.getGameDisplayName());
       }
     }
   }
@@ -54,7 +61,7 @@ public class OverviewTabActionListener implements ActionListener {
       return;
     }
 
-    List<GameInfo> gameInfos = repository.getGameInfos();
+    List<GameInfo> gameInfos = service.getGameInfos();
     final JDialog progressDialog = new JDialog(ConfigWindow.getInstance(), "Table Scanner", true);
     progressDialog.setSize(400, 200);
     progressDialog.setLayout(new GridBagLayout());
@@ -87,7 +94,7 @@ public class OverviewTabActionListener implements ActionListener {
     progressDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     progressDialog.setLocationRelativeTo(ConfigWindow.getInstance());
 
-    progressWorker = new ProgressWorker(repository);
+    progressWorker = new ProgressWorker(service);
     progressWorker.addPropertyChangeListener(evt -> {
       String name = evt.getPropertyName();
       System.out.println(name);
@@ -112,7 +119,7 @@ public class OverviewTabActionListener implements ActionListener {
     new Thread(new Runnable() {
       @Override
       public void run() {
-        repository.invalidateAll();
+        service.rescanAllTables();
       }
     }).start();
 
@@ -120,18 +127,18 @@ public class OverviewTabActionListener implements ActionListener {
     progressDialog.setVisible(true);
   }
 
-  public class ProgressWorker extends SwingWorker<Object, Object> implements RepositoryListener {
-    private GameRepository repository;
+  public class ProgressWorker extends SwingWorker<Object, Object> implements RomScanListener {
+    private VPinService repository;
     private int tablesToScan = 0;
     private int total = 0;
     private GameInfo latestScan;
     private GameInfo latestPublish;
 
-    ProgressWorker(GameRepository repository) {
+    ProgressWorker(VPinService repository) {
       this.repository = repository;
       this.tablesToScan = repository.getGameInfos().size();
       this.total = repository.getGameInfos().size();
-      this.repository.addListener(this);
+      this.repository.addRomScannedListener(this);
     }
 
     @Override
@@ -171,17 +178,13 @@ public class OverviewTabActionListener implements ActionListener {
     }
 
     public void destroy() {
-      this.repository.removeListener(this);
+      this.repository.removeRomScannedListener(this);
     }
 
     @Override
-    public void gameScanned(GameInfo gameInfo) {
-      latestScan = gameInfo;
+    public void romScanned(RomScannedEvent e) {
+      latestScan = e.getGameInfo();
       tablesToScan--;
-    }
-
-    @Override
-    public void highscoreChanged(HighscoreChangedEvent highscoreChangedEvent) {
     }
   }
 }

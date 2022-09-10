@@ -1,8 +1,8 @@
 package de.mephisto.vpin.popper.overlay.generator;
 
-import de.mephisto.vpin.PopperScreen;
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
+import de.mephisto.vpin.popper.PopperScreen;
 import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.Logger;
@@ -15,6 +15,12 @@ public class HighscoreCardGenerator extends GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardGenerator.class);
 
   public static File SAMPLE_FILE = new File(SystemInfo.RESOURCES, "highscore-card-sample.png");
+
+  public static BufferedImage generateCard(GameInfo game) throws Exception {
+    String screenName = Config.getCardGeneratorConfig().getString("popper.screen");
+    PopperScreen screen = PopperScreen.valueOf(screenName);
+    return generateCard(game, screen, null);
+  }
 
   public static BufferedImage generateCard(GameInfo game, PopperScreen screen) throws Exception {
     return generateCard(game, screen, null);
@@ -52,13 +58,13 @@ public class HighscoreCardGenerator extends GraphicsGenerator {
   }
 
   public static void main(String[] args) throws Exception {
-    GameRepository repository = GameRepository.create();
+    VPinService service = VPinService.create();
     try {
-      GameInfo gameInfo = repository.getGameByRom("STLE");
+      GameInfo gameInfo = service.getGameByRom("STLE");
       new HighscoreCardGenerator().generate(gameInfo, PopperScreen.Other2, HighscoreCardGenerator.SAMPLE_FILE);
     } catch (Exception e) {
       e.printStackTrace();
     }
-    repository.shutdown();
+    service.shutdown();
   }
 }

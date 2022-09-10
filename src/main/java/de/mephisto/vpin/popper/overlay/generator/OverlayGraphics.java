@@ -1,7 +1,7 @@
 package de.mephisto.vpin.popper.overlay.generator;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.highscores.Highscore;
 import de.mephisto.vpin.highscores.Score;
 import de.mephisto.vpin.popper.overlay.util.Config;
@@ -60,7 +60,7 @@ public class OverlayGraphics extends VPinGraphics {
     ROW_HEIGHT = TABLE_FONT_SIZE + ROW_SEPARATOR + SCORE_FONT_SIZE;
   }
 
-  public static void drawGames(BufferedImage image, GameRepository repository, GameInfo gameOfTheMonth) throws Exception {
+  public static void drawGames(BufferedImage image, VPinService service, GameInfo gameOfTheMonth) throws Exception {
     initValues();
     float alphaWhite = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.white");
     float alphaBlack = Config.getOverlayGeneratorConfig().getFloat("overlay.alphacomposite.black");
@@ -70,14 +70,14 @@ public class OverlayGraphics extends VPinGraphics {
     if (gameOfTheMonth != null) {
       highscoreListYOffset = renderTableChallenge(image, gameOfTheMonth, highscoreListYOffset);
     }
-    renderHighscoreList(image, gameOfTheMonth, repository, highscoreListYOffset);
+    renderHighscoreList(image, gameOfTheMonth, service, highscoreListYOffset);
   }
 
   /**
    * The upper section, usually with the three topscores.
    */
   private static int renderTableChallenge(BufferedImage image, GameInfo challengedGame, int highscoreListYOffset) throws Exception {
-    Highscore highscore = challengedGame.getHighscore();
+    Highscore highscore = challengedGame.resolveHighscore();
     int returnOffset = highscoreListYOffset;
     if (highscore != null) {
       Graphics g = image.getGraphics();
@@ -140,7 +140,7 @@ public class OverlayGraphics extends VPinGraphics {
     return returnOffset;
   }
 
-  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, GameRepository repository, int highscoreListYOffset) throws Exception {
+  private static void renderHighscoreList(BufferedImage image, GameInfo gameOfTheMonth, VPinService service, int highscoreListYOffset) throws Exception {
     Graphics g = image.getGraphics();
     setDefaultColor(g, Config.getOverlayGeneratorConfig().getString("overlay.font.color"));
     int imageWidth = image.getWidth();
@@ -154,11 +154,11 @@ public class OverlayGraphics extends VPinGraphics {
 
     int yStart = highscoreListYOffset + ROW_SEPARATOR + TITLE_FONT_SIZE / 2;
 
-    List<GameInfo> gameInfos = repository.getGameInfos();
+    List<GameInfo> gameInfos = service.getGameInfos();
     gameInfos.sort((o1, o2) -> (int) (o2.getLastPlayed().getTime() - o1.getLastPlayed().getTime()));
 
     for (GameInfo game : gameInfos) {
-      Highscore highscore = game.getHighscore();
+      Highscore highscore = game.resolveHighscore();
       if (highscore == null) {
         LOG.info("Skipped highscore rendering of " + game.getGameDisplayName() + ", no highscore info found");
         continue;

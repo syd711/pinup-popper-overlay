@@ -1,12 +1,12 @@
 package de.mephisto.vpin.popper.overlay;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
-import de.mephisto.vpin.games.HighscoreChangedEvent;
-import de.mephisto.vpin.games.RepositoryListener;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
+import de.mephisto.vpin.highscores.HighscoreChangedEvent;
+import de.mephisto.vpin.ServiceListener;
 import de.mephisto.vpin.popper.overlay.cardsettings.CardSettingsTab;
 import de.mephisto.vpin.popper.overlay.overlaysettings.OverlaySettingsTab;
-import de.mephisto.vpin.popper.overlay.overview.OverviewTab;
+import de.mephisto.vpin.popper.overlay.tabes.TablesTab;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +16,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-public class ConfigWindow extends JFrame implements RepositoryListener {
+public class ConfigWindow extends JFrame {
   private final static Logger LOG = LoggerFactory.getLogger(ConfigWindow.class);
 
   private static ConfigWindow instance;
-  private final GameRepository repository;
+  private final VPinService service;
 
   public static final Color DEFAULT_BG_COLOR = Color.WHITE;// Color.decode("#EEEEEE");
 
@@ -36,20 +36,19 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
     UIManager.setLookAndFeel ("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 
 
-    repository = GameRepository.create();
-    repository.addListener(this);
+    service = VPinService.create();
 
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab("Highscore Overlay Settings", null, new OverlaySettingsTab(this, repository), "Table Challenge, Key-Bindings, etc.");
+    tabbedPane.addTab("Highscore Overlay Settings", null, new OverlaySettingsTab(this, service), "Table Challenge, Key-Bindings, etc.");
     tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-    tabbedPane.addTab("Highscore Cards Settings", null, new CardSettingsTab(this, repository), "Highscore Generation Settings");
+    tabbedPane.addTab("Highscore Cards Settings", null, new CardSettingsTab(this, service), "Highscore Generation Settings");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    tabbedPane.addTab("Tables", null, new OverviewTab(this, repository),"");
+    tabbedPane.addTab("Tables", null, new TablesTab(this, service),"");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 
@@ -99,15 +98,5 @@ public class ConfigWindow extends JFrame implements RepositoryListener {
 
   public static void main(String[] args) throws Exception {
     new ConfigWindow();
-  }
-
-  @Override
-  public void gameScanned(GameInfo gameInfo) {
-
-  }
-
-  @Override
-  public void highscoreChanged(HighscoreChangedEvent highscoreChangedEvent) {
-    LOG.info("Highscore changed for " + highscoreChangedEvent.getGameInfo());
   }
 }

@@ -11,7 +11,7 @@ public class SuperMain {
       OverlayGenerator.main(args);
     }
     else {
-      OverlayWindowFX.launch(OverlayWindowFX.class);
+      new ServiceRunner();
     }
   }
 }

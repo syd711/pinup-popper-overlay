@@ -1,7 +1,7 @@
 package de.mephisto.vpin.popper.overlay.util;
 
-import de.mephisto.vpin.games.GameInfo;
-import de.mephisto.vpin.games.GameRepository;
+import de.mephisto.vpin.GameInfo;
+import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.util.PropertiesStore;
 import de.mephisto.vpin.util.SystemInfo;
@@ -18,14 +18,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class WidgetFactory {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
 
-  public static void createTableSelector(GameRepository repository, JPanel parent, String title, PropertiesStore store, String property) {
+  public static void createTableSelector(VPinService repository, JPanel parent, String title, PropertiesStore store, String property) {
     List<GameInfo> gameInfos = repository.getActiveGameInfos();
-//    List<GameInfo> collect = gameInfos.stream().filter(g -> g.getHighscore() != null).collect(Collectors.toList());
-    Vector<GameInfo> data = new Vector<>(gameInfos);
+    List<GameInfo> collect = gameInfos.stream().filter(g -> !StringUtils.isEmpty(g.getRom())).collect(Collectors.toList());
+    Vector<GameInfo> data = new Vector<>(collect);
     data.insertElementAt(null, 0);
     final JComboBox tableSelection = new JComboBox(data);
     tableSelection.addActionListener(e -> {
