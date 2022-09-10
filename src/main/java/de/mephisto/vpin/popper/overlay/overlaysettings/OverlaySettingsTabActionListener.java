@@ -29,15 +29,7 @@ public class OverlaySettingsTabActionListener implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if (cmd.equals("tableOfTheMonthSelector")) {
-      GameInfo selectedItem = (GameInfo) ((JComboBox) e.getSource()).getSelectedItem();
-      String value = "";
-      if (selectedItem != null) {
-        value = String.valueOf(selectedItem.getId());
-      }
-      Config.getOverlayConfig().set("overlay.challengedTable", value);
-    }
-    else if (cmd.equals("modifierCombo")) {
+    if (cmd.equals("modifierCombo")) {
       this.saveOverlayKeyBinding();
     }
     else if (cmd.equals("keyCombo")) {
@@ -72,7 +64,7 @@ public class OverlaySettingsTabActionListener implements ActionListener {
       key = modifierNum + "+" + key;
     }
 
-    Config.getOverlayConfig().set("overlay.hotkey", key);
+    Config.getOverlayGeneratorConfig().set("overlay.hotkey", key);
   }
 
 }

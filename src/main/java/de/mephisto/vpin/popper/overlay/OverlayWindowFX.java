@@ -44,8 +44,7 @@ public class OverlayWindowFX extends Application implements NativeKeyListener, S
   @Override
   public void start(Stage primaryStage) throws Exception {
     this.stage = primaryStage;
-    PropertiesStore overlayConfig = Config.getOverlayConfig();
-    String hotkey = overlayConfig.getString("overlay.hotkey");
+    String hotkey = Config.getCardGeneratorConfig().getString("overlay.hotkey");
     keyChecker = new KeyChecker(hotkey);
 
     Platform.setImplicitExit(false);

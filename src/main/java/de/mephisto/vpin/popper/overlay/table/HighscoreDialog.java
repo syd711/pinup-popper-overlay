@@ -1,4 +1,4 @@
-package de.mephisto.vpin.popper.overlay.tabes;
+package de.mephisto.vpin.popper.overlay.table;
 
 import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.highscores.Highscore;

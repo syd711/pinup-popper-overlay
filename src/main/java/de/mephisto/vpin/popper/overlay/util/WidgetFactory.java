@@ -25,7 +25,7 @@ public class WidgetFactory {
 
   public static void createTableSelector(VPinService repository, JPanel parent, String title, PropertiesStore store, String property) {
     List<GameInfo> gameInfos = repository.getActiveGameInfos();
-    List<GameInfo> collect = gameInfos.stream().filter(g -> !StringUtils.isEmpty(g.getRom())).collect(Collectors.toList());
+    List<GameInfo> collect = gameInfos.stream().filter(g -> g.hasHighscore()).collect(Collectors.toList());
     Vector<GameInfo> data = new Vector<>(collect);
     data.insertElementAt(null, 0);
     final JComboBox tableSelection = new JComboBox(data);

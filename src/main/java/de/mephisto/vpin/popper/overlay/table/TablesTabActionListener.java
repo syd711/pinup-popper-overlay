@@ -1,9 +1,7 @@
-package de.mephisto.vpin.popper.overlay.tabes;
+package de.mephisto.vpin.popper.overlay.table;
 
 import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
-import de.mephisto.vpin.highscores.HighscoreChangedEvent;
-import de.mephisto.vpin.ServiceListener;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.roms.RomScanListener;
 import de.mephisto.vpin.roms.RomScannedEvent;

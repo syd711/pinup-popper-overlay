@@ -18,7 +18,9 @@ public class OverlayGenerator extends GraphicsGenerator {
   private final VPinService service;
 
   public static void main(String[] args) throws Exception {
-    generateOverlay(VPinService.create());
+    VPinService service = VPinService.create();
+    generateOverlay(service);
+    service.shutdown();
   }
 
   public static void generateOverlay(VPinService service) throws Exception {
@@ -34,7 +36,7 @@ public class OverlayGenerator extends GraphicsGenerator {
       BufferedImage backgroundImage = super.loadBackground(new File(SystemInfo.RESOURCES, Config.getOverlayGeneratorConfig().getString("overlay.background")));
       BufferedImage rotated = rotateRight(backgroundImage);
 
-      int selection = Config.getOverlayConfig().getInt("overlay.challengedTable");
+      int selection = Config.getOverlayGeneratorConfig().getInt("overlay.challengedTable");
       GameInfo gameOfTheMonth = null;
       if (selection > 0) {
         gameOfTheMonth = service.getGameInfo(selection);
@@ -47,8 +49,6 @@ public class OverlayGenerator extends GraphicsGenerator {
     } catch (Exception e) {
       LOG.error("Failed to generate overlay: " + e.getMessage(), e);
       throw e;
-    } finally {
-      service.shutdown();
     }
   }
 }

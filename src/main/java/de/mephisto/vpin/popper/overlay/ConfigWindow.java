@@ -1,12 +1,9 @@
 package de.mephisto.vpin.popper.overlay;
 
-import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
-import de.mephisto.vpin.highscores.HighscoreChangedEvent;
-import de.mephisto.vpin.ServiceListener;
 import de.mephisto.vpin.popper.overlay.cardsettings.CardSettingsTab;
 import de.mephisto.vpin.popper.overlay.overlaysettings.OverlaySettingsTab;
-import de.mephisto.vpin.popper.overlay.tabes.TablesTab;
+import de.mephisto.vpin.popper.overlay.table.TablesTab;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

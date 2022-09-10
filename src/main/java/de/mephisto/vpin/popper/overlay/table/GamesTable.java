@@ -1,4 +1,4 @@
-package de.mephisto.vpin.popper.overlay.tabes;
+package de.mephisto.vpin.popper.overlay.table;
 
 import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
@@ -27,11 +27,12 @@ public class GamesTable extends JTable {
     getSelectionModel().addListSelectionListener(this);
     setRowHeight(20);
 
-    getColumnModel().getColumn(0).setPreferredWidth(160);
-    getColumnModel().getColumn(1).setPreferredWidth(40);
+    getColumnModel().getColumn(0).setPreferredWidth(20);
+    getColumnModel().getColumn(1).setPreferredWidth(160);
     getColumnModel().getColumn(2).setPreferredWidth(40);
-    getColumnModel().getColumn(3).setPreferredWidth(30);
-    getColumnModel().getColumn(4).setPreferredWidth(240);
+    getColumnModel().getColumn(3).setPreferredWidth(40);
+    getColumnModel().getColumn(4).setPreferredWidth(30);
+    getColumnModel().getColumn(5).setPreferredWidth(240);
 
     List<GameInfo> games = service.getGameInfos();
     setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {

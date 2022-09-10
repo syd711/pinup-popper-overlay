@@ -1,4 +1,4 @@
-package de.mephisto.vpin.popper.overlay.tabes;
+package de.mephisto.vpin.popper.overlay.table;
 
 import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
@@ -29,18 +29,21 @@ public class GameTableModel extends AbstractTableModel {
   public Object getValueAt(int rowIndex, int columnIndex) {
     GameInfo gameInfo = gameInfos.get(rowIndex);
     if(columnIndex == 0) {
-      return gameInfo.getGameDisplayName();
+      return gameInfo.getId();
     }
     if(columnIndex == 1) {
-      return gameInfo.getEmulatorName();
+      return gameInfo.getGameDisplayName();
     }
     if(columnIndex == 2) {
-      return gameInfo.getRom();
+      return gameInfo.getEmulatorName();
     }
     if(columnIndex == 3) {
-      return gameInfo.getNumberPlays();
+      return gameInfo.getRom();
     }
     if(columnIndex == 4) {
+      return gameInfo.getNumberPlays();
+    }
+    if(columnIndex == 5) {
       if(StringUtils.isEmpty(gameInfo.getRom())) {
         return "No rom information found for table.";
       }
