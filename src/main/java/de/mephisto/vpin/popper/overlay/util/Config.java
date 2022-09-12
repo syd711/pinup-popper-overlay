@@ -9,14 +9,16 @@ import org.slf4j.LoggerFactory;
  */
 public class Config {
   private final static String GENERATOR_CONFIG_FILENAME = "overlay-generator.properties";
-  private final static String CARd_CONFIG_FILENAME = "card-generator.properties";
+  private final static String CARD_CONFIG_FILENAME = "card-generator.properties";
+  private final static String COMMAND_CONFIG_FILENAME = "commands.properties";
 
   private static PropertiesStore generatorConfig;
   private static PropertiesStore cardConfig;
+  private static PropertiesStore commandConfig;
 
   public static PropertiesStore getCardGeneratorConfig() {
     if (cardConfig == null) {
-      cardConfig = PropertiesStore.create(CARd_CONFIG_FILENAME);
+      cardConfig = PropertiesStore.create(CARD_CONFIG_FILENAME);
     }
     return cardConfig;
   }
@@ -26,5 +28,12 @@ public class Config {
       generatorConfig = PropertiesStore.create(GENERATOR_CONFIG_FILENAME);
     }
     return generatorConfig;
+  }
+
+  public static PropertiesStore getCommandConfig() {
+    if (commandConfig == null) {
+      commandConfig = PropertiesStore.create(COMMAND_CONFIG_FILENAME);
+    }
+    return commandConfig;
   }
 }

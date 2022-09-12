@@ -28,6 +28,9 @@ public class OverlaySettingsTab extends JPanel {
   private final OverlaySettingsTabActionListener actionListener;
   private final VPinService service;
 
+  final JComboBox modifierCombo;
+  final JComboBox keyCombo;
+
   final JLabel iconLabel;
   final JButton generateButton;
 
@@ -49,11 +52,11 @@ public class OverlaySettingsTab extends JPanel {
 
     Vector<String> modifierNames = new Vector<>(Keys.getModifierNames());
     modifierNames.insertElementAt(null, 0);
-    final JComboBox modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
+    modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
     modifierCombo.setActionCommand("modifierCombo");
     modifierCombo.addActionListener(this.actionListener);
 
-    final JComboBox keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
+    keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
     keyCombo.setActionCommand("keyCombo");
     keyCombo.addActionListener(this.actionListener);
 
