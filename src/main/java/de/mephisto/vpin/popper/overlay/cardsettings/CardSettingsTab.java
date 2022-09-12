@@ -48,11 +48,12 @@ public class CardSettingsTab extends JPanel {
 
     JPanel settingsPanel = new JPanel();
     settingsPanel.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
-    settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
+    settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "center"));
     this.add(settingsPanel, BorderLayout.WEST);
 
 
     List<String> values = Arrays.stream(PopperScreen.values()).sequential().map(e -> e.toString()).collect(Collectors.toList());
+    values.add(0, null);
     JComboBox screenCombo = WidgetFactory.createCombobox(settingsPanel, values, "PinUP Popper Screen:", store, "popper.screen");
     JLabel warnLabel = WidgetFactory.createLabel(settingsPanel, getScreenStatusMessage(store.getString("popper.screen")), Color.RED);
 
@@ -70,8 +71,8 @@ public class CardSettingsTab extends JPanel {
     WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", store, "card.table.font");
     WidgetFactory.createFontSelector(settingsPanel, "Score Font:", store, "card.score.font");
     WidgetFactory.createColorChooser(configWindow, settingsPanel, "Font Color:", store, "card.font.color");
-    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "card.title.y.offset", 80);
-    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "card.highscores.row.padding.left", 60);
+    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", "px", store, "card.title.y.offset", 80);
+    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", "px", store, "card.highscores.row.padding.left", 60);
     WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "card.alphacomposite.white");
     WidgetFactory.createSlider(settingsPanel, "Darken Background:", store, "card.alphacomposite.black");
     WidgetFactory.createSlider(settingsPanel, "Border Size:", store, "card.border.width");

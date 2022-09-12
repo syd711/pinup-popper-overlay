@@ -64,7 +64,6 @@ public class WidgetFactory {
 
   public static JComboBox createCombobox(JPanel parent, List<String> values, String title, PropertiesStore store, String property) {
     Vector<String> data = new Vector<>(values);
-    data.add(0, null);
     final JComboBox combo = new JComboBox(data);
     combo.addActionListener(e -> {
       String selectedItem = (String) combo.getSelectedItem();
@@ -108,13 +107,14 @@ public class WidgetFactory {
     });
   }
 
-  public static void createSpinner(JPanel parent, String title, PropertiesStore store, String property, int defaultValue) {
+  public static void createSpinner(JPanel parent, String title, String unit, PropertiesStore store, String property, int defaultValue) {
     parent.add(new JLabel(title));
     int value = store.getInt(property, defaultValue);
     final JSpinner field = new JSpinner();
     field.setValue(value);
-    field.setMinimumSize(new Dimension(50, 26));
-    parent.add(field, "span 3");
+    field.setMinimumSize(new Dimension(100, 26));
+    parent.add(field);
+    parent.add(new JLabel(unit), "span 2");
     parent.add(new JLabel(""), "wrap");
     field.addChangeListener(e -> {
       int fieldValue = (int) field.getValue();

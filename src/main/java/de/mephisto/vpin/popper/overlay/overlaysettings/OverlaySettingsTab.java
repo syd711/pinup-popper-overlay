@@ -46,7 +46,7 @@ public class OverlaySettingsTab extends JPanel {
 
     JPanel settingsPanel = new JPanel();
     settingsPanel.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
-    settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "top"));
+    settingsPanel.setLayout(new MigLayout("gap rel 8 insets 10", "left", "center"));
     this.add(settingsPanel, BorderLayout.WEST);
 
 
@@ -95,8 +95,8 @@ public class OverlaySettingsTab extends JPanel {
     WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", store, "overlay.table.font");
     WidgetFactory.createFontSelector(settingsPanel, "Score Font:", store, "overlay.score.font");
     WidgetFactory.createColorChooser(configWindow, settingsPanel, "Font Color:", store, "overlay.font.color");
-    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "overlay.title.y.offset", 80);
-    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "overlay.highscores.row.padding.left", 60);
+    WidgetFactory.createSpinner(settingsPanel, "Padding Top:", "px", store, "overlay.title.y.offset", 80);
+    WidgetFactory.createSpinner(settingsPanel, "Padding Left:", "px", store, "overlay.highscores.row.padding.left", 60);
     WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "overlay.alphacomposite.white");
     WidgetFactory.createSlider(settingsPanel, "Darken Background:", store, "overlay.alphacomposite.black");
 

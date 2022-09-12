@@ -49,7 +49,7 @@ public class CommandsTab extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
     if(cmd.equals("createRule")) {
-      new RuleDialog(configWindow);
+      new RuleDialog(configWindow, service);
     }
   }
 }
