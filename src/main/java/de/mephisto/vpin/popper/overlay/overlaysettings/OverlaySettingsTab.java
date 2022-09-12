@@ -61,7 +61,7 @@ public class OverlaySettingsTab extends JPanel {
     keyCombo.addActionListener(this.actionListener);
 
 
-    String hotkey = Config.getCardGeneratorConfig().get("overlay.hotkey");
+    String hotkey = Config.getOverlayGeneratorConfig().get("overlay.hotkey");
     if (hotkey != null) {
       if (hotkey.contains("+")) {
         String[] split = hotkey.split("\\+");

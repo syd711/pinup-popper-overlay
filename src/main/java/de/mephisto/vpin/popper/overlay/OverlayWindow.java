@@ -21,7 +21,7 @@ public class OverlayWindow extends JFrame implements NativeKeyListener {
 
 
   public OverlayWindow() throws Exception {
-    String hotkey = Config.getCardGeneratorConfig().getString("overlay.hotkey");
+    String hotkey = Config.getOverlayGeneratorConfig().getString("overlay.hotkey");
     keyChecker = new KeyChecker(hotkey);
 
     UIManager.setLookAndFeel(

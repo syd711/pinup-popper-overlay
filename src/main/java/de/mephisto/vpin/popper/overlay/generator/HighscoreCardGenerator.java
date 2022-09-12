@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Date;
 
 public class HighscoreCardGenerator extends GraphicsGenerator {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardGenerator.class);
@@ -55,6 +56,10 @@ public class HighscoreCardGenerator extends GraphicsGenerator {
       LOG.error("Failed to generate card: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  private Date getLastModificationDate(GameInfo target, PopperScreen screen) {
+    return new Date();
   }
 
   public static void main(String[] args) throws Exception {
