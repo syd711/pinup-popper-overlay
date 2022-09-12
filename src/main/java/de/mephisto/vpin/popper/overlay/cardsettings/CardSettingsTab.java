@@ -69,7 +69,7 @@ public class CardSettingsTab extends JPanel {
     WidgetFactory.createFontSelector(settingsPanel, "Title Font:", store, "card.title.font");
     WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", store, "card.table.font");
     WidgetFactory.createFontSelector(settingsPanel, "Score Font:", store, "card.score.font");
-    WidgetFactory.createColorChooser(settingsPanel, "Font Color:", store, "card.font.color");
+    WidgetFactory.createColorChooser(configWindow, settingsPanel, "Font Color:", store, "card.font.color");
     WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "card.title.y.offset", 80);
     WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "card.highscores.row.padding.left", 60);
     WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "card.alphacomposite.white");

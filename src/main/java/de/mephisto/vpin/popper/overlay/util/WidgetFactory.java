@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,6 +23,18 @@ import java.util.stream.Collectors;
 
 public class WidgetFactory {
   private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+
+  public static JButton createButton(JPanel parent,
+                                     String actionCommand,
+                                     String toolTipText,
+                                     ActionListener actionListener) {
+    JButton button = new JButton(toolTipText);
+    button.setActionCommand(actionCommand);
+    button.setToolTipText(toolTipText);
+    button.addActionListener(actionListener);
+    parent.add(button);
+    return button;
+  }
 
   public static void createTableSelector(VPinService repository, JPanel parent, String title, PropertiesStore store, String property) {
     List<GameInfo> gameInfos = repository.getActiveGameInfos();
@@ -195,13 +208,13 @@ public class WidgetFactory {
     });
   }
 
-  public static void createColorChooser(JPanel parent, String label, PropertiesStore store, String property) {
+  public static void createColorChooser(JFrame frame, JPanel parent, String label, PropertiesStore store, String property) {
     String value = store.getString(property);
     parent.add(new JLabel(label));
     JButton open = new JButton("Select Color");
     JLabel valueLabel = new JLabel(value);
     open.addActionListener(e-> {
-      new ColorDialog(parent, valueLabel, store, property);
+      new ColorDialog(frame, valueLabel, store, property);
     });
     parent.add(valueLabel, "span 3");
     parent.add(open, "span 2");

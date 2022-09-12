@@ -9,7 +9,8 @@ import java.util.Locale;
 
 public class ColorDialog extends JDialog {
 
-  public ColorDialog(JPanel parent, JLabel valueLabel, PropertiesStore store, String property) {
+  public ColorDialog(JFrame parent, JLabel valueLabel, PropertiesStore store, String property) {
+    super(parent);
     String value = store.getString(property, "#FFFFFF");
     final JColorChooser fontColorChooser = new JColorChooser();
     fontColorChooser.setLocale(Locale.ENGLISH);

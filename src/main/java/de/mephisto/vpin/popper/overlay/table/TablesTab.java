@@ -2,6 +2,7 @@ package de.mephisto.vpin.popper.overlay.table;
 
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
+import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,31 +38,16 @@ public class TablesTab extends JPanel {
   }
 
   private void addButtons(JPanel toolBar) {
-    JButton refreshButton = makeNavigationButton("refresh.png", "tableRefresh", "Refresh List", "Refresh all tables");
-    toolBar.add(refreshButton);
-    scanButton = makeNavigationButton("reload.png", "tableRescan", "Rescan Table", "Rescan tables");
+    WidgetFactory.createButton(toolBar, "tableRefresh", "Refresh List", this.actionListener);
+    scanButton = WidgetFactory.createButton(toolBar, "tableRescan", "Rescan Table", this.actionListener);
     scanButton.setEnabled(false);
     toolBar.add(scanButton);
-    highscoreButton = makeNavigationButton("highscores.png", "tableHighscore", "Show Highscore", "Show Table Highscore");
+    highscoreButton = WidgetFactory.createButton(toolBar, "tableHighscore", "Show Highscore", this.actionListener);
     highscoreButton.setEnabled(false);
     toolBar.add(highscoreButton);
   }
 
   public GamesTable getGamesTable() {
     return gamesTable;
-  }
-
-  private JButton makeNavigationButton(String imageName,
-                                       String actionCommand,
-                                       String toolTipText,
-                                       String altText) {
-    //Create and initialize the button.
-    JButton button = new JButton(toolTipText);
-    button.setActionCommand(actionCommand);
-    button.setToolTipText(toolTipText);
-    button.addActionListener(actionListener);
-//    button.setIcon(new ImageIcon(ResourceLoader.getResource(imageName)));
-
-    return button;
   }
 }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.popper.overlay;
 
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.cardsettings.CardSettingsTab;
+import de.mephisto.vpin.popper.overlay.commands.CommandsTab;
 import de.mephisto.vpin.popper.overlay.overlaysettings.OverlaySettingsTab;
 import de.mephisto.vpin.popper.overlay.table.TablesTab;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
@@ -45,14 +46,18 @@ public class ConfigWindow extends JFrame {
     tabbedPane.addTab("Highscore Cards Settings", null, new CardSettingsTab(this, service), "Highscore Generation Settings");
     tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-    tabbedPane.addTab("Tables", null, new TablesTab(this, service),"");
+    tabbedPane.addTab("DOF Commands", null, new CommandsTab(this, service),"Create custom DOF rules");
     tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
+
+    tabbedPane.addTab("Tables", null, new TablesTab(this, service),"Status of all tables");
+    tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 
     tabbedPane.setBackground(DEFAULT_BG_COLOR);
     tabbedPane.setBackgroundAt(0, DEFAULT_BG_COLOR);
     tabbedPane.setBackgroundAt(1, DEFAULT_BG_COLOR);
     tabbedPane.setBackgroundAt(2, DEFAULT_BG_COLOR);
+    tabbedPane.setBackgroundAt(3, DEFAULT_BG_COLOR);
     add(tabbedPane);
 
     setSize(1346,990);

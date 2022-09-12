@@ -26,10 +26,7 @@ public class OverlaySettingsTab extends JPanel {
 
   private final ConfigWindow configWindow;
   private final OverlaySettingsTabActionListener actionListener;
-  private VPinService service;
-
-  final JComboBox modifierCombo;
-  final JComboBox keyCombo;
+  private final VPinService service;
 
   final JLabel iconLabel;
   final JButton generateButton;
@@ -52,11 +49,11 @@ public class OverlaySettingsTab extends JPanel {
 
     Vector<String> modifierNames = new Vector<>(Keys.getModifierNames());
     modifierNames.insertElementAt(null, 0);
-    modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
+    final JComboBox modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
     modifierCombo.setActionCommand("modifierCombo");
     modifierCombo.addActionListener(this.actionListener);
 
-    keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
+    final JComboBox keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
     keyCombo.setActionCommand("keyCombo");
     keyCombo.addActionListener(this.actionListener);
 
@@ -94,7 +91,7 @@ public class OverlaySettingsTab extends JPanel {
     WidgetFactory.createFontSelector(settingsPanel, "Title Font:", store, "overlay.title.font");
     WidgetFactory.createFontSelector(settingsPanel, "Table Name Font:", store, "overlay.table.font");
     WidgetFactory.createFontSelector(settingsPanel, "Score Font:", store, "overlay.score.font");
-    WidgetFactory.createColorChooser(settingsPanel, "Font Color:", store, "overlay.font.color");
+    WidgetFactory.createColorChooser(configWindow, settingsPanel, "Font Color:", store, "overlay.font.color");
     WidgetFactory.createSpinner(settingsPanel, "Padding Top:", store, "overlay.title.y.offset", 80);
     WidgetFactory.createSpinner(settingsPanel, "Padding Left:", store, "overlay.highscores.row.padding.left", 60);
     WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "overlay.alphacomposite.white");
