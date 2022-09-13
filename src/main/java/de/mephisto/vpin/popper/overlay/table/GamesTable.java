@@ -7,7 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
 
 public class GamesTable extends JTable {
@@ -19,6 +21,8 @@ public class GamesTable extends JTable {
 
   public GamesTable(TablesTab overviewTab, VPinService service, GameTableModel tableModel, GameTableColumnModel columnModel) {
     super(tableModel, columnModel);
+
+
     this.tablesTab = overviewTab;
     this.service = service;
 
@@ -48,7 +52,7 @@ public class GamesTable extends JTable {
         if (StringUtils.isEmpty(game.getRom())) {
           c.setBackground(Color.decode("#FF9999"));
         }
-        else if(!game.hasHighscore()) {
+        else if (!game.hasHighscore()) {
           c.setBackground(Color.decode("#FFCC33"));
         }
 
@@ -56,6 +60,15 @@ public class GamesTable extends JTable {
         return c;
       }
     });
+
+    TableRowSorter<GameTableModel> sorter = new TableRowSorter<>(tableModel);
+    sorter.setComparator(0, (Comparator<Integer>) (o1, o2) -> o1 - o2);
+    sorter.setComparator(1, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+    sorter.setComparator(2, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+    sorter.setComparator(3, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+    sorter.setComparator(4, (Comparator<Integer>) (o1, o2) -> o1 - o2);
+    sorter.setComparator(5, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+    setRowSorter(sorter);
   }
 
   public GameInfo getSelection() {

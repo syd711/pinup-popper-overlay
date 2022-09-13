@@ -40,6 +40,9 @@ public class RuleDialog extends JDialog {
 
   private final VPinService service;
   private final JPanel keySelectionPanel;
+  private final JSpinner timeSpinner;
+  private final JCheckBox toggleBtnCheckbox;
+  private final JComboBox triggerCombo;
 
   public RuleDialog(ConfigWindow configWindow, VPinService service) {
     super(configWindow);
@@ -48,7 +51,7 @@ public class RuleDialog extends JDialog {
     this.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     this.setLayout(new BorderLayout());
     this.setModal(true);
-    this.setSize(350, 300);
+    this.setSize(370, 330);
     this.setTitle("DOF Rule");
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
@@ -71,28 +74,47 @@ public class RuleDialog extends JDialog {
 
     WidgetFactory.createCombobox(rootPanel, VALUES, "to value", store, key + ".value");
 
-    WidgetFactory.createSpinner(rootPanel, "for", "ms", store, key + ".duration", 0);
+    timeSpinner = WidgetFactory.createSpinner(rootPanel, "for", "ms", store, key + ".duration", 0);
 
-    addTriggerCombo(rootPanel, key + ".trigger", store);
+    triggerCombo = addTriggerCombo(rootPanel, key + ".trigger", store);
+    triggerCombo.addActionListener(e -> this.updateViewState());
+
+    toggleBtnCheckbox = WidgetFactory.createCheckbox(rootPanel, "Toggle Button", store, key + ".toggle");
+    toggleBtnCheckbox.addActionListener(e -> this.updateViewState());
+
     keySelectionPanel = addKeySelection(rootPanel, key + ".key", store);
-    String triggerKey = key + ".trigger";
-    String triggerValue = store.getString(triggerKey);
-    keySelectionPanel.setVisible(String.valueOf(triggerValue).equals(Trigger.KEY_PRESSED_VALUE));
+
+    this.updateViewState();
 
     JToolBar tb = new JToolBar();
+    tb.setLayout(new FlowLayout(FlowLayout.RIGHT));
     tb.setBorder(BorderFactory.createEmptyBorder(4, 4, 8, 8));
-    tb.setLayout(new BorderLayout());
     tb.setFloatable(false);
-    JButton close = new JButton("Close");
+    JButton save = new JButton("Save");
+    save.setMinimumSize(new Dimension(60, 30));
+    save.addActionListener(e -> setVisible(false));
+    tb.add(save);
+    JButton close = new JButton("Cancel");
     close.setMinimumSize(new Dimension(60, 30));
     close.addActionListener(e -> setVisible(false));
-    tb.add(close, BorderLayout.EAST);
+    tb.add(close);
+
+
     this.add(tb, BorderLayout.SOUTH);
 
     this.setVisible(true);
   }
 
-  private void addTriggerCombo(JPanel rootPanel, String key, PropertiesStore store) {
+  private void updateViewState() {
+    Trigger selectedItem = (Trigger) triggerCombo.getSelectedItem();
+    boolean keyTrigger = selectedItem.getValue().equals(Trigger.KEY_PRESSED_VALUE);
+
+    keySelectionPanel.setVisible(keyTrigger);
+    toggleBtnCheckbox.setVisible(keyTrigger);
+    timeSpinner.setEnabled(!keyTrigger);
+  }
+
+  private JComboBox addTriggerCombo(JPanel rootPanel, String key, PropertiesStore store) {
     String property = key + ".trigger";
     Vector<Trigger> data = new Vector<>(TRIGGERS);
     final JComboBox triggerTypeSelector = new JComboBox(data);
@@ -102,8 +124,8 @@ public class RuleDialog extends JDialog {
       if (selectedItem != null) {
         value = String.valueOf(selectedItem.getValue());
       }
-      keySelectionPanel.setVisible(value.equals(Trigger.KEY_PRESSED_VALUE));
       store.set(property, value);
+      updateViewState();
     });
     String selection = store.getString(property);
     if (!StringUtils.isEmpty(selection)) {
@@ -113,6 +135,7 @@ public class RuleDialog extends JDialog {
     rootPanel.add(triggerTypeSelector, "span 3");
     rootPanel.add(new JLabel(""));
     rootPanel.add(new JLabel(""), "wrap");
+    return triggerTypeSelector;
   }
 
   private JPanel addKeySelection(JPanel rootPanel, String pKey, PropertiesStore store) {

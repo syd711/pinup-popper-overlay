@@ -10,8 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +96,21 @@ public class WidgetFactory {
     return label;
   }
 
+  public static JCheckBox createCheckbox(JPanel parent, String title, PropertiesStore store, String key) {
+    parent.add(new JLabel(""));
+    final JCheckBox field = new JCheckBox(title);
+    field.setMinimumSize(new Dimension(330, 26));
+    field.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
+    field.addActionListener(e -> {
+      boolean checked = field.isSelected();
+      store.set(key, String.valueOf(checked));
+    });
+    field.setSelected(store.getBoolean(key));
+    parent.add(field, "span 4");
+    parent.add(new JLabel(""), "wrap");
+    return field;
+  }
+
   public static void createTextField(JPanel parent, String title, PropertiesStore store, String property, String defaultValue) {
     parent.add(new JLabel(title));
     String value = store.getString(property, defaultValue);
@@ -107,10 +124,10 @@ public class WidgetFactory {
     });
   }
 
-  public static void createSpinner(JPanel parent, String title, String unit, PropertiesStore store, String property, int defaultValue) {
+  public static JSpinner createSpinner(JPanel parent, String title, String unit, PropertiesStore store, String property, int defaultValue) {
     parent.add(new JLabel(title));
     int value = store.getInt(property, defaultValue);
-    final JSpinner field = new JSpinner();
+    final JSpinner field = new JSpinner(new SpinnerNumberModel(0, 0, 999999, 1));
     field.setValue(value);
     field.setMinimumSize(new Dimension(100, 26));
     parent.add(field);
@@ -120,6 +137,7 @@ public class WidgetFactory {
       int fieldValue = (int) field.getValue();
       store.set(property, fieldValue);
     });
+    return field;
   }
 
   public static void createFileChooser(JPanel parent, String label, String buttonLabel, PropertiesStore store, String property, String defaultValue) {

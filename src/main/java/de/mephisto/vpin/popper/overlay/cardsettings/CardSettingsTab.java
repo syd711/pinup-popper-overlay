@@ -155,7 +155,7 @@ public class CardSettingsTab extends JPanel {
           file = sampleFile;
         }
         BufferedImage image = ImageIO.read(file);
-        int percentage = 48;
+        int percentage = 38;
         Image newimg = image.getScaledInstance(image.getWidth() * percentage / 100, image.getHeight() * percentage / 100, Image.SCALE_SMOOTH); // scale it the smooth way
         return new ImageIcon(newimg);  // transform it back
       }
