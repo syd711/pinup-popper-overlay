@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.Comparator;
@@ -56,19 +57,18 @@ public class GamesTable extends JTable {
           c.setBackground(Color.decode("#FFCC33"));
         }
 
-        table.repaint();
         return c;
       }
     });
 
-    TableRowSorter<GameTableModel> sorter = new TableRowSorter<>(tableModel);
-    sorter.setComparator(0, (Comparator<Integer>) (o1, o2) -> o1 - o2);
-    sorter.setComparator(1, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
-    sorter.setComparator(2, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
-    sorter.setComparator(3, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
-    sorter.setComparator(4, (Comparator<Integer>) (o1, o2) -> o1 - o2);
-    sorter.setComparator(5, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
-    setRowSorter(sorter);
+//    TableRowSorter<GameTableModel> sorter = new TableRowSorter<>(tableModel);
+//    sorter.setComparator(0, (Comparator<Integer>) (o1, o2) -> o1 - o2);
+//    sorter.setComparator(1, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+//    sorter.setComparator(2, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+//    sorter.setComparator(3, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+//    sorter.setComparator(4, (Comparator<Integer>) (o1, o2) -> o1 - o2);
+//    sorter.setComparator(5, (Comparator<String>) (o1, o2) -> o1.compareTo(o2));
+//    setRowSorter(sorter);
   }
 
   public GameInfo getSelection() {
