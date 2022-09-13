@@ -1,6 +1,8 @@
 package de.mephisto.vpin.popper.overlay.commands;
 
 import de.mephisto.vpin.VPinService;
+import de.mephisto.vpin.dof.DOFCommand;
+import de.mephisto.vpin.dof.Trigger;
 import de.mephisto.vpin.dof.Unit;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.util.Config;
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -22,7 +25,6 @@ public class RuleDialog extends JDialog {
 
   private static final java.util.List<String> OUTPUTS = new ArrayList<>();
   private static final java.util.List<String> VALUES = new ArrayList<>();
-  private static final java.util.List<Trigger> TRIGGERS = new ArrayList<>();
 
   static {
     for (int i = 1; i < 129; i++) {
@@ -31,11 +33,6 @@ public class RuleDialog extends JDialog {
     for (int i = 0; i < 256; i++) {
       VALUES.add(String.valueOf(i));
     }
-
-    TRIGGERS.add(new Trigger(Trigger.SYSTEM_START_VALUE, Trigger.SYSTEM_START));
-    TRIGGERS.add(new Trigger(Trigger.TABLE_START_VALUE, Trigger.TABLE_START));
-    TRIGGERS.add(new Trigger(Trigger.TABLE_EXIT_VALUE, Trigger.TABLE_EXIT));
-    TRIGGERS.add(new Trigger(Trigger.KEY_PRESSED_VALUE, Trigger.KEY_PRESSED));
   }
 
   private final VPinService service;
@@ -44,14 +41,18 @@ public class RuleDialog extends JDialog {
   private final JCheckBox toggleBtnCheckbox;
   private final JComboBox triggerCombo;
 
-  public RuleDialog(ConfigWindow configWindow, VPinService service) {
+  private final CommandPropertiesStore store;
+
+
+  public RuleDialog(ConfigWindow configWindow, VPinService service, DOFCommand dofCommand) {
     super(configWindow);
     this.service = service;
+    this.store = new CommandPropertiesStore(dofCommand);
 
     this.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     this.setLayout(new BorderLayout());
     this.setModal(true);
-    this.setSize(370, 330);
+    this.setSize(500, 360);
     this.setTitle("DOF Rule");
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     int x = (int) ((dimension.getWidth() - this.getWidth()) / 2);
@@ -65,8 +66,9 @@ public class RuleDialog extends JDialog {
     this.add(rootPanel, BorderLayout.CENTER);
 
 
-    String key = "rule.1";
-    PropertiesStore store = Config.getCommandConfig();
+    String key = "command." + dofCommand.getId();
+
+    WidgetFactory.createTextField(rootPanel, "Description:", store, key + ".description", "");
 
     addBoardCombo(rootPanel, key + ".board", store);
 
@@ -92,7 +94,10 @@ public class RuleDialog extends JDialog {
     tb.setFloatable(false);
     JButton save = new JButton("Save");
     save.setMinimumSize(new Dimension(60, 30));
-    save.addActionListener(e -> setVisible(false));
+    save.addActionListener(e -> {
+      store.save();
+      setVisible(false);
+    });
     tb.add(save);
     JButton close = new JButton("Cancel");
     close.setMinimumSize(new Dimension(60, 30));
@@ -107,22 +112,25 @@ public class RuleDialog extends JDialog {
 
   private void updateViewState() {
     Trigger selectedItem = (Trigger) triggerCombo.getSelectedItem();
-    boolean keyTrigger = selectedItem.getValue().equals(Trigger.KEY_PRESSED_VALUE);
+    boolean keyTrigger = selectedItem.equals(Trigger.KeyEvent);
 
     keySelectionPanel.setVisible(keyTrigger);
     toggleBtnCheckbox.setVisible(keyTrigger);
     timeSpinner.setEnabled(!keyTrigger);
+    if(!timeSpinner.isEnabled()) {
+      timeSpinner.setValue(0);
+    }
   }
 
   private JComboBox addTriggerCombo(JPanel rootPanel, String key, PropertiesStore store) {
     String property = key + ".trigger";
-    Vector<Trigger> data = new Vector<>(TRIGGERS);
+    Vector<Trigger> data = new Vector<>(Arrays.asList(Trigger.values()));
     final JComboBox triggerTypeSelector = new JComboBox(data);
     triggerTypeSelector.addActionListener(e -> {
       Trigger selectedItem = (Trigger) triggerTypeSelector.getSelectedItem();
       String value = "";
       if (selectedItem != null) {
-        value = String.valueOf(selectedItem.getValue());
+        value = String.valueOf(selectedItem);
       }
       store.set(property, value);
       updateViewState();

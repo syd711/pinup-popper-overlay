@@ -57,6 +57,7 @@ public class GamesTable extends JTable {
           c.setBackground(Color.decode("#FFCC33"));
         }
 
+        table.repaint();
         return c;
       }
     });
