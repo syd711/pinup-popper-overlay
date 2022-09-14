@@ -4,29 +4,26 @@ import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.dof.DOFCommand;
 import de.mephisto.vpin.dof.Trigger;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
-import de.mephisto.vpin.popper.overlay.table.GameTableColumnModel;
-import de.mephisto.vpin.popper.overlay.table.GameTableModel;
-import de.mephisto.vpin.popper.overlay.table.GamesTable;
-import de.mephisto.vpin.popper.overlay.table.TablesTabActionListener;
 import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
-import net.miginfocom.swing.MigLayout;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class CommandsTab extends JPanel implements ActionListener {
-  private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(CommandsTab.class);
+  private final static Logger LOG = LoggerFactory.getLogger(CommandsTab.class);
 
   private final ConfigWindow configWindow;
   private final CommandTable commandTable;
   private final CommandTableModel commandTableModel;
-  private VPinService service;
+  private final VPinService service;
 
   JButton editButton;
-
+  JButton deleteButton;
 
   public CommandsTab(ConfigWindow configWindow, VPinService service) {
     this.configWindow = configWindow;
@@ -52,22 +49,56 @@ public class CommandsTab extends JPanel implements ActionListener {
   private void addButtons(JPanel toolBar) {
     WidgetFactory.createButton(toolBar, "createRule", "Create Rule", this);
     editButton = WidgetFactory.createButton(toolBar, "editRule", "Edit Rule", this);
+    deleteButton = WidgetFactory.createButton(toolBar, "deleteRule", "Delete Rule", this);
     editButton.setEnabled(false);
+    deleteButton.setEnabled(false);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     String cmd = e.getActionCommand();
-    if(cmd.equals("createRule")) {
-      DOFCommand dofCommand = new DOFCommand(1, 1, 1, 0, 0, Trigger.TableStart, null, false, "");
-      new RuleDialog(configWindow, service, dofCommand);
-      service.getDOFCommands().add(dofCommand);
-      commandTableModel.fireTableDataChanged();
+    switch (cmd) {
+      case "createRule":
+        DOFCommand dofCommand = new DOFCommand(getNextId(), 1, 1, 0, 0, Trigger.TableStart, null, false, "");
+        RuleDialog ruleDialog = new RuleDialog(configWindow, service, dofCommand);
+        int result = ruleDialog.showDialog();
+        if (result == 1) {
+          service.addDOFCommand(dofCommand);
+          commandTableModel.fireTableDataChanged();
+        }
+
+        break;
+      case "editRule": {
+        DOFCommand selection = commandTable.getSelection();
+        RuleDialog editDialog = new RuleDialog(configWindow, service, selection);
+        int resultEdit = editDialog.showDialog();
+        if (resultEdit == 1) {
+          commandTableModel.fireTableDataChanged();
+          service.updateDOFCommand(selection);
+        }
+        break;
+      }
+      case "deleteRule": {
+        DOFCommand selection = commandTable.getSelection();
+        int delete = JOptionPane.showConfirmDialog(configWindow, "Delete selected rule?", "Delete Rule2", JOptionPane.YES_NO_OPTION);
+        if (delete == JOptionPane.YES_OPTION) {
+          service.removeDOFCommand(selection);
+          commandTableModel.fireTableDataChanged();
+        }
+        break;
+      }
     }
-    else if(cmd.equals("editRule")) {
-      DOFCommand selection = commandTable.getSelection();
-      new RuleDialog(configWindow, service, selection);
-      commandTableModel.fireTableDataChanged();
+  }
+
+  private int getNextId() {
+    int id = 0;
+    List<DOFCommand> dofCommands = service.getDOFCommands();
+    for (DOFCommand dofCommand : dofCommands) {
+      if (dofCommand.getId() > id) {
+        id = dofCommand.getId();
+      }
     }
+    id++;
+    return id;
   }
 }

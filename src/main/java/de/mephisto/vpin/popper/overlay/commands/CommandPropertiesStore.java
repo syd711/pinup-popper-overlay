@@ -12,6 +12,7 @@ public class CommandPropertiesStore extends PropertiesStore {
     this.command = command;
     set("command." + command.getId() + ".id", command.getId());
     set("command." + command.getId() + ".unit", command.getUnit());
+    set("command." + command.getId() + ".output", command.getPortNumber());
     set("command." + command.getId() + ".value", command.getValue());
     set("command." + command.getId() + ".duration", command.getDurationMs());
     set("command." + command.getId() + ".trigger", command.getTrigger().name());
@@ -31,6 +32,7 @@ public class CommandPropertiesStore extends PropertiesStore {
   public void save() {
     command.setUnit(getInt("command." + command.getId() + ".unit"));
     command.setValue(getInt("command." + command.getId() + ".value"));
+    command.setPortNumber(getInt("command." + command.getId() + ".output"));
     command.setDurationMs(getInt("command." + command.getId() + ".duration"));
     command.setTrigger(Trigger.valueOf(get("command." + command.getId() + ".trigger")));
     command.setKeyBinding(get("command." + command.getId() + ".keyBinding"));

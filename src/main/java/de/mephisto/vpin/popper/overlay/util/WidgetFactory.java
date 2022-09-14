@@ -10,10 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class WidgetFactory {
     final JComboBox combo = new JComboBox(data);
     combo.addActionListener(e -> {
       String selectedItem = (String) combo.getSelectedItem();
-      if(selectedItem == null) {
+      if (selectedItem == null) {
         selectedItem = "";
       }
       store.set(property, selectedItem);
@@ -118,10 +118,26 @@ public class WidgetFactory {
     field.setMinimumSize(new Dimension(330, 26));
     parent.add(field, "span 5");
     parent.add(new JLabel(""), "wrap");
-    field.addActionListener(e -> {
-      String text = field.getText();
-      store.set(property, text);
-    });
+    field.getDocument().addDocumentListener(new DocumentListener() {
+                                              @Override
+                                              public void insertUpdate(DocumentEvent e) {
+                                                String text = field.getText();
+                                                store.set(property, text);
+                                              }
+
+                                              @Override
+                                              public void removeUpdate(DocumentEvent e) {
+                                                String text = field.getText();
+                                                store.set(property, text);
+                                              }
+
+                                              @Override
+                                              public void changedUpdate(DocumentEvent e) {
+                                                String text = field.getText();
+                                                store.set(property, text);
+                                              }
+                                            }
+    );
   }
 
   public static JSpinner createSpinner(JPanel parent, String title, String unit, PropertiesStore store, String property, int defaultValue) {
@@ -189,7 +205,7 @@ public class WidgetFactory {
     String name = store.getString(property + ".name");
     int size = store.getInt(property + ".size");
     final JLabel titleFontLabel = new JLabel(name + " / " + size);
-    parent.add(titleFontLabel,"span 3");
+    parent.add(titleFontLabel, "span 3");
     JButton fontChooserButton = new JButton("Choose Font");
     fontChooserButton.addActionListener(e -> {
       JFontChooser fontChooser = new JFontChooser();
@@ -231,7 +247,7 @@ public class WidgetFactory {
     parent.add(new JLabel(label));
     JButton open = new JButton("Select Color");
     JLabel valueLabel = new JLabel(value);
-    open.addActionListener(e-> {
+    open.addActionListener(e -> {
       new ColorDialog(frame, valueLabel, store, property);
     });
     parent.add(valueLabel, "span 3");

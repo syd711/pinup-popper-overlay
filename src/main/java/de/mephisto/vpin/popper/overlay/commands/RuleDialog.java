@@ -5,7 +5,6 @@ import de.mephisto.vpin.dof.DOFCommand;
 import de.mephisto.vpin.dof.Trigger;
 import de.mephisto.vpin.dof.Unit;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
-import de.mephisto.vpin.popper.overlay.util.Config;
 import de.mephisto.vpin.popper.overlay.util.Keys;
 import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
 import de.mephisto.vpin.util.PropertiesStore;
@@ -14,8 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -41,13 +38,20 @@ public class RuleDialog extends JDialog {
   private final JCheckBox toggleBtnCheckbox;
   private final JComboBox triggerCombo;
 
+  private JComboBox keyCombo;
+  private JComboBox modifierCombo;
+
   private final CommandPropertiesStore store;
 
+  private DOFCommand dofCommand;
+
+  private int result = 0;
 
   public RuleDialog(ConfigWindow configWindow, VPinService service, DOFCommand dofCommand) {
     super(configWindow);
     this.service = service;
     this.store = new CommandPropertiesStore(dofCommand);
+    this.dofCommand = dofCommand;
 
     this.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     this.setLayout(new BorderLayout());
@@ -84,7 +88,7 @@ public class RuleDialog extends JDialog {
     toggleBtnCheckbox = WidgetFactory.createCheckbox(rootPanel, "Toggle Button", store, key + ".toggle");
     toggleBtnCheckbox.addActionListener(e -> this.updateViewState());
 
-    keySelectionPanel = addKeySelection(rootPanel, key + ".key", store);
+    keySelectionPanel = addKeySelection(rootPanel, key + ".keyBinding", store);
 
     this.updateViewState();
 
@@ -96,18 +100,25 @@ public class RuleDialog extends JDialog {
     save.setMinimumSize(new Dimension(60, 30));
     save.addActionListener(e -> {
       store.save();
+      result = 1;
       setVisible(false);
     });
     tb.add(save);
     JButton close = new JButton("Cancel");
     close.setMinimumSize(new Dimension(60, 30));
-    close.addActionListener(e -> setVisible(false));
+    close.addActionListener(e -> {
+      result = 0;
+      setVisible(false);
+    });
     tb.add(close);
 
 
     this.add(tb, BorderLayout.SOUTH);
+  }
 
+  public int showDialog() {
     this.setVisible(true);
+    return result;
   }
 
   private void updateViewState() {
@@ -117,28 +128,27 @@ public class RuleDialog extends JDialog {
     keySelectionPanel.setVisible(keyTrigger);
     toggleBtnCheckbox.setVisible(keyTrigger);
     timeSpinner.setEnabled(!keyTrigger);
-    if(!timeSpinner.isEnabled()) {
+    if (!timeSpinner.isEnabled()) {
       timeSpinner.setValue(0);
     }
   }
 
   private JComboBox addTriggerCombo(JPanel rootPanel, String key, PropertiesStore store) {
-    String property = key + ".trigger";
     Vector<Trigger> data = new Vector<>(Arrays.asList(Trigger.values()));
     final JComboBox triggerTypeSelector = new JComboBox(data);
+    String selection = store.getString(key);
+    if (!StringUtils.isEmpty(selection)) {
+      triggerTypeSelector.setSelectedItem(Trigger.valueOf(selection));
+    }
     triggerTypeSelector.addActionListener(e -> {
       Trigger selectedItem = (Trigger) triggerTypeSelector.getSelectedItem();
       String value = "";
       if (selectedItem != null) {
         value = String.valueOf(selectedItem);
       }
-      store.set(property, value);
+      store.set(key, value);
       updateViewState();
     });
-    String selection = store.getString(property);
-    if (!StringUtils.isEmpty(selection)) {
-      triggerTypeSelector.setSelectedItem(selection);
-    }
     rootPanel.add(new JLabel("when"));
     rootPanel.add(triggerTypeSelector, "span 3");
     rootPanel.add(new JLabel(""));
@@ -151,26 +161,16 @@ public class RuleDialog extends JDialog {
     panel.setBackground(ConfigWindow.DEFAULT_BG_COLOR);
     Vector<String> modifierNames = new Vector<>(Keys.getModifierNames());
     modifierNames.insertElementAt(null, 0);
-    JComboBox modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
+    modifierCombo = new JComboBox(new DefaultComboBoxModel(modifierNames));
     modifierCombo.setActionCommand("modifierCombo");
-    modifierCombo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
+    modifierCombo.addActionListener(e -> saveOverlayKeyBinding());
 
-      }
-    });
-
-    JComboBox keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
+    keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
     keyCombo.setActionCommand("keyCombo");
-    keyCombo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-
-      }
-    });
+    keyCombo.addActionListener(e -> saveOverlayKeyBinding());
 
 
-    String hotkey = Config.getOverlayGeneratorConfig().get("overlay.hotkey");
+    String hotkey = store.get(pKey);
     if (hotkey != null) {
       if (hotkey.contains("+")) {
         String[] split = hotkey.split("\\+");
@@ -193,7 +193,25 @@ public class RuleDialog extends JDialog {
     rootPanel.add(new JLabel(""));
     rootPanel.add(new JLabel(""), "wrap");
 
+    saveOverlayKeyBinding();
     return panel;
+  }
+
+
+  private void saveOverlayKeyBinding() {
+    String key = (String) keyCombo.getSelectedItem();
+    String modifier = (String) modifierCombo.getSelectedItem();
+
+    if (key.length() == 1) {
+      key = key.toLowerCase();
+    }
+
+    if (modifier != null) {
+      int modifierNum = Keys.getModifier(modifier);
+      key = modifierNum + "+" + key;
+    }
+
+    this.store.set("command." + this.dofCommand.getId() + ".keyBinding", key);
   }
 
   private void addBoardCombo(JPanel rootPanel, String key, PropertiesStore store) {

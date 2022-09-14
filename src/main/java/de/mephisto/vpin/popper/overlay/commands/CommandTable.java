@@ -1,7 +1,9 @@
 package de.mephisto.vpin.popper.overlay.commands;
 
+import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.dof.DOFCommand;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +44,12 @@ public class CommandTable extends JTable {
 //      @Override
 //      public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 //        final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+//        c.setBackground(Color.WHITE);
+//        if (isSelected) {
+//          c.setBackground(Color.LIGHT_GRAY);
+//        }
+//
+//        table.repaint();
 //        return c;
 //      }
 //    });
@@ -58,6 +66,7 @@ public class CommandTable extends JTable {
       int row = selectedRow[0];
       this.selection = commandList.get(row);
       commandsTab.editButton.setEnabled(selection != null);
+      commandsTab.deleteButton.setEnabled(selection != null);
     }
   }
 }

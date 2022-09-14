@@ -142,7 +142,7 @@ public class OverlaySettingsTab extends JPanel {
       return new ImageIcon(newimg);  // transform it back
 
     } catch (Exception e) {
-      LOG.error("Erorr loading overlay preview: " + e.getMessage(), e);
+      LOG.error("Error loading overlay preview: " + e.getMessage(), e);
     }
     return null;
   }

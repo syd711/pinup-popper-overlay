@@ -2,22 +2,25 @@ package de.mephisto.vpin.popper.overlay.commands;
 
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.dof.DOFCommand;
+import de.mephisto.vpin.popper.overlay.util.Keys;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
+import java.util.Locale;
 
 public class CommandTableModel extends AbstractTableModel {
 
-  private final List<DOFCommand> commandList;
+  private VPinService repository;
 
   public CommandTableModel(VPinService repository) {
-    commandList = repository.getDOFCommands();
+    this.repository = repository;
   }
 
   @Override
   public int getRowCount() {
-    return commandList.size();
+    return repository.getDOFCommands().size();
   }
 
   @Override
@@ -27,7 +30,8 @@ public class CommandTableModel extends AbstractTableModel {
 
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
-    DOFCommand command = commandList.get(rowIndex);
+    List<DOFCommand> dofCommands = repository.getDOFCommands();
+    DOFCommand command = dofCommands.get(rowIndex);
     if (columnIndex == 0) {
       return command.getId();
     }
@@ -50,7 +54,17 @@ public class CommandTableModel extends AbstractTableModel {
       return command.getTrigger();
     }
     if (columnIndex == 7) {
-      return command.getKeyBinding();
+      String keyBinding = command.getKeyBinding();
+      if(!StringUtils.isEmpty(keyBinding)) {
+        if (keyBinding.contains("+")) {
+          String[] split = keyBinding.split("\\+");
+          String key = split[1];
+          String modifier = Keys.getModifierName(Integer.parseInt(split[0]));
+          return modifier + " + " + key;
+        }
+        return keyBinding;
+      }
+      return "";
     }
     if (columnIndex == 8) {
       return command.isToggle();
