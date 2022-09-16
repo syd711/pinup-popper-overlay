@@ -38,8 +38,8 @@ public class WidgetFactory {
     return button;
   }
 
-  public static void createTableSelector(VPinService repository, JPanel parent, String title, PropertiesStore store, String property) {
-    List<GameInfo> gameInfos = repository.getActiveGameInfos();
+  public static void createTableSelector(VPinService service, JPanel parent, String title, PropertiesStore store, String property) {
+    List<GameInfo> gameInfos = service.getActiveGameInfos();
     List<GameInfo> collect = gameInfos.stream().filter(g -> g.hasHighscore()).collect(Collectors.toList());
     Vector<GameInfo> data = new Vector<>(collect);
     data.insertElementAt(null, 0);
@@ -54,7 +54,7 @@ public class WidgetFactory {
     });
     int selection = store.getInt(property);
     if (selection > 0) {
-      GameInfo gameInfo = repository.getGameInfo(selection);
+      GameInfo gameInfo = service.getGameInfo(selection);
       tableSelection.setSelectedItem(gameInfo);
     }
 

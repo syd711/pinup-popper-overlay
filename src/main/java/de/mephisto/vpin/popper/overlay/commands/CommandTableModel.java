@@ -2,25 +2,24 @@ package de.mephisto.vpin.popper.overlay.commands;
 
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.dof.DOFCommand;
+import de.mephisto.vpin.dof.Unit;
 import de.mephisto.vpin.popper.overlay.util.Keys;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import java.util.List;
-import java.util.Locale;
 
 public class CommandTableModel extends AbstractTableModel {
 
-  private VPinService repository;
+  private VPinService service;
 
-  public CommandTableModel(VPinService repository) {
-    this.repository = repository;
+  public CommandTableModel(VPinService service) {
+    this.service = service;
   }
 
   @Override
   public int getRowCount() {
-    return repository.getDOFCommands().size();
+    return service.getDOFCommands().size();
   }
 
   @Override
@@ -30,7 +29,7 @@ public class CommandTableModel extends AbstractTableModel {
 
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
-    List<DOFCommand> dofCommands = repository.getDOFCommands();
+    List<DOFCommand> dofCommands = service.getDOFCommands();
     DOFCommand command = dofCommands.get(rowIndex);
     if (columnIndex == 0) {
       return command.getId();
@@ -39,7 +38,8 @@ public class CommandTableModel extends AbstractTableModel {
       return command.getDescription();
     }
     if (columnIndex == 2) {
-      return command.getUnit();
+      Unit unit = service.getUnit(command.getUnit());
+      return unit.toString();
     }
     if (columnIndex == 3) {
       return command.getPortNumber();
@@ -58,9 +58,14 @@ public class CommandTableModel extends AbstractTableModel {
       if(!StringUtils.isEmpty(keyBinding)) {
         if (keyBinding.contains("+")) {
           String[] split = keyBinding.split("\\+");
-          String key = split[1];
-          String modifier = Keys.getModifierName(Integer.parseInt(split[0]));
-          return modifier + " + " + key;
+          if(split.length > 1) {
+            String key = split[1];
+            String modifier = Keys.getModifierName(Integer.parseInt(split[0]));
+            return modifier + " + " + key;
+          }
+          else {
+            return Keys.getModifierName(Integer.parseInt(split[0]));
+          }
         }
         return keyBinding;
       }

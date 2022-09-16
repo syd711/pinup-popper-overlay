@@ -7,10 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.Comparator;
 import java.util.List;
 
 public class GamesTable extends JTable {
@@ -46,7 +43,8 @@ public class GamesTable extends JTable {
         final Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         c.setBackground(Color.WHITE);
         if (isSelected) {
-          c.setBackground(Color.LIGHT_GRAY);
+          c.setBackground(Color.BLUE);
+          return c;
         }
 
         GameInfo game = games.get(row);
@@ -56,8 +54,10 @@ public class GamesTable extends JTable {
         else if (!game.hasHighscore()) {
           c.setBackground(Color.decode("#FFCC33"));
         }
+        else if(row % 2 == 0) {
+          c.setBackground(Color.decode("#EEEEEE"));
+        }
 
-        table.repaint();
         return c;
       }
     });
@@ -77,6 +77,7 @@ public class GamesTable extends JTable {
   }
 
   public void valueChanged(ListSelectionEvent e) {
+    this.repaint();
     List<GameInfo> gameInfos = service.getGameInfos();
     int[] selectedRow = getSelectedRows();
     if (selectedRow.length > 0) {

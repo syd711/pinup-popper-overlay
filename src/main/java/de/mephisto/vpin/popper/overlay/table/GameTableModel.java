@@ -11,8 +11,8 @@ public class GameTableModel extends AbstractTableModel {
 
   private final List<GameInfo> gameInfos;
 
-  public GameTableModel(VPinService repository) {
-    gameInfos = repository.getGameInfos();
+  public GameTableModel(VPinService service) {
+    gameInfos = service.getGameInfos();
   }
 
   @Override

@@ -69,13 +69,7 @@ public class CommandsTab extends JPanel implements ActionListener {
 
         break;
       case "editRule": {
-        DOFCommand selection = commandTable.getSelection();
-        RuleDialog editDialog = new RuleDialog(configWindow, service, selection);
-        int resultEdit = editDialog.showDialog();
-        if (resultEdit == 1) {
-          commandTableModel.fireTableDataChanged();
-          service.updateDOFCommand(selection);
-        }
+        editRule();
         break;
       }
       case "deleteRule": {
@@ -87,6 +81,16 @@ public class CommandsTab extends JPanel implements ActionListener {
         }
         break;
       }
+    }
+  }
+
+  void editRule() {
+    DOFCommand selection = commandTable.getSelection();
+    RuleDialog editDialog = new RuleDialog(configWindow, service, selection);
+    int resultEdit = editDialog.showDialog();
+    if (resultEdit == 1) {
+      commandTableModel.fireTableDataChanged();
+      service.updateDOFCommand(selection);
     }
   }
 

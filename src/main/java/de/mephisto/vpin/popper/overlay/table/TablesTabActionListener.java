@@ -126,17 +126,17 @@ public class TablesTabActionListener implements ActionListener {
   }
 
   public class ProgressWorker extends SwingWorker<Object, Object> implements RomScanListener {
-    private VPinService repository;
+    private VPinService service;
     private int tablesToScan = 0;
     private int total = 0;
     private GameInfo latestScan;
     private GameInfo latestPublish;
 
-    ProgressWorker(VPinService repository) {
-      this.repository = repository;
-      this.tablesToScan = repository.getGameInfos().size();
-      this.total = repository.getGameInfos().size();
-      this.repository.addRomScannedListener(this);
+    ProgressWorker(VPinService service) {
+      this.service = service;
+      this.tablesToScan = service.getGameInfos().size();
+      this.total = service.getGameInfos().size();
+      this.service.addRomScannedListener(this);
     }
 
     @Override
@@ -176,7 +176,7 @@ public class TablesTabActionListener implements ActionListener {
     }
 
     public void destroy() {
-      this.repository.removeRomScannedListener(this);
+      this.service.removeRomScannedListener(this);
     }
 
     @Override

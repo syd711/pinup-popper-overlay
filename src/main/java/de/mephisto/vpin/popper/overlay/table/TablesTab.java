@@ -17,12 +17,12 @@ public class TablesTab extends JPanel {
   JButton scanButton;
 
 
-  public TablesTab(ConfigWindow configWindow, VPinService repository) {
+  public TablesTab(ConfigWindow configWindow, VPinService service) {
     super(new BorderLayout());
     this.configWindow = configWindow;
 
     setBackground(ConfigWindow.DEFAULT_BG_COLOR);
-    this.actionListener = new TablesTabActionListener(repository, this);
+    this.actionListener = new TablesTabActionListener(service, this);
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
     JPanel toolBar = new JPanel();
@@ -32,7 +32,7 @@ public class TablesTab extends JPanel {
     this.addButtons(toolBar);
     this.add(toolBar, BorderLayout.NORTH);
 
-    gamesTable = new GamesTable(this, repository, new GameTableModel(repository), new GameTableColumnModel());
+    gamesTable = new GamesTable(this, service, new GameTableModel(service), new GameTableColumnModel());
     JScrollPane sp = new JScrollPane(gamesTable);
     this.add(sp, BorderLayout.CENTER);
   }

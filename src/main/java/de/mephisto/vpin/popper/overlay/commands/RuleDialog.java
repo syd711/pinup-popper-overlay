@@ -85,7 +85,7 @@ public class RuleDialog extends JDialog {
     triggerCombo = addTriggerCombo(rootPanel, key + ".trigger", store);
     triggerCombo.addActionListener(e -> this.updateViewState());
 
-    toggleBtnCheckbox = WidgetFactory.createCheckbox(rootPanel, "Toggle Button", store, key + ".toggle");
+    toggleBtnCheckbox = WidgetFactory.createCheckbox(rootPanel, "Toggle Button (keep value until pressed again)", store, key + ".toggle");
     toggleBtnCheckbox.addActionListener(e -> this.updateViewState());
 
     keySelectionPanel = addKeySelection(rootPanel, key + ".keyBinding", store);
@@ -131,6 +131,11 @@ public class RuleDialog extends JDialog {
     if (!timeSpinner.isEnabled()) {
       timeSpinner.setValue(0);
     }
+
+    if(!keyTrigger) {
+      this.keyCombo.setSelectedIndex(0);
+      this.modifierCombo.setSelectedIndex(0);
+    }
   }
 
   private JComboBox addTriggerCombo(JPanel rootPanel, String key, PropertiesStore store) {
@@ -165,7 +170,9 @@ public class RuleDialog extends JDialog {
     modifierCombo.setActionCommand("modifierCombo");
     modifierCombo.addActionListener(e -> saveOverlayKeyBinding());
 
-    keyCombo = new JComboBox(new DefaultComboBoxModel(new Vector(Keys.getKeyNames())));
+    Vector keys = new Vector(Keys.getKeyNames());
+    keys.insertElementAt("", 0);
+    keyCombo = new JComboBox(new DefaultComboBoxModel(keys));
     keyCombo.setActionCommand("keyCombo");
     keyCombo.addActionListener(e -> saveOverlayKeyBinding());
 
@@ -174,9 +181,14 @@ public class RuleDialog extends JDialog {
     if (hotkey != null) {
       if (hotkey.contains("+")) {
         String[] split = hotkey.split("\\+");
-        String key = split[1];
-        modifierCombo.setSelectedItem(Keys.getModifierName(Integer.parseInt(split[0])));
-        keyCombo.setSelectedItem(key.toUpperCase(Locale.ROOT));
+        if(split.length > 1) {
+          String key = split[1];
+          modifierCombo.setSelectedItem(Keys.getModifierName(Integer.parseInt(split[0])));
+          keyCombo.setSelectedItem(key.toUpperCase(Locale.ROOT));
+        }
+        else {
+          modifierCombo.setSelectedItem(Keys.getModifierName(Integer.parseInt(split[0])));
+        }
       }
       else {
         modifierCombo.setSelectedIndex(0);
