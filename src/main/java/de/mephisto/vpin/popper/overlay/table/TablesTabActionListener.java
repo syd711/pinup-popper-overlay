@@ -36,14 +36,18 @@ public class TablesTabActionListener implements ActionListener {
           tablesTab.scanButton.setEnabled(false);
           String rom = service.rescanRom(selection);
           if(rom == null) {
-            JOptionPane.showMessageDialog(configWindow, "Finished table ROM scan, no ROM name could be resolved for '" + selection.getGameDisplayName() + "'.",
+            JOptionPane.showMessageDialog(configWindow, "Finished table ROM scan, no ROM name could be resolved for '" + selection.getGameDisplayName() + "'.\n\n" +
+                "This means this table will be ignored for the overall highscore and highscore card generation.",
                 "Scan Finished", JOptionPane.INFORMATION_MESSAGE);
           }
           else {
             JOptionPane.showMessageDialog(configWindow, "Finished table ROM scan, resolved ROM name '" + rom + "'.",
-                "Scan Finished", JOptionPane.INFORMATION_MESSAGE);
+                "Scan Finished", JOptionPane.WARNING_MESSAGE);
           }
-          tablesTab.scanButton.setEnabled(true);
+          service.refreshGameInfos();
+          tablesTab.gameTableModel.fireTableDataChanged();
+          tablesTab.scanButton.setEnabled(false);
+          tablesTab.highscoreButton.setEnabled(false);
         }
       }
     }
@@ -51,15 +55,7 @@ public class TablesTabActionListener implements ActionListener {
       int input = JOptionPane.showConfirmDialog(ConfigWindow.getInstance(),
           "Re-scan all tables for their ROM names? (This may take a while.)", "Table Scan", JOptionPane.OK_CANCEL_OPTION);
       if (input == JOptionPane.OK_OPTION) {
-        tablesTab.scanAllButton.setEnabled(false);
-        ProgressDialog d = new ProgressDialog(configWindow, new TableScanProgressModel(service, "Scanning Table ROMs"));
-        ProgressResultModel progressResultModel = d.showDialog();
-
-        JOptionPane.showMessageDialog(configWindow, "Finished ROM scan, found ROM names of "
-                + (progressResultModel.getProcessed()-progressResultModel.getSkipped()) + " from " + progressResultModel.getProcessed() + " tables.",
-            "Generation Finished", JOptionPane.INFORMATION_MESSAGE);
-        LOG.info("Finished global ROM scan.");
-        tablesTab.scanAllButton.setEnabled(true);
+        scanAll();
       }
     }
     else if (e.getActionCommand().equals("tableHighscore")) {
@@ -71,5 +67,19 @@ public class TablesTabActionListener implements ActionListener {
         new HighscoreDialog(this.tablesTab.configWindow, gameInfo, "Highscore for " + gameInfo.getGameDisplayName());
       }
     }
+  }
+
+  public void scanAll() {
+    tablesTab.scanAllButton.setEnabled(false);
+    ProgressDialog d = new ProgressDialog(configWindow, new TableScanProgressModel(service, "Resolving ROM Names"));
+    ProgressResultModel progressResultModel = d.showDialog();
+
+    JOptionPane.showMessageDialog(configWindow, "Finished ROM scan, found ROM names of "
+            + (progressResultModel.getProcessed()-progressResultModel.getSkipped()) + " from " + progressResultModel.getProcessed() + " tables.",
+        "Generation Finished", JOptionPane.INFORMATION_MESSAGE);
+    LOG.info("Finished global ROM scan.");
+    service.refreshGameInfos();
+    tablesTab.gameTableModel.fireTableDataChanged();
+    tablesTab.scanAllButton.setEnabled(true);
   }
 }

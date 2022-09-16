@@ -9,15 +9,15 @@ import java.util.List;
 
 public class GameTableModel extends AbstractTableModel {
 
-  private final List<GameInfo> gameInfos;
+  private VPinService service;
 
   public GameTableModel(VPinService service) {
-    gameInfos = service.getGameInfos();
+    this.service = service;
   }
 
   @Override
   public int getRowCount() {
-    return gameInfos.size();
+    return service.getGameInfos().size();
   }
 
   @Override
@@ -27,6 +27,7 @@ public class GameTableModel extends AbstractTableModel {
 
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
+    List<GameInfo> gameInfos = service.getGameInfos();
     GameInfo gameInfo = gameInfos.get(rowIndex);
     if(columnIndex == 0) {
       return gameInfo.getId();

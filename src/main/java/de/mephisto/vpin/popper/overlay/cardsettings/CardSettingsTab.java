@@ -216,10 +216,10 @@ public class CardSettingsTab extends JPanel {
       if (warning == JOptionPane.OK_OPTION) {
         generateButton.setEnabled(false);
 
-        ProgressDialog d = new ProgressDialog(configWindow, new GeneratorProgressModel(service, this.getScreen(), "Generating Card"));
+        ProgressDialog d = new ProgressDialog(configWindow, new GeneratorProgressModel(service, this.getScreen(), "Generating Cards"));
         ProgressResultModel progressResultModel = d.showDialog();
 
-        JOptionPane.showMessageDialog(configWindow, "Finished highscore card pre-generation, generated card for "
+        JOptionPane.showMessageDialog(configWindow, "Finished highscore card pre-generation, generated cards for "
             + (progressResultModel.getProcessed()-progressResultModel.getSkipped()) + " of " + progressResultModel.getProcessed() + " tables.",
             "Generation Finished", JOptionPane.INFORMATION_MESSAGE);
         LOG.info("Finished highscore card generation.");

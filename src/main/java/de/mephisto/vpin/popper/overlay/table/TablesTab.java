@@ -9,8 +9,10 @@ import java.awt.*;
 
 public class TablesTab extends JPanel {
 
-  private TablesTabActionListener actionListener;
 
+  public TablesTabActionListener actionListener;
+
+  final GameTableModel gameTableModel;
   GamesTable gamesTable;
   ConfigWindow configWindow;
   JButton highscoreButton;
@@ -32,7 +34,8 @@ public class TablesTab extends JPanel {
     this.addButtons(toolBar);
     this.add(toolBar, BorderLayout.NORTH);
 
-    gamesTable = new GamesTable(this, service, new GameTableModel(service), new GameTableColumnModel());
+    gameTableModel = new GameTableModel(service);
+    gamesTable = new GamesTable(this, service, gameTableModel, new GameTableColumnModel());
     JScrollPane sp = new JScrollPane(gamesTable);
     this.add(sp, BorderLayout.CENTER);
   }
