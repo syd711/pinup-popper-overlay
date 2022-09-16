@@ -15,7 +15,7 @@ public class ServiceRunner implements HighscoreChangeListener {
   private final VPinService service;
 
   public ServiceRunner() {
-    service = VPinService.create();
+    service = VPinService.create(true);
     LOG.info("ServiceRunner started.");
 
     String targetScreen = Config.getCardGeneratorConfig().get("popper.screen");

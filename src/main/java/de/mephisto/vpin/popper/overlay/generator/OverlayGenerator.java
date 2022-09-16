@@ -18,7 +18,7 @@ public class OverlayGenerator extends GraphicsGenerator {
   private final VPinService service;
 
   public static void main(String[] args) throws Exception {
-    VPinService service = VPinService.create();
+    VPinService service = VPinService.create(false);
     generateOverlay(service);
     service.shutdown();
   }

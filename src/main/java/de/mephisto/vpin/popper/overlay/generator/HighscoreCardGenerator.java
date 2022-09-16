@@ -63,7 +63,7 @@ public class HighscoreCardGenerator extends GraphicsGenerator {
   }
 
   public static void main(String[] args) throws Exception {
-    VPinService service = VPinService.create();
+    VPinService service = VPinService.create(false);
     try {
       GameInfo gameInfo = service.getGameByRom("STLE");
       new HighscoreCardGenerator().generate(gameInfo, PopperScreen.Other2, HighscoreCardGenerator.SAMPLE_FILE);

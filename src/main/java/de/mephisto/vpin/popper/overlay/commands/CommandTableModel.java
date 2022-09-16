@@ -39,6 +39,9 @@ public class CommandTableModel extends AbstractTableModel {
     }
     if (columnIndex == 2) {
       Unit unit = service.getUnit(command.getUnit());
+      if(unit == null) {
+        return "UNKNOWN UNIT";
+      }
       return unit.toString();
     }
     if (columnIndex == 3) {

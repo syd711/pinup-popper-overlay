@@ -40,7 +40,7 @@ public class ConfigWindow extends JFrame {
     UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 
 
-    service = VPinService.create();
+    service = VPinService.create(false);
 
 
     setSize(1346, 990);

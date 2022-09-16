@@ -7,7 +7,7 @@
       "value": 255,
       "durationMs": 0,
       "trigger": "KeyEvent",
-      "keyBinding": "16+F2",
+      "keyBinding": "2+1",
       "toggle": true,
       "description": "yyyyy"
     }
