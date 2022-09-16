@@ -169,6 +169,10 @@ public class OverlayGraphics extends VPinGraphics {
       }
 
       File wheelIconFile = game.getWheelIconFile();
+      if(!wheelIconFile.exists() && Config.getOverlayGeneratorConfig().getBoolean("overlay.skipWithMissingWheels")) {
+        continue;
+      }
+
       if (wheelIconFile.exists()) {
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
         g.drawImage(wheelImage, ROW_PADDING_LEFT, yStart, ROW_HEIGHT, ROW_HEIGHT, null);

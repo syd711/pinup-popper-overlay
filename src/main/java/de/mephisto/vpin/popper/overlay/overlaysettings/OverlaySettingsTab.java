@@ -99,6 +99,7 @@ public class OverlaySettingsTab extends JPanel {
     WidgetFactory.createSpinner(settingsPanel, "Padding Left:", "px", store, "overlay.highscores.row.padding.left", 60);
     WidgetFactory.createSlider(settingsPanel, "Brighten Background:", store, "overlay.alphacomposite.white");
     WidgetFactory.createSlider(settingsPanel, "Darken Background:", store, "overlay.alphacomposite.black");
+    WidgetFactory.createCheckbox(settingsPanel, "Ignore Tables without Wheel Icon", store, "overlay.skipWithMissingWheels");
 
 
     settingsPanel.add(new JLabel(""));
