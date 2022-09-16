@@ -1,8 +1,6 @@
 package de.mephisto.vpin.popper.overlay.util;
 
 import de.mephisto.vpin.util.PropertiesStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility for accessing the different config files.

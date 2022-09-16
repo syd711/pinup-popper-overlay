@@ -4,8 +4,8 @@ import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.cardsettings.CardSettingsTab;
 import de.mephisto.vpin.popper.overlay.commands.CommandsTab;
 import de.mephisto.vpin.popper.overlay.overlaysettings.OverlaySettingsTab;
-import de.mephisto.vpin.popper.overlay.table.TablesTab;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
+import de.mephisto.vpin.popper.overlay.table.TablesTab;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

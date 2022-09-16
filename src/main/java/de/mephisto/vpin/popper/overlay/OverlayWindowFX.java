@@ -1,14 +1,13 @@
 package de.mephisto.vpin.popper.overlay;
 
 import de.mephisto.vpin.GameInfo;
-import de.mephisto.vpin.highscores.HighscoreChangedEvent;
 import de.mephisto.vpin.ServiceListener;
+import de.mephisto.vpin.highscores.HighscoreChangedEvent;
 import de.mephisto.vpin.popper.overlay.generator.KeyChecker;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGraphics;
 import de.mephisto.vpin.popper.overlay.resources.ResourceLoader;
 import de.mephisto.vpin.popper.overlay.util.Config;
-import de.mephisto.vpin.util.PropertiesStore;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;

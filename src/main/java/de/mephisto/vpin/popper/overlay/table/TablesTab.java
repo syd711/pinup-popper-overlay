@@ -15,14 +15,14 @@ public class TablesTab extends JPanel {
   ConfigWindow configWindow;
   JButton highscoreButton;
   JButton scanButton;
-
+  JButton scanAllButton;
 
   public TablesTab(ConfigWindow configWindow, VPinService service) {
     super(new BorderLayout());
     this.configWindow = configWindow;
 
     setBackground(ConfigWindow.DEFAULT_BG_COLOR);
-    this.actionListener = new TablesTabActionListener(service, this);
+    this.actionListener = new TablesTabActionListener(configWindow, service, this);
     this.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
     JPanel toolBar = new JPanel();
@@ -38,10 +38,12 @@ public class TablesTab extends JPanel {
   }
 
   private void addButtons(JPanel toolBar) {
-    WidgetFactory.createButton(toolBar, "tableRefresh", "Refresh List", this.actionListener);
-    scanButton = WidgetFactory.createButton(toolBar, "tableRescan", "Rescan Table", this.actionListener);
+    scanAllButton = WidgetFactory.createButton(toolBar, "rescanAll", "Re-scan All Tables", this.actionListener);
+
+    scanButton = WidgetFactory.createButton(toolBar, "tableRescan", "Re-scan Table", this.actionListener);
     scanButton.setEnabled(false);
     toolBar.add(scanButton);
+
     highscoreButton = WidgetFactory.createButton(toolBar, "tableHighscore", "Show Highscore", this.actionListener);
     highscoreButton.setEnabled(false);
     toolBar.add(highscoreButton);

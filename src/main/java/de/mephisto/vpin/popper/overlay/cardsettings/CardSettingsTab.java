@@ -1,8 +1,8 @@
 package de.mephisto.vpin.popper.overlay.cardsettings;
 
-import de.mephisto.vpin.popper.PopperScreen;
 import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
+import de.mephisto.vpin.popper.PopperScreen;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.generator.HighscoreCardGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;

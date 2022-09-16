@@ -1,9 +1,7 @@
 package de.mephisto.vpin.popper.overlay.commands;
 
-import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.dof.DOFCommand;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

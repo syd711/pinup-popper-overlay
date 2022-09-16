@@ -1,6 +1,5 @@
 package de.mephisto.vpin.popper.overlay.overlaysettings;
 
-import de.mephisto.vpin.GameInfo;
 import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.generator.OverlayGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
@@ -8,7 +7,6 @@ import de.mephisto.vpin.popper.overlay.util.Keys;
 import de.mephisto.vpin.util.SystemInfo;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
