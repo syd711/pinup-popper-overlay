@@ -6,6 +6,8 @@ import de.mephisto.vpin.VPinService;
 import de.mephisto.vpin.popper.overlay.ConfigWindow;
 import de.mephisto.vpin.popper.overlay.generator.HighscoreCardGenerator;
 import de.mephisto.vpin.popper.overlay.util.Config;
+import de.mephisto.vpin.popper.overlay.util.ProgressDialog;
+import de.mephisto.vpin.popper.overlay.util.ProgressResultModel;
 import de.mephisto.vpin.popper.overlay.util.WidgetFactory;
 import de.mephisto.vpin.util.PropertiesStore;
 import de.mephisto.vpin.util.SystemInfo;
@@ -84,7 +86,7 @@ public class CardSettingsTab extends JPanel {
     generateButton.setActionCommand("generateCard");
     generateButton.addActionListener(this.actionListener);
 
-    JButton showActiveCardButton = new JButton("Show Active Card Image");
+    JButton showActiveCardButton = new JButton("Open Sample Card Image");
     showActiveCardButton.setActionCommand("showCard");
     showActiveCardButton.addActionListener(this.actionListener);
 
@@ -209,18 +211,20 @@ public class CardSettingsTab extends JPanel {
 
   public void generateAllCards() {
     try {
-      int warning = JOptionPane.showConfirmDialog(this.configWindow, "This will overwrite all existing media for screen '" + getScreen() + "'.\nContinue?", "Warning", JOptionPane.YES_NO_OPTION);
+      int warning = JOptionPane.showConfirmDialog(this.configWindow, "This will overwrite all existing media for screen '" + getScreen()
+          + "'.\nThese files will be updated or created once a highscore of a table has been updated.\n\nStart Card Generation?", "Warning", JOptionPane.YES_NO_OPTION);
       if (warning == JOptionPane.OK_OPTION) {
         generateButton.setEnabled(false);
-        List<GameInfo> gameInfos = service.getGameInfos();
-        for (GameInfo gameInfo : gameInfos) {
-          if (gameInfo.resolveHighscore() != null) {
-            HighscoreCardGenerator.generateCard(gameInfo, getScreen());
-          }
-        }
+
+        ProgressDialog d = new ProgressDialog(configWindow, new GeneratorProgressModel(service, this.getScreen(), "Generating Card"));
+        ProgressResultModel progressResultModel = d.showDialog();
+
+        JOptionPane.showMessageDialog(configWindow, "Finished highscore card pre-generation, generated card for "
+            + (progressResultModel.getProcessed()-progressResultModel.getSkipped()) + " of " + progressResultModel.getProcessed() + " tables.",
+            "Generation Finished", JOptionPane.INFORMATION_MESSAGE);
+        LOG.info("Finished highscore card generation.");
         generateButton.setEnabled(true);
       }
-
     } catch (Exception e) {
       JOptionPane.showMessageDialog(this.configWindow, "Error generating overlay: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
